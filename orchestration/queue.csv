@@ -98,7 +98,7 @@
 97,L-06,L,agent,,todo,إيروسول: نسبة concentrate:propellant + كتلة الغاز + تحذير شروط الأمان وخط التعبئة
 98,L-07,L,agent,,todo,ريد ديفيوزر وزيوت فواحة (IFRA 10A) وشموع/واكس (IFRA 12: fragrance load من حد الشمع في TDS)
 99,L-08,L,agent,,todo,معطر جل وسيارة ومفارش
-100,L-09,L,agent,N-10,todo,فحص IFRA: نسبة العطر في المنتج ≤ حد شهادة العطر لفئة المنتج
+100,L-09,L,agent,N-10,partial,فحص IFRA: نسبة العطر في المنتج ≤ حد شهادة العطر لفئة المنتج
 101,L-10,L,agent,I-01,todo,تكلفة عطر كاملة: زيت + كحول (landed) + فاقد + فارغ زجاج + بخاخ + علبة
 102,M-01,M,agent,,todo,محرر بالأطوار: مائي، زيتي، تبريد (cool-down) + درجات حرارة الإضافة
 103,M-02,M,agent,,todo,تصنيف وظيفي: humectant، emollient، occlusive، emulsifier، thickener، preservative، active، fragrance
@@ -112,7 +112,7 @@
 111,N-01,N,agent,,done,"Rules DSL (JSON): field, operator, limit, unit, scope (product type), source"
 112,N-02,N,human,A-09,todo,ترجمة ES 1562 و ES 4900 لقواعد (بعد شراء النصوص)
 113,N-03,N,agent,E-01,todo,قواعد CosIng Annex II/III/V/VI + قاعدة مجموع النسب ≤ 1
-114,N-04,N,agent,E-07,todo,قواعد IFRA: نسبة العطر × حد شهادة IFRA للعطر حسب الفئة
+114,N-04,N,agent,E-07,done,قواعد IFRA: نسبة العطر × حد شهادة IFRA للعطر حسب الفئة
 115,N-05,N,agent,,done,UNKNOWN لما الداتا ناقصة (مش PASS)
 116,N-06,N,agent,,done,مولّد قائمة INCI مرتبة تنازليًا (و<1% بأي ترتيب) + تحذيرات Annex III الإلزامية
 117,N-07,N,agent,N-02,todo,مولّد بطاقة منظفات حسب ES 6910 (عربي)

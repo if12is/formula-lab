@@ -64,3 +64,5 @@
 | 2026-11-21 | N-05 | done | داتا ناقصة ⇒ UNKNOWN، عمرها ما تبقى PASS (property-based) | compliance.prop.test.ts |
 | 2026-11-21 | N-06 | done | قائمة INCI تنازلي + حد 1% + دمج المكرر + تحذيرات البطاقة | inci.test.ts |
 | 2026-11-21 | N-09 | partial | قاعدة الميثانول كـ rule data في draft set لحد ما المصدر التنظيمي يتحدد | methanol-rule.test.ts؛ المصدر في HUMAN-TODO |
+| 2026-11-21 | N-04 | done | فحص IFRA لكل زيت عطر قصاد شهادته وفئة المنتج | ifra.test.ts |
+| 2026-11-21 | L-09 | partial | نفس الفحص لكل فئة منتج — مستني داتا الفئات (N-10) | — |
