@@ -37,4 +37,54 @@ return [
         'date-range' => 'نطاق تاريخ',
         'number-range' => 'نطاق أرقام',
     ],
+    'sanad_entity' => [
+        'product' => 'منتج',
+        'supplier' => 'مورد',
+        'purchase' => 'فاتورة شراء',
+        'batch' => 'دفعة',
+        'stock_movement' => 'حركة مخزون',
+    ],
+    'sanad_op' => [
+        'upsert' => 'إنشاء أو تعديل',
+        'delete' => 'حذف',
+    ],
+    'sanad_ref_type' => [
+        'product' => 'منتج',
+        'supplier' => 'مورد',
+        'purchase' => 'فاتورة شراء',
+        'purchase_item' => 'بند شراء',
+        'batch' => 'دفعة',
+    ],
+    'sanad_item_kind' => [
+        'merchandise' => 'بضاعة',
+        'raw_material' => 'خامة',
+        'packaging' => 'تغليف',
+        'finished_good' => 'منتج تام',
+    ],
+    'sanad_outbox_kind' => [
+        'production_order' => 'أمر إنتاج',
+        'finished_good' => 'تسجيل منتج',
+        'wholesale_prices' => 'أسعار جملة',
+    ],
+    'sanad_outbox_status' => [
+        'pending' => 'قيد الانتظار',
+        'applied' => 'تم التطبيق',
+        'failed' => 'فشل',
+        'conflict' => 'تعارض',
+    ],
+    'sanad_conflict_reason' => [
+        'formula_lab_newer' => 'نسخة معمل التركيبات أحدث',
+        'invalid_reference' => 'مرجع غير صالح',
+        'schema_mismatch' => 'عدم تطابق البنية',
+    ],
+    'sanad_ability' => [
+        'changes:write' => 'استقبال التغييرات من سند',
+        'outbox:read' => 'السماح لسند بقراءة الصادر',
+        'outbox:ack' => 'السماح لسند بتأكيد الصادر',
+    ],
+    'sanad_change_status' => [
+        'applied' => 'تم التطبيق',
+        'unchanged' => 'بدون تغيير',
+        'conflict' => 'تعارض',
+    ],
 ];

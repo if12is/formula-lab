@@ -32,6 +32,13 @@ trait TranslatesValidationMessages
             'max.string' => __('validation.max.string'),
             'min.string' => __('validation.min.string'),
             'confirmed' => __('validation.confirmed'),
+            'present' => __('validation.present'),
+            'uuid' => __('validation.uuid'),
+            'regex' => __('validation.regex'),
+            'date_format' => __('validation.date_format'),
+            'numeric' => __('validation.numeric'),
+            'max.array' => __('validation.max.array'),
+            'min.array' => __('validation.min.array'),
         ];
     }
 }

@@ -61,7 +61,8 @@ Response `200`:
 }
 ```
 - `accepted` = items applied or already-identical (no-op). `conflicts[]` items are **not** applied; Sanad records each in `SyncConflict` (`table_name = 'formula_lab.<entity>'`, `direction='push'`, `status='pending'`) and logs the run in `SyncLog`. `cursor` advances past conflicted items (they live in SyncConflict now).
-- `reason` ∈ `formula_lab_newer | invalid_reference | schema_mismatch`.
+- `reason` ∈ `formula_lab_newer | invalid_reference | schema_mismatch`. In a conflict entry `local_*` describes the copy Formula Lab already holds and `central_*` what Sanad just sent.
+- `skipped[]` (additive): items whose `entity` Formula Lab does not know are not applied and are listed as `{entity, uuid, reason: "unknown_entity"}`; they never cause a 4xx/5xx and do not count in `accepted`. Sanad pushes one entity per request (supplier, product, purchase, batch, stock_movement); Formula Lab stores `batch` as a reference only and accepts `stock_movement` without storing it until the actual-cost phase (Q).
 - Partial failure of the whole request ⇒ non-2xx and **nothing** applied (the batch is atomic); Sanad retries with the same `Idempotency-Key`.
 
 ## 3. Sanad pulls from Formula Lab
@@ -74,6 +75,7 @@ Returns pending work for this link, ordered by an increasing opaque cursor.
       "id": "ob_01J…",
       "type": "production_order",
       "external_id": "po-2026-000123",
+      "produced_at": "2026-11-21T09:30:00Z",
       "payload": { }
     }
   ],
@@ -81,7 +83,7 @@ Returns pending work for this link, ordered by an increasing opaque cursor.
   "has_more": false
 }
 ```
-`type` ∈ `production_order | finished_good | wholesale_prices`. Items stay in the outbox until acked; re-reading is safe.
+`type` ∈ `production_order | finished_good | wholesale_prices`. Every item also carries `produced_at` (ISO-8601 UTC, set when Formula Lab enqueued it; additive field) which Sanad uses to detect a local price edit made after the suggestion was produced. Items stay in the outbox until acked; re-reading is safe. A `failed` ack re-queues the item as a new outbox row (new `id`) until 5 failures.
 
 Payloads:
 - **production_order** (approved only; immutable once published — corrections are a new `external_id`):
