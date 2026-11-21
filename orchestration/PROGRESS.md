@@ -24,3 +24,4 @@
 | 2026-11-21 | F-09 | done | منحنى الملح: interpolation على القياسات بس، بره المدى = missing | فحص يدوي: 1.5% ⇒ 1250 mPa·s، 2.5% ⇒ out_of_measured_range ✓ |
 | 2026-11-21 | F-07 | partial | خواص الصابون كمؤشر من profile الأحماض بخريطة خصائص بمصدر (مفيش خريطة افتراضية) | الخريطة نفسها في HUMAN-TODO |
 | 2026-11-21 | D-04 | done | اختيار القيمة: override ⇒ أعلى ثقة ⇒ الأحدث ⇒ sourceId، وتعارضات ظاهرة | resolve.test.ts |
+| 2026-11-21 | F-10 | done | trace tree لكل رقم ناتج بمصادر ودرجة ثقة الأوراق + بوابة الثقة (L7 ⇒ missing إلا بـ override موقّع) | trace.test.ts، sourced.test.ts |

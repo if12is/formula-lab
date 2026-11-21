@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { convertMoney, type FxRate } from './fx';
+import { convertMoney, isIsoDate, type FxRate } from './fx';
 import { qty, UnitMismatchError } from './quantity';
 
 const usdEgp: FxRate = { from: 'USD', to: 'EGP', rate: '48.5', date: '2026-11-20', sourceId: 'cbe:2026-11-20', source: 'CBE' };
@@ -28,5 +28,14 @@ describe('convertMoney', () => {
     expect(() => convertMoney(qty('1', 'USD'), 'EGP', { ...usdEgp, rate: '1e2' })).toThrow(RangeError);
     expect(() => convertMoney(qty('1', 'USD'), 'EGP', { ...usdEgp, date: '20-11-2026' })).toThrow(RangeError);
     expect(() => convertMoney(qty('1', 'USD'), 'EGP', { ...usdEgp, date: '2026-13-01' })).toThrow(RangeError);
+  });
+});
+
+describe('isIsoDate', () => {
+  it('accepts YYYY-MM-DD only', () => {
+    expect(isIsoDate('2026-11-21')).toBe(true);
+    expect(isIsoDate('2026-13-01')).toBe(false);
+    expect(isIsoDate('21/11/2026')).toBe(false);
+    expect(isIsoDate(20261121)).toBe(false);
   });
 });

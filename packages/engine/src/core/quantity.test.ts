@@ -26,6 +26,7 @@ describe('Quantity', () => {
     expect(dimensionOf('%w/v')).toBe('fraction');
     expect(dimensionOf('mPa·s')).toBe('viscosity');
     expect(dimensionOf('kg/L')).toBe('density');
+    expect(dimensionOf('pc')).toBe('count');
     expect(qty('1', 'EGP').dimension).toBe('money');
     expect(currencyOf('USD')).toBe('USD');
     expect(currencyOf('kg')).toBeUndefined();

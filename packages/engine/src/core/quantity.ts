@@ -7,7 +7,8 @@ export type Dimension =
   | 'acid-value'
   | 'money'
   | 'viscosity'
-  | 'density';
+  | 'density'
+  | 'count';
 
 export type MassUnit = 'kg' | 'g' | 'mg';
 export type VolumeUnit = 'L' | 'mL';
@@ -22,7 +23,8 @@ export type Unit =
   | '%v/v'
   | 'mgKOH/g'
   | Currency
-  | 'mPa·s';
+  | 'mPa·s'
+  | 'pc';
 
 interface UnitDef {
   dimension: Dimension;
@@ -49,6 +51,8 @@ const UNIT_DEFS: Record<Unit, UnitDef> = {
   EGP: { dimension: 'money', group: 'EGP', factor: '1', currency: 'EGP' },
   USD: { dimension: 'money', group: 'USD', factor: '1', currency: 'USD' },
   'mPa·s': { dimension: 'viscosity', group: 'mPa·s', factor: '1' },
+  /** Dimensionless piece count (whole packs). */
+  pc: { dimension: 'count', group: 'count', factor: '1' },
 };
 
 export const UNITS = Object.keys(UNIT_DEFS) as Unit[];

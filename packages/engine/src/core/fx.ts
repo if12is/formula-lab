@@ -25,6 +25,11 @@ export interface FxConversion {
 
 const ISO_DATE = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
 
+/** True for a YYYY-MM-DD string (format check only, no calendar or clock access). */
+export function isIsoDate(x: unknown): x is string {
+  return typeof x === 'string' && ISO_DATE.test(x);
+}
+
 /**
  * Converts money using an explicit dated rate. Missing rate => Result missing;
  * currency mismatch or malformed rate => throws.
@@ -47,7 +52,7 @@ export function convertMoney(
   if (!isDecimalString(rate.rate) || dec(rate.rate).lte(0)) {
     throw new RangeError(`fx rate must be a positive decimal string, got ${JSON.stringify(rate.rate)}`);
   }
-  if (!ISO_DATE.test(rate.date)) {
+  if (!isIsoDate(rate.date)) {
     throw new RangeError(`fx rate date must be YYYY-MM-DD, got ${JSON.stringify(rate.date)}`);
   }
   return ok({
