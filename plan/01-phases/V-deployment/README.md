@@ -9,4 +9,4 @@
 - [ ] HTTPS + backups + monitoring
 
 ## التاسكات
-شوف `tasks.md` (6 تاسك).
+شوف `tasks.md` (7 تاسك).

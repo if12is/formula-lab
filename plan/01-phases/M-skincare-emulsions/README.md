@@ -10,4 +10,4 @@
 - [ ] قيود frame + CosIng Annex V
 
 ## التاسكات
-شوف `tasks.md` (7 تاسك).
+شوف `tasks.md` (9 تاسك).

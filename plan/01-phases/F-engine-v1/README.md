@@ -10,4 +10,4 @@
 - [ ] كل ناتج فيه engineVersion + datasetVersion + مصادر كل رقم
 
 ## التاسكات
-شوف `tasks.md` (13 تاسك).
+شوف `tasks.md` (15 تاسك).

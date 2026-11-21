@@ -6,7 +6,7 @@
 Formula Lab للتركيبات بس (شوف قسم النطاق في CLAUDE.md). لو تاسك بيمس مخزون أو مبيعات أو موردين أو عملاء أو موزعين ⇒ نفّذه كـ API call لـ Sanad، أو كـ endpoint في PR بتاع sanad. تاسكات `deferred` اتخطاها.
 
 ## قبل أول تاسك (مرة واحدة)
-1. اقرا `CLAUDE.md`، `plan/README.md`، كل `plan/00-research/*`، و`plan/02-specs/*`.
+1. اقرا `CLAUDE.md`، `plan/README.md`، كل `plan/00-research/*` (خصوصًا `07-competitor-dashboard-features.md`: بناخد الفكرة ونطورها، ممنوع ننسخ كود أو نصوص أو تصميم المنافس)، و`plan/02-specs/*`.
 2. اتأكد إن الريبوهات دي متاحة واعمل لها clone للقراءة: `if12is/taif-kit`، `wasef201/sanad`. اقرا `taif-kit/README.md` و`docs/BUILD-GUIDE.md` و`docs/TEMPLATES-GUIDE.md` و`docs/FORMS.md`، و`sanad/AGENTS.md` و`sanad/docs/05-api-contract.md` و`routes/api.php`.
 3. اقرا `orchestration/queue.csv` (الترتيب) و`orchestration/PROGRESS.md` (اللي اتعمل).
 
