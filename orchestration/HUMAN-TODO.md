@@ -10,3 +10,4 @@
 - [ ] S-01: الـ CI محتاج صلاحية قراءة لريبو `if12is/taif-kit` (private) عشان `pnpm i` يسحب `github:if12is/taif-kit#v1.8.0` — أضف deploy key (أو `gh auth setup-git` بتوكن) في إعدادات الـ CI. محلياً اتسحب عادي من غير fallback.
 - [ ] S-01: لوجو Formula Lab (SVG) — دلوقتي الشريط الجانبي بيعرض حرف "F" في مربع (الافتراضي بتاع الكيت). لما يتوفر اللوجو يتمرر كـ `brand.logo` في `createKit`.
 - [ ] S-01: مقترحات للكيت (taif-kit): (1) نوع فلتر `number-range` في `FilterBar` (دلوقتي بنرسمه محلياً في `ListFilters` بـ `NumberRangeInput`)، (2) `FilterBar` يعرض عدد الفلاتر النشطة وزر "مسح الكل" يشمل البحث والفلاتر المخصصة، (3) `StatCard` بقيمة `null` تعرض كلمة "None" — اضطرينا نغيّر label `none` لـ "—"، (4) `@iconify/vue` و`reka-ui` يتعلنوا peer/dependency واضحين لأن pnpm مابيعملهمش hoist، (5) سلاسل الـ `labels` للغات تانية غير العربية (`arLabels` بس).
+- [ ] مراجعة ودمج PR بتاع Sanad: https://github.com/wasef201/sanad/pull/1 (وتشغيل الـ migration على MySQL/PostgreSQL) — G-03
