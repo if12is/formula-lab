@@ -27,6 +27,21 @@ class IdempotencyTest extends SanadTestCase
         $this->ack(str_repeat('k', 256))->assertStatus(400);
     }
 
+    public function test_any_opaque_key_up_to_255_characters_is_accepted(): void
+    {
+        $keys = [
+            hash('sha256', '{"acks":[]}'),
+            str_repeat('k', 255),
+            'not a uuid / with spaces & مفتاح',
+            'po-2026-000123',
+        ];
+
+        foreach ($keys as $key) {
+            $this->ack($key)->assertOk()->assertHeaderMissing('Idempotent-Replay');
+            $this->ack($key)->assertOk()->assertHeader('Idempotent-Replay', 'true');
+        }
+    }
+
     public function test_a_replay_returns_the_stored_response_with_the_header_and_runs_nothing_again(): void
     {
         $first = $this->push([$this->item('supplier', '11111111-1111-4111-8111-111111111111', ['name' => 'A'])], 'key-1');

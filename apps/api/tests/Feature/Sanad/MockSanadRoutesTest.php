@@ -182,4 +182,19 @@ class MockSanadRoutesTest extends TestCase
             'product_uuid' => self::FG, 'batch_number' => 'B-1', 'quantity' => '5', 'unit_cost' => '1', 'production_date' => '2026-11-25',
         ], $this->auth('x2'))->assertOk();
     }
+
+    public function test_consume_and_receive_take_branch_code_and_ignore_nothing_else(): void
+    {
+        $line = ['product_uuid' => self::GLYCERIN, 'quantity' => '1.000000', 'uom' => 'kg'];
+
+        $this->postJson(self::BASE.'/production-orders/po-1/consume', ['branch_code' => 'MAIN', 'lines' => [$line]], $this->auth('b1'))->assertOk();
+        $this->postJson(self::BASE.'/production-orders/po-2/consume', ['branch_code' => null, 'lines' => [$line]], $this->auth('b2'))->assertOk();
+        $this->postJson(self::BASE.'/production-orders/po-3/consume', ['branch_code' => ['MAIN'], 'lines' => [$line]], $this->auth('b3'))->assertStatus(422)->assertJsonValidationErrors(['branch_code']);
+        // branch_uuid is gone from the contract: Sanad branches have no uuid.
+        $this->postJson(self::BASE.'/production-orders/po-4/consume', ['branch_uuid' => 'not-a-uuid', 'lines' => [$line]], $this->auth('b4'))->assertOk();
+
+        $receive = ['finished_good_uuid' => self::FG, 'batch_number' => 'B-1', 'quantity' => '500.000000', 'unit_cost' => '18.457300', 'production_date' => '2026-11-25', 'expiry_date' => '2028-11-24'];
+        $this->postJson(self::BASE.'/production-orders/po-1/receive', ['branch_code' => 'MAIN'] + $receive, $this->auth('b5'))->assertOk();
+        $this->postJson(self::BASE.'/production-orders/po-1/receive', ['branch_code' => ['MAIN']] + $receive, $this->auth('b6'))->assertStatus(422)->assertJsonValidationErrors(['branch_code']);
+    }
 }

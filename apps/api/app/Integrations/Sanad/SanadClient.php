@@ -69,7 +69,7 @@ final class SanadClient
 
     /**
      * @param  list<array<string, mixed>>  $lines  `{product_uuid, quantity, uom}`
-     * @param  array<string, mixed>  $options  other body keys: branch_uuid, branch, consumed_on, notes
+     * @param  array<string, mixed>  $options  other body keys: branch_code (null = Sanad's main branch), consumed_on, notes
      * @return array<string, mixed>
      *
      * @throws SanadIntegrationException With shortfalls() on a 422 when stock is insufficient.

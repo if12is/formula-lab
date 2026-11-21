@@ -59,7 +59,7 @@ class SanadClientTest extends TestCase
     public function test_purchases_and_stock_use_their_endpoints(): void
     {
         SanadFake::purchases([SanadFake::purchase()]);
-        SanadFake::stock([['product_uuid' => 'p', 'branch_uuid' => null, 'quantity' => '1.000000', 'uom' => 'kg', 'updated_at' => '2026-11-21T09:30:00Z']]);
+        SanadFake::stock([['product_uuid' => 'p', 'branch_code' => null, 'quantity' => '1.000000', 'uom' => 'kg', 'updated_at' => '2026-11-21T09:30:00Z']]);
 
         $this->assertCount(1, $this->client->purchases('2026-11-01T00:00:00Z')->data);
         $this->assertCount(1, $this->client->stock(branch: 'MAIN')->data);
@@ -103,7 +103,7 @@ class SanadClientTest extends TestCase
         SanadFake::receive();
         SanadFake::wholesalePrices();
 
-        $consumed = $this->client->consume('po-1', [['product_uuid' => 'p', 'quantity' => '1.000000', 'uom' => 'kg']], ['branch_uuid' => 'b', 'consumed_on' => '2026-11-25']);
+        $consumed = $this->client->consume('po-1', [['product_uuid' => 'p', 'quantity' => '1.000000', 'uom' => 'kg']], ['branch_code' => 'MAIN', 'consumed_on' => '2026-11-25']);
         $received = $this->client->receive('po-1', ['finished_good_uuid' => 'fg', 'quantity' => '500.000000', 'unit_cost' => '18.457300']);
         $prices = $this->client->wholesalePrices('fg', ['wholesale_price' => '31.00', 'tier' => 'distributors']);
 
@@ -111,7 +111,7 @@ class SanadClientTest extends TestCase
         $this->assertSame('received', $received['status']);
         $this->assertSame('500.000000', $received['quantity']);
         $this->assertSame('31.00', $prices['wholesale_price']);
-        Http::assertSent(fn (Request $request): bool => str_ends_with($request->url(), '/production-orders/po-1/consume') && $request->data()['branch_uuid'] === 'b');
+        Http::assertSent(fn (Request $request): bool => str_ends_with($request->url(), '/production-orders/po-1/consume') && $request->data()['branch_code'] === 'MAIN');
         Http::assertSent(fn (Request $request): bool => str_ends_with($request->url(), '/production-orders/po-1/receive'));
         Http::assertSent(fn (Request $request): bool => str_ends_with($request->url(), '/products/fg/wholesale-prices'));
     }

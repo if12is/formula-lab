@@ -63,7 +63,7 @@ return [
     ],
     'sanad_outbox_kind' => [
         'production_order' => 'Production order',
-        'finished_good' => 'Product upsert',
+        'product_upsert' => 'Product upsert',
         'wholesale_prices' => 'Wholesale prices',
     ],
     'sanad_outbox_status' => [

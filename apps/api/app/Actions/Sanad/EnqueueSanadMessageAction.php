@@ -30,7 +30,7 @@ final class EnqueueSanadMessageAction
 
         $externalId ??= match ($kind) {
             SanadOutboxKind::ProductionOrder => $payload['external_id'] ?? null,
-            SanadOutboxKind::FinishedGood => $payload['uuid'] ?? null,
+            SanadOutboxKind::ProductUpsert => $payload['uuid'] ?? null,
             SanadOutboxKind::WholesalePrices => $payload['product_uuid'] ?? null,
         };
 

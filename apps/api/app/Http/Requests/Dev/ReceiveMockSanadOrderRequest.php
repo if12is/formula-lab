@@ -24,8 +24,9 @@ class ReceiveMockSanadOrderRequest extends MockSanadRequest
             'production_date' => ['required', 'date_format:Y-m-d'],
             'expiry_date' => ['nullable', 'date_format:Y-m-d', 'after_or_equal:production_date'],
             'uom' => ['nullable', 'string', 'max:100'],
+            'branch_code' => ['nullable', 'string', 'max:100'],
+            // Legacy alias of branch_code, still accepted by Sanad.
             'branch' => ['nullable', 'string', 'max:100'],
-            'branch_uuid' => ['nullable', 'uuid'],
         ];
     }
 }

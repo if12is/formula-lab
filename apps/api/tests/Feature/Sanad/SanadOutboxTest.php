@@ -37,8 +37,19 @@ class SanadOutboxTest extends SanadTestCase
 
     public function test_enqueue_derives_the_external_id_per_kind(): void
     {
-        $this->assertSame('u-1', $this->enqueue(['uuid' => 'u-1'], kind: SanadOutboxKind::FinishedGood)->external_id);
+        $this->assertSame('u-1', $this->enqueue(['uuid' => 'u-1'], kind: SanadOutboxKind::ProductUpsert)->external_id);
         $this->assertSame('p-1', $this->enqueue(['product_uuid' => 'p-1'], kind: SanadOutboxKind::WholesalePrices)->external_id);
+    }
+
+    public function test_the_product_upsert_kind_is_stored_under_its_contract_name(): void
+    {
+        $this->assertSame('product_upsert', SanadOutboxKind::ProductUpsert->value);
+        $this->assertSame(['production_order', 'product_upsert', 'wholesale_prices'], SanadOutboxKind::values());
+        $this->assertNull(SanadOutboxKind::tryFrom('finished_good'), 'finished_good is only a legacy alias on the Sanad side');
+
+        $row = $this->enqueue(['uuid' => 'u-2', 'item_kind' => 'finished_good'], kind: SanadOutboxKind::ProductUpsert);
+
+        $this->assertSame('product_upsert', $row->fresh()->getRawOriginal('kind'));
     }
 
     public function test_enqueue_refuses_floats(): void

@@ -90,7 +90,7 @@ final class SanadContract
     /** @param  array<string, mixed>  $row */
     public static function assertStock(array $row): void
     {
-        foreach (['product_uuid', 'branch_uuid', 'uom', 'updated_at'] as $key) {
+        foreach (['product_uuid', 'branch_code', 'uom', 'updated_at'] as $key) {
             Assert::assertArrayHasKey($key, $row, $key);
         }
         self::assertDecimalString($row, 'quantity');

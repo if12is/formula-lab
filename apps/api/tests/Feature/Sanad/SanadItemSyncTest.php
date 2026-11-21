@@ -157,7 +157,7 @@ class SanadItemSyncTest extends SanadTestCase
 
         $this->assertSame('outbox', $result->mode);
         $row = SanadOutbox::query()->findOrFail($result->outboxId);
-        $this->assertSame(SanadOutboxKind::FinishedGood, $row->kind);
+        $this->assertSame(SanadOutboxKind::ProductUpsert, $row->kind);
         $this->assertSame($result->productUuid, $row->external_id);
         $this->assertEquals([
             'uuid' => $result->productUuid, 'name' => 'SLES 70%', 'item_kind' => 'raw_material',

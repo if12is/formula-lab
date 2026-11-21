@@ -246,7 +246,7 @@ final class SanadFake
             'tax_amount' => '360.50',
             'discount_amount' => '0.00',
             'total' => '2935.50',
-            'branch_uuid' => null,
+            'branch_code' => 'MAIN',
             'updated_at' => '2026-11-21T09:30:00Z',
             'items' => $items === [] ? [self::purchaseItem()] : $items,
         ];

@@ -18,8 +18,9 @@ class ConsumeMockSanadOrderRequest extends MockSanadRequest
             'lines.*.product_uuid' => ['required', 'uuid'],
             'lines.*.quantity' => ['required', 'string', 'regex:'.self::DECIMAL, 'gt:0'],
             'lines.*.uom' => ['nullable', 'string', 'max:100'],
+            'branch_code' => ['nullable', 'string', 'max:100'],
+            // Legacy alias of branch_code, still accepted by Sanad.
             'branch' => ['nullable', 'string', 'max:100'],
-            'branch_uuid' => ['nullable', 'uuid'],
             'consumed_on' => ['nullable', 'date_format:Y-m-d'],
         ];
     }

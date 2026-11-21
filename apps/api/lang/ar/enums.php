@@ -63,7 +63,7 @@ return [
     ],
     'sanad_outbox_kind' => [
         'production_order' => 'أمر إنتاج',
-        'finished_good' => 'تسجيل منتج',
+        'product_upsert' => 'تسجيل منتج',
         'wholesale_prices' => 'أسعار جملة',
     ],
     'sanad_outbox_status' => [

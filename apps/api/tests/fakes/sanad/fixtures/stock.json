@@ -1,7 +1,6 @@
 [
   {
     "product_uuid": "11111111-1111-4111-8111-111111111111",
-    "branch_uuid": null,
     "branch_code": "MAIN",
     "quantity": "120.000000",
     "uom": "كجم",
@@ -20,7 +19,6 @@
   },
   {
     "product_uuid": "22222222-2222-4222-8222-222222222222",
-    "branch_uuid": null,
     "branch_code": "MAIN",
     "quantity": "300.000000",
     "uom": "كجم",
@@ -29,7 +27,6 @@
   },
   {
     "product_uuid": "33333333-3333-4333-8333-333333333333",
-    "branch_uuid": null,
     "branch_code": "MAIN",
     "quantity": "5000.000000",
     "uom": "وحدة",

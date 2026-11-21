@@ -64,7 +64,7 @@ final class PublishMaterialToSanadAction
 
         if ($device !== null) {
             return DB::transaction(function () use ($device, $material, $uuid, $body): SanadPublishResult {
-                $row = ($this->enqueue)($device, SanadOutboxKind::FinishedGood, ['uuid' => $uuid] + $body);
+                $row = ($this->enqueue)($device, SanadOutboxKind::ProductUpsert, ['uuid' => $uuid] + $body);
                 $material->forceFill(['sanad_product_uuid' => $uuid])->save();
 
                 return new SanadPublishResult($uuid, 'outbox', outboxId: $row->id);
