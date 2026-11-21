@@ -7,7 +7,7 @@
   "scripts": {
     "test": "pnpm -r --filter \"./packages/**\" test",
     "typecheck": "pnpm -r --filter \"./packages/**\" typecheck",
-    "lint": "eslint .",
+    "lint": "eslint . && node scripts/check-i18n.mjs",
     "test:php": "cd apps/api && php artisan test",
     "e2e": "playwright test --trace off"
   },

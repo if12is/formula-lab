@@ -7,3 +7,6 @@
 - [ ] قرار: أسعار وكميات Sanad بـ decimal(12,2) (خانتين). نكتفي بيها لتكلفة الخامات، ولا نوسّعها في PR بتاع Sanad؟ (G-01)
 - [ ] F-07: وفّر/اعتمد مصدر خريطة خواص الصابون (soap property map: أي أحماض دهنية بتدخل في hardness/cleansing/conditioning/bubbly/creamy وiodine/INS — مثلاً اصطلاح soapcalc) مع sourceId ودرجة ثقة. المحرك مابيشحنش خريطة افتراضية.
 - [ ] F-08: وفّر جدول rHLB للخامات (مع sourceId ودرجة ثقة؛ L7 مرفوض في الحساب النهائي إلا بـ override) وأرقام مجموعات Davies (Hi) لو عايز حاسبة Davies — المحرك بياخدهم كمدخلات بس.
+- [ ] S-01: الـ CI محتاج صلاحية قراءة لريبو `if12is/taif-kit` (private) عشان `pnpm i` يسحب `github:if12is/taif-kit#v1.8.0` — أضف deploy key (أو `gh auth setup-git` بتوكن) في إعدادات الـ CI. محلياً اتسحب عادي من غير fallback.
+- [ ] S-01: لوجو Formula Lab (SVG) — دلوقتي الشريط الجانبي بيعرض حرف "F" في مربع (الافتراضي بتاع الكيت). لما يتوفر اللوجو يتمرر كـ `brand.logo` في `createKit`.
+- [ ] S-01: مقترحات للكيت (taif-kit): (1) نوع فلتر `number-range` في `FilterBar` (دلوقتي بنرسمه محلياً في `ListFilters` بـ `NumberRangeInput`)، (2) `FilterBar` يعرض عدد الفلاتر النشطة وزر "مسح الكل" يشمل البحث والفلاتر المخصصة، (3) `StatCard` بقيمة `null` تعرض كلمة "None" — اضطرينا نغيّر label `none` لـ "—"، (4) `@iconify/vue` و`reka-ui` يتعلنوا peer/dependency واضحين لأن pnpm مابيعملهمش hoist، (5) سلاسل الـ `labels` للغات تانية غير العربية (`arLabels` بس).

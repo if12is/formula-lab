@@ -2,7 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\Translations;
+use App\Support\UiPreferences;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -35,9 +38,22 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $locale = app()->getLocale();
+
         return [
             ...parent::share($request),
-            //
+            'appUrl' => config('app.url'),
+            'locale' => [
+                'current' => $locale,
+                'direction' => UiPreferences::direction($locale),
+                'supported' => collect(config('ui.locales'))
+                    ->map(fn (array $meta, string $code): array => ['code' => $code, 'native' => $meta['native'], 'short' => $meta['short']])
+                    ->values()
+                    ->all(),
+            ],
+            'theme' => ['preference' => UiPreferences::theme($request)],
+            // The whole dictionary travels once per locale; later visits leave it out.
+            'translations' => Inertia::once(fn (): array => Translations::for($locale))->as("translations.{$locale}"),
         ];
     }
 }

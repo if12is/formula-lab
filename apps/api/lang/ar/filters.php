@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'search_placeholder' => 'ابحث بالاسم أو الكود',
+    'sort_by' => 'الترتيب حسب',
+    'sort_direction_asc' => 'تصاعدي',
+    'sort_direction_desc' => 'تنازلي',
+    'clear_all' => 'مسح كل الفلاتر',
+    'active_count' => 'الفلاتر النشطة: {count}',
+    'from' => 'من',
+    'to' => 'إلى',
+    'min' => 'الحد الأدنى',
+    'max' => 'الحد الأقصى',
+    'clear_range' => 'مسح النطاق',
+    'any' => 'الكل',
+    'status' => 'الحالة',
+    'created_at' => 'تاريخ الإضافة',
+    'updated_at' => 'تاريخ التعديل',
+    'name' => 'الاسم',
+    'empty_title' => 'لا توجد سجلات بعد',
+    'empty_description' => 'أول سجل تضيفه سيظهر هنا.',
+    'filtered_empty_title' => 'لا توجد نتائج تطابق هذه الفلاتر',
+    'filtered_empty_description' => 'غيّر البحث أو امسح الفلاتر.',
+    'rows_per_page' => 'عدد الصفوف في الصفحة',
+];
