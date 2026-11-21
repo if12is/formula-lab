@@ -11,3 +11,4 @@
 | 2026-11-21 | B-06 | partial-verified | CI: js + php (postgres) + e2e | .github/workflows/ci.yml (YAML صالح؛ هيتأكد أول run على GitHub) |
 | 2026-11-21 | B-07 | done | docker compose للتطوير (postgres, redis, app, vite) | docker compose config ✓ (الـ containers ما اتشغلتش في البيئة دي) |
 | 2026-11-21 | B-08 | done | عقد المحرك كـ types + canonical JSON + SHA-256 (noble) + قسم versioning | hash.test.ts |
+| 2026-11-21 | C-01 | done | core/decimal.ts | vitest ✓ + coverage 100% للملف + فحص يدوي مستقل (evidence/C) |
