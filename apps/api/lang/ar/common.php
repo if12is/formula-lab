@@ -10,4 +10,6 @@ return [
     'search_placeholder' => 'ابحث',
     'results_empty' => 'لا توجد نتائج',
     'retry' => 'حاول مرة أخرى',
+    'cancel' => 'إلغاء',
+    'request_failed' => 'تعذّر تنفيذ الطلب. حاول مرة أخرى بعد قليل.',
 ];

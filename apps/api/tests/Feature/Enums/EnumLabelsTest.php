@@ -7,6 +7,7 @@ use App\Enums\Confidence;
 use App\Enums\FilterType;
 use App\Enums\FormulaStatus;
 use App\Enums\ProductTier;
+use App\Enums\SourceKind;
 use App\Enums\TradeMaterialStatus;
 use BackedEnum;
 use Illuminate\Support\Str;
@@ -24,6 +25,7 @@ class EnumLabelsTest extends TestCase
             'FilterType' => [FilterType::class],
             'FormulaStatus' => [FormulaStatus::class],
             'ProductTier' => [ProductTier::class],
+            'SourceKind' => [SourceKind::class],
             'TradeMaterialStatus' => [TradeMaterialStatus::class],
         ];
     }

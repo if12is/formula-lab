@@ -19,16 +19,17 @@ final class FormulaVersionService
     /**
      * @param  list<array{trade_material_id: string, percent_ww?: string|int|null, is_qs?: bool, phase?: string|null}>  $lines
      *                                                                                                                          Order defines line_no (1-based); percent_ww is null only for a q.s. line.
+     * @param  FormulaVersion|null  $basedOn  The version the new one was edited from (its parent); the latest version when omitted.
      *
      * @throws InvalidFormulaVersionException When there are no lines, or a version after the first has no reason.
      */
-    public function createVersion(Formula $formula, array $lines, ?string $reason, ?User $user = null): FormulaVersion
+    public function createVersion(Formula $formula, array $lines, ?string $reason, ?User $user = null, ?FormulaVersion $basedOn = null): FormulaVersion
     {
         if ($lines === []) {
             throw InvalidFormulaVersionException::linesRequired();
         }
 
-        return DB::transaction(function () use ($formula, $lines, $reason, $user): FormulaVersion {
+        return DB::transaction(function () use ($formula, $lines, $reason, $user, $basedOn): FormulaVersion {
             // Serialise concurrent saves of the same formula so version numbers do not collide.
             Formula::query()->whereKey($formula->getKey())->lockForUpdate()->firstOrFail();
 
@@ -39,7 +40,7 @@ final class FormulaVersionService
                 throw InvalidFormulaVersionException::reasonRequired();
             }
 
-            return ($this->createFormulaVersion)($formula, $lines, $number, $latest, $reason, $user);
+            return ($this->createFormulaVersion)($formula, $lines, $number, $basedOn ?? $latest, $reason, $user);
         });
     }
 }

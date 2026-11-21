@@ -87,4 +87,14 @@ return [
         'unchanged' => 'Unchanged',
         'conflict' => 'Conflict',
     ],
+    'source_kind' => [
+        'supplier_tds' => 'Supplier data sheet',
+        'coa' => 'Certificate of analysis',
+        'standard' => 'Standard specification',
+        'regulatory_db' => 'Regulatory database',
+        'reference' => 'Scientific reference',
+        'community' => 'Community source',
+        'lab_measurement' => 'Lab measurement',
+        'unverified_entry' => 'Unverified entry',
+    ],
 ];

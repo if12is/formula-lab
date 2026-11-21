@@ -10,4 +10,6 @@ return [
     'search_placeholder' => 'Search',
     'results_empty' => 'No results',
     'retry' => 'Try again',
+    'cancel' => 'Cancel',
+    'request_failed' => 'The request failed. Try again in a moment.',
 ];

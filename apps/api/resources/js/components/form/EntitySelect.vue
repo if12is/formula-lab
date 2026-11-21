@@ -10,7 +10,11 @@
  *
  * Local mode: `options` is [{ value, label | labelKey, hint? }]; the box filters as you type; `multiple` allows many.
  * Remote mode: `search-url` answers GET ?q=text with JSON [{ value, label, description? }]; the chosen value
- * is the model, and `selected-label` names the current value on first paint (an edit form).
+ * is the model, and `selected-label` names the current value on first paint (an edit form). Any other keys of
+ * an option travel with it to the `select` event, so a page can keep what the server sent along (a material's prices).
+ *
+ * `bare` drops the FormField for a control inside a table row or a repeated line: the label then becomes
+ * the control's aria-label (say which row in the label, e.g. through `label-params`).
  */
 import { computed, ref, watch } from 'vue';
 import { Combobox, FormField, Typeahead } from '@kit';
@@ -29,6 +33,9 @@ const props = defineProps({
     searchUrl: { type: String, default: null },
     selectedLabel: { type: String, default: '' },
     name: { type: String, default: undefined },
+    bare: { type: Boolean, default: false },
+    /** Placeholders for the label's {name} slots, e.g. { line: 3 }. */
+    labelParams: { type: Object, default: undefined },
 });
 
 const model = defineModel({ type: [String, Number, Array], default: null });
@@ -69,7 +76,10 @@ watch(text, (value) => {
 </script>
 
 <template>
-    <FormField :label="t(labelKey)" :hint="hintKey ? t(hintKey) : undefined" :error="error ?? undefined" :required="required">
+    <component
+        :is="bare ? 'div' : FormField"
+        v-bind="bare ? {} : { label: t(labelKey, labelParams), hint: hintKey ? t(hintKey) : undefined, error: error ?? undefined, required }"
+    >
         <Typeahead
             v-if="searchUrl"
             v-model="text"
@@ -78,6 +88,8 @@ watch(text, (value) => {
             :disabled="disabled"
             :placeholder="placeholder"
             :name="name"
+            :aria-label="bare ? t(labelKey, labelParams) : undefined"
+            :invalid="bare && Boolean(error)"
             @select="picked"
         />
         <Combobox
@@ -88,6 +100,8 @@ watch(text, (value) => {
             :disabled="disabled"
             :placeholder="placeholder"
             :name="name"
+            :aria-label="bare ? t(labelKey, labelParams) : undefined"
+            :invalid="bare && Boolean(error)"
         />
-    </FormField>
+    </component>
 </template>

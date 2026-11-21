@@ -87,4 +87,14 @@ return [
         'unchanged' => 'بدون تغيير',
         'conflict' => 'تعارض',
     ],
+    'source_kind' => [
+        'supplier_tds' => 'نشرة بيانات المورد',
+        'coa' => 'شهادة تحليل',
+        'standard' => 'مواصفة قياسية',
+        'regulatory_db' => 'قاعدة بيانات تنظيمية',
+        'reference' => 'مرجع علمي',
+        'community' => 'مصدر مجتمعي',
+        'lab_measurement' => 'قياس معملي',
+        'unverified_entry' => 'إدخال غير موثّق',
+    ],
 ];
