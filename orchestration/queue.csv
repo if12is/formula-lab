@@ -3,7 +3,7 @@
 2,B-02,B,agent,,todo,"إنشاء monorepo (pnpm workspaces): packages/engine, packages/optimizer, apps/api (Laravel), apps/web (Vue+Inertia), apps/desktop (Electron), apps/mobile (Capacitor)"
 3,B-03,B,agent,,done,كتابة ADR-001: المحرك TypeScript مشترك + Decimal
 4,B-04,B,agent,,done,كتابة ADR-002: الـ AI ما يحسبش؛ بيستدعي tools بس
-5,B-05,B,agent,,todo,كتابة ADR-003: نسخ الداتا المرجعية immutable ومرقمة
+5,B-05,B,agent,,done,كتابة ADR-003: نسخ الداتا المرجعية immutable ومرقمة
 6,B-06,B,agent,B-01,todo,"إعداد CI (GitHub Actions/Gitea): lint, typecheck, vitest, pest, playwright"
 7,B-07,B,agent,B-01,todo,"إعداد بيئة dev بـ Docker Compose (Postgres, Redis, Laravel, Vite)"
 8,B-08,B,agent,B-02,todo,تحديد عقد المحرك: Input/Output types + versioning (engineVersion في كل ناتج)
