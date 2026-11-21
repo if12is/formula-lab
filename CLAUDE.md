@@ -11,7 +11,7 @@
 3. **ما نعيدش اختراع العجلة:**
    - **POS والتجارة = Sanad** (`wasef201/sanad`): موردين، مشتريات، مخزون، مبيعات، عملاء، موزعين، أسعار جملة، فواتير. بنكلمه بالـ API (`plan/02-specs/sanad-integration.md`). ممنوع جداول موازية.
    - **UI = Taif Kit** (`if12is/taif-kit`): كل الشاشات من components والـ templates بتاعته. ممنوع components من الصفر لو الكيت فيه بديل.
-4. **ما فيش حاجة "شغالة" من غير اختبار:** Vitest للمحرك، Pest لـ Laravel، **Playwright** لأي شاشة أو رحلة مستخدم.
+4. **ما فيش حاجة "شغالة" من غير اختبار:** Vitest للمحرك، PHPUnit لـ Laravel (أسلوب صاحب المشروع)، **Playwright** لأي شاشة أو رحلة مستخدم.
 5. **ممنوع اختراع أرقام كيميائية أو تنظيمية** (حدود مواصفات، نسب فئات). الحقل يفضل `null` + سطر في `orchestration/HUMAN-TODO.md`.
 6. اللغة: الواجهة عربي RTL افتراضي. التعليقات والـ commits إنجليزي. الكلام مع صاحب المشروع بالعربي المصري.
 
@@ -44,3 +44,6 @@ Laravel 13 + PostgreSQL + Inertia 3 + Vue 3 + Taif Kit + Tailwind 4 + Vite 8 · 
 - كل نصوص الواجهة في ملفات لغة (`apps/api/lang/ar/*.php` + JSON للـ frontend)، ممنوع نص ثابت جوه الـ components. عربي RTL افتراضي ومظبوط (logical classes، `<bdi>` للأرقام).
 - كل صفحة قائمة فيها فلاتر بتحكم كامل (بحث، فلترة بكل الأعمدة المهمة، ترتيب، حفظ الحالة في الـ URL، مسح الفلاتر).
 - الـ selectors بتدعم البحث (Combobox/Typeahead) وسهلة على الموبايل.
+
+## أسلوب Laravel (طريقة صاحب المشروع في كل مشاريعه)
+إلزامي: `orchestration/context/laravel-conventions.md` — Route → FormRequest → Controller رفيع → Service → Action → Model، Enums بـ label() من ملفات الترجمة، FormRequests برسايل مترجمة، domain exceptions مترجمة، اختبارات PHPUnit.
