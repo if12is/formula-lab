@@ -109,7 +109,7 @@
 108,M-07,M,agent,O-01,todo,بروتوكول ثبات (طرد مركزي، دورات حرارة، 4 أسابيع 40°C) يتسجل في حلقة المعمل
 109,M-08,M,agent,M-03,todo,ثقة L1–L7 لقيم rHLB مع فلتر، والحساب النهائي يرفض L7؛ مسارات منفصلة: غير أيوني (HLB)، كاتيوني (نطاق TDS)، سطحي (مادة فعالة)، مخصص
 110,M-09,M,agent,,todo,presets أنواع المنتجات (لوشن، كريم، كريم وش، واقي شمس، بلسم، ماسك، كريم/رغوة تنظيف) كـ profiles بمصادر
-111,N-01,N,agent,,todo,"Rules DSL (JSON): field, operator, limit, unit, scope (product type), source"
+111,N-01,N,agent,,done,"Rules DSL (JSON): field, operator, limit, unit, scope (product type), source"
 112,N-02,N,human,A-09,todo,ترجمة ES 1562 و ES 4900 لقواعد (بعد شراء النصوص)
 113,N-03,N,agent,E-01,todo,قواعد CosIng Annex II/III/V/VI + قاعدة مجموع النسب ≤ 1
 114,N-04,N,agent,E-07,todo,قواعد IFRA: نسبة العطر × حد شهادة IFRA للعطر حسب الفئة

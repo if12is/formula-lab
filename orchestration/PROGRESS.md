@@ -60,3 +60,4 @@
 | 2026-11-21 | K-03 | done | الكلور الفعال من COA + تخفيف + فقد تخزين من قياسات المستخدم بس | فحص يدوي: 12.5%⇒5% = 400 جم، فقد 8% ⇒ 434.78 جم ✓ |
 | 2026-11-21 | H-07 | done | فحص الحجم الاسمي ≤ سعة العبوة − headspace | 530 مل/5% ⇒ +3.5 PASS، 520 ⇒ −6 FAIL ✓ |
 | 2026-11-21 | G-03 | done | صاحب المشروع عمل merge لـ wasef201/sanad#1 | — |
+| 2026-11-21 | N-01 | done | Rules DSL بمصدر إلزامي + hash لكل rule set + evaluator (PASS/FAIL/UNKNOWN، مجموع نسب Annex III) | dsl.test.ts، evaluate.test.ts |

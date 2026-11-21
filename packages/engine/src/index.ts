@@ -39,3 +39,4 @@ export * from './fragrance';
 export * from './dilution';
 export * from './ph';
 export * from './packaging-check';
+export * from './compliance';
