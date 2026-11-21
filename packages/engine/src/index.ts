@@ -21,3 +21,8 @@ export * from './hlb';
 export * from './viscosity';
 export * from './soap-props';
 export * from './data';
+export * from './trace';
+export * from './formula';
+export * from './cost';
+export * from './batch';
+export { calculate } from './calculate';
