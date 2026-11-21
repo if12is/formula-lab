@@ -8,3 +8,4 @@
 | 2026-11-21 | G-01 | done | مراجعة كود Sanad وتصحيح spec الربط (store API للبورتال بس، المزامنة DB-level) + عقد HTTP v1 | plan/02-specs/sanad-integration.md, orchestration/context/sanad-contract-v1.md |
 | 2026-11-21 | G-02 | done | مصدر الحقيقة لكل كيان + شيل جداول الموردين/المشتريات من الـ schema واستبدالها بـ sanad_refs وcache | plan/02-specs/data-model.sql |
 | 2026-11-21 | B-02 | done | monorepo pnpm: packages/engine + optimizer، apps/api (Laravel 12 + Inertia 2 + Vue 3 + Tailwind 4 + Pest + pgsql)، ESLint بيمنع Date.now/Math.random/Number في المحرك | pnpm test/typecheck/lint ✓، php artisan test 2 ✓، e2e 1 ✓؛ evidence/B-02 |
+| 2026-11-21 | B-06 | partial-verified | CI: js + php (postgres) + e2e | .github/workflows/ci.yml (YAML صالح؛ هيتأكد أول run على GitHub) |
