@@ -121,6 +121,11 @@ return [
         'reference' => 'Scientific reference',
         'community' => 'Community source',
         'lab_measurement' => 'Lab measurement',
+        'owner_decision' => 'Owner decision',
         'unverified_entry' => 'Unverified entry',
+    ],
+    'tax_mode' => [
+        'disabled' => 'Tax disabled',
+        'rate' => 'Rate',
     ],
 ];

@@ -17,6 +17,7 @@ import ExplainableNum from '../../components/explain/ExplainableNum.vue';
 import EntitySelect from '../../components/form/EntitySelect.vue';
 import DisplayCurrencyLine from '../../components/currency/DisplayCurrencyLine.vue';
 import CompliancePanel from '../../components/compliance/CompliancePanel.vue';
+import TaxPanel from '../../components/pricing/TaxPanel.vue';
 import ConfidenceBadge from '../../components/materials/ConfidenceBadge.vue';
 import MaterialFormModal from '../../components/materials/MaterialFormModal.vue';
 import Num from '../../components/Num.vue';
@@ -34,6 +35,8 @@ const props = defineProps({
     history: { type: Array, required: true },
     /** { ruleSets } for the compliance panel; only an existing formula has one (its product type and IFRA category are saved). */
     compliance: { type: Object, default: null },
+    /** The product's tax setting with its allowed options and the dated regimes (pricing panel); an existing formula only. */
+    tax: { type: Object, default: null },
     datasetVersion: { type: String, required: true },
     tierOptions: { type: Array, required: true },
     urls: { type: Object, required: true },
@@ -394,6 +397,8 @@ const percentValid = (line) => line.percent === '' || isDecimalString(line.perce
                     </ul>
                 </div>
             </Card>
+
+            <TaxPanel v-if="!creating && tax" :formula-id="formula.id" :tax="tax" :errors="$page.props.errors" />
 
             <CompliancePanel v-if="!creating && compliance" :draft="draft" :formula="formula" :rule-sets="compliance.ruleSets" :entities="entities" :sources="sources" />
 

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ProductTier;
+use App\Enums\TaxMode;
 use Database\Factories\FormulaFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,12 +16,12 @@ class Formula extends Model
     /** @use HasFactory<FormulaFactory> */
     use HasFactory, HasUuids;
 
-    protected $fillable = ['tenant_id', 'code', 'name', 'product_type', 'tier', 'ifra_category'];
+    protected $fillable = ['tenant_id', 'code', 'name', 'product_type', 'tier', 'ifra_category', 'tax_mode', 'tax_rate_pct', 'sanad_product_uuid'];
 
     /** @return array<string, string> */
     protected function casts(): array
     {
-        return ['tier' => ProductTier::class];
+        return ['tier' => ProductTier::class, 'tax_mode' => TaxMode::class];
     }
 
     /** @return BelongsTo<Tenant, $this> */

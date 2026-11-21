@@ -40,6 +40,11 @@ class SanadLinkException extends BusinessRuleViolationException
         return new self(__('exceptions.sanad_tenant_mismatch'), 403);
     }
 
+    public static function decimalInvalid(string $field): self
+    {
+        return new self(__('exceptions.sanad_decimal_invalid', ['field' => $field]));
+    }
+
     public static function uomRequired(): self
     {
         return new self(__('exceptions.sanad_uom_required'));

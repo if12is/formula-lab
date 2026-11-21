@@ -6,6 +6,7 @@
  */
 import { canonicalHash } from '../core/canonical-hash';
 import { isDecimalString } from '../core/decimal';
+import { isIsoDate } from '../core/fx';
 import { missing, ok, type Result } from '../core/result';
 import { checkKeys as checkKeysWith, containsJsNumber, isRecord, nonEmptyString, type Issues } from '../core/validate';
 
@@ -63,6 +64,10 @@ export interface DecisionRuleSet {
   id: string;
   version: string;
   status: DecisionRuleSetStatus;
+  /** Who approved a published rule set (the owner). Required when published, not allowed on a draft. */
+  approvedBy?: string;
+  /** ISO date of the approval. Required when published, not allowed on a draft. */
+  approvedOn?: string;
   rules: DecisionRule[];
 }
 
@@ -81,9 +86,11 @@ export const DECISION_DSL_REASONS = {
   INVALID_PARAMS: 'decision.dsl.invalid_params',
   CONDITIONS_REQUIRED: 'decision.dsl.conditions_required',
   DUPLICATE_ID: 'decision.dsl.duplicate_id',
+  APPROVAL_REQUIRED: 'decision.dsl.approval_required',
+  APPROVAL_NOT_ALLOWED: 'decision.dsl.approval_not_allowed',
 } as const;
 
-const RULESET_KEYS = ['id', 'version', 'status', 'rules'];
+const RULESET_KEYS = ['id', 'version', 'status', 'approvedBy', 'approvedOn', 'rules'];
 const NESTED_KEYS = ['id', 'field', 'operator', 'value', 'valueFrom', 'conditions'];
 const RULE_KEYS = [...NESTED_KEYS, 'severity', 'messageKey', 'params', 'remedyKey', 'basis'];
 const FIELD_PATH = /^[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*$/;
@@ -206,6 +213,27 @@ function validateRule(rule: unknown, path: string, ids: Set<string>, issues: Iss
   }
 }
 
+/** A published rule set names who approved it and when; a draft carries neither (approval is what publishing records). */
+function validateApproval(input: Record<string, unknown>, issues: Issues): void {
+  if (input.status === 'published') {
+    for (const key of ['approvedBy', 'approvedOn'] as const) {
+      const value = input[key];
+      const valid = key === 'approvedOn' ? isIsoDate(value) : nonEmptyString(value);
+      if (value === undefined) {
+        issues.push({ property: `$.${key}`, reason: DECISION_DSL_REASONS.APPROVAL_REQUIRED });
+      } else if (!valid) {
+        issues.push({ property: `$.${key}`, reason: DECISION_DSL_REASONS.INVALID_TYPE });
+      }
+    }
+  } else if (input.status === 'draft') {
+    for (const key of ['approvedBy', 'approvedOn'] as const) {
+      if (input[key] !== undefined) {
+        issues.push({ property: `$.${key}`, reason: DECISION_DSL_REASONS.APPROVAL_NOT_ALLOWED });
+      }
+    }
+  }
+}
+
 /**
  * Strict validation of an untrusted decision rule set (parsed JSON). Rejects JS numbers anywhere, unknown keys,
  * unknown operators, malformed field paths, wrong operand types and duplicate ids. Reports every problem.
@@ -224,6 +252,7 @@ export function validateDecisionRuleSet(input: unknown): Result<DecisionRuleSet>
   if (input.status !== 'draft' && input.status !== 'published') {
     issues.push({ property: '$.status', reason: input.status === undefined ? DECISION_DSL_REASONS.REQUIRED : DECISION_DSL_REASONS.INVALID_TYPE });
   }
+  validateApproval(input, issues);
   if (!Array.isArray(input.rules)) {
     issues.push({ property: '$.rules', reason: input.rules === undefined ? DECISION_DSL_REASONS.REQUIRED : DECISION_DSL_REASONS.INVALID_TYPE });
   } else {

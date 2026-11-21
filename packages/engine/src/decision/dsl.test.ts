@@ -45,6 +45,14 @@ describe('validateDecisionRuleSet', () => {
     expect(reasons({ id: 'a', version: '1', status: 'draft' })).toEqual(['$.rules=' + R.REQUIRED]);
   });
 
+  it('a published set must name who approved it and when; a draft carries neither', () => {
+    const published = { ...base(), status: 'published' };
+    expect(reasons(published)).toEqual(['$.approvedBy=' + R.APPROVAL_REQUIRED, '$.approvedOn=' + R.APPROVAL_REQUIRED]);
+    expect(reasons({ ...published, approvedBy: ' ', approvedOn: 'yesterday' })).toEqual(['$.approvedBy=' + R.INVALID_TYPE, '$.approvedOn=' + R.INVALID_TYPE]);
+    expect(validateDecisionRuleSet({ ...published, approvedBy: 'owner', approvedOn: '2026-11-21' }).ok).toBe(true);
+    expect(reasons({ ...base(), approvedBy: 'owner', approvedOn: '2026-11-21' })).toEqual(['$.approvedBy=' + R.APPROVAL_NOT_ALLOWED, '$.approvedOn=' + R.APPROVAL_NOT_ALLOWED]);
+  });
+
   it('checks rule-level reporting fields', () => {
     const s = withRule({ severity: 'info', messageKey: undefined, remedyKey: '', basis: ' ', params: { Bad: 'a.b' } });
     expect(reasons(s)).toEqual([

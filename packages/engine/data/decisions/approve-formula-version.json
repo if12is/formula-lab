@@ -1,7 +1,9 @@
 {
   "id": "approve-formula-version",
-  "version": "0.1.0",
-  "status": "draft",
+  "version": "1.0.0",
+  "status": "published",
+  "approvedBy": "owner",
+  "approvedOn": "2026-11-21",
   "rules": [
     {
       "id": "AFV-01",

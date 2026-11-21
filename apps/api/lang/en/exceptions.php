@@ -42,4 +42,9 @@ return [
     'sanad_uom_required' => 'The unit of measure is required to publish a material to Sanad; it is not guessed.',
     'sanad_kind_not_publishable' => 'Only raw materials and packaging can be published as materials (got :kind).',
     'sanad_tenant_required' => 'A tenant is required: the material has none and no Sanad device was given.',
+    'sanad_decimal_invalid' => 'The field :field must be a non-negative decimal written as text.',
+    'tax_rate_not_allowed' => 'A tax rate of :rate% is not one of the rates allowed for a product.',
+    'tax_rate_required' => 'Choose a tax rate or disable the tax.',
+    'tax_setting_missing' => 'Product :formula has no tax setting (disabled or a rate), and none is guessed.',
+    'tax_regime_missing' => 'No tax regime of :rate% is in force on :date.',
 ];

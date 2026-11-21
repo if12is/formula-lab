@@ -4,8 +4,11 @@ namespace App\Services\Formula;
 
 use App\Actions\Formula\CreateFormulaAction;
 use App\Actions\Formula\UpdateFormulaIfraCategoryAction;
+use App\Actions\Formula\UpdateFormulaTaxAction;
 use App\Actions\Tenancy\EnsureDefaultTenantAction;
+use App\Enums\TaxMode;
 use App\Exceptions\Domain\InvalidFormulaVersionException;
+use App\Exceptions\Domain\InvalidTaxSettingException;
 use App\Models\Formula;
 use App\Models\FormulaVersion;
 use App\Models\User;
@@ -19,12 +22,23 @@ final class FormulaService
         private EnsureDefaultTenantAction $ensureDefaultTenant,
         private FormulaVersionService $formulaVersionService,
         private UpdateFormulaIfraCategoryAction $updateIfraCategory,
+        private UpdateFormulaTaxAction $updateTax,
     ) {}
 
     /** The IFRA category is a fact about the product, not about one version, so it is saved on the formula itself. */
     public function setIfraCategory(Formula $formula, ?string $category): Formula
     {
         return ($this->updateIfraCategory)($formula, $category);
+    }
+
+    /**
+     * The tax of the product is a fact about the product, not about one version, so it is saved on the formula itself.
+     *
+     * @throws InvalidTaxSettingException When a rate is missing or not one of the allowed rates.
+     */
+    public function setTax(Formula $formula, TaxMode $mode, ?string $ratePct): Formula
+    {
+        return ($this->updateTax)($formula, $mode, $ratePct);
     }
 
     /**

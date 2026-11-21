@@ -3,7 +3,7 @@ import approveJson from '../../data/decisions/approve-formula-version.json';
 import releaseJson from '../../data/decisions/release-batch.json';
 import publishJson from '../../data/decisions/publish-to-sanad.json';
 import { coverageGap, countString, evaluateSpecs, type FormulaApprovalContext, type PublishToSanadContext, type ReleaseBatchContext } from './context';
-import { validateDecisionRuleSet, type DecisionRuleSet } from './dsl';
+import { hashDecisionRuleSet, validateDecisionRuleSet, type DecisionRuleSet } from './dsl';
 import { evaluateDecision, type DecisionContext, type FailedRule } from './evaluate';
 
 function load(json: unknown): DecisionRuleSet {
@@ -261,5 +261,42 @@ describe('publish-to-sanad (Y-05)', () => {
       const r = evaluateDecision(rs, c as DecisionContext);
       expect(r.ok && r.value.decision).toBe('blocked');
     }
+  });
+});
+
+describe('owner-approved decision rule sets (2026-11-21)', () => {
+  // A published rule set never changes: any edit must ship as a new version, so its hash is pinned here.
+  const pinned: Record<string, { json: unknown; hash: string }> = {
+    'approve-formula-version': { json: approveJson, hash: 'fc009c90a8083cab8743f48e4b2f1fa748793758567afcd39d668272fe5c500e' },
+    'release-batch': { json: releaseJson, hash: '97296862475a08d0db08e067f4a7c84e068be28f42b0c00757c2a2624f7bb06e' },
+    'publish-to-sanad': { json: publishJson, hash: '65caf64f734c4a54a63e50edfe2f839757bbe59e9d792bf69ede2bfda2d0d926' },
+  };
+
+  for (const [id, { json, hash }] of Object.entries(pinned)) {
+    it(`${id} is published, approved by the owner on 2026-11-21 and its hash is pinned`, () => {
+      const rs = load(json);
+      expect(rs).toMatchObject({ id, version: '1.0.0', status: 'published', approvedBy: 'owner', approvedOn: '2026-11-21' });
+      expect(hashDecisionRuleSet(rs)).toBe(hash);
+    });
+  }
+
+  it('re-approval threshold comes from the input: 5 passes at 5 and 4.99, blocks at 5.01, and a different input moves the limit', () => {
+    const rs = load(publishJson);
+    const ctx = (change: string, threshold: string): PublishToSanadContext => ({
+      cost: { approved: true, approvedUnitCost: '10' },
+      priceWaterfall: { missingCount: '0', missingProperties: [] },
+      repricing: { maxMaterialPriceChangePct: change, changedMaterialIds: ['m1'], thresholdPct: threshold },
+    });
+    expect(ids(failures(rs, ctx('5', '5')))).toEqual([]);
+    expect(ids(failures(rs, ctx('4.99', '5')))).toEqual([]);
+    expect(ids(failures(rs, ctx('5.01', '5')))).toEqual(['PS-04']);
+    expect(ids(failures(rs, ctx('5.01', '10')))).toEqual([]);
+  });
+
+  it('no rule carries the threshold as a literal: PS-04 reads it from the context', () => {
+    const rs = load(publishJson);
+    const ps04 = rs.rules.find((r) => r.id === 'PS-04');
+    expect(ps04).toMatchObject({ operator: 'lte', valueFrom: 'repricing.thresholdPct' });
+    expect(ps04).not.toHaveProperty('value');
   });
 });

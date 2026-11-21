@@ -165,4 +165,12 @@ return [
         'label_warning_needs_substance_target' => 'A label warning needs a CAS or INCI target.',
     ],
     'unknown_reason' => 'Reason from the engine: {reason}',
+    'tax' => [
+        'regime_missing' => 'No tax regime of this rate is in force on the price date.',
+        'regime_ambiguous' => 'More than one tax regime of this rate is in force on the price date.',
+        'regime_invalid' => 'The tax regime data is invalid (rate or dates).',
+        'as_of_invalid' => 'The price date is not valid.',
+        'setting_missing' => 'The product has no tax setting yet (disabled or a rate).',
+        'setting_invalid' => 'The chosen tax rate is not valid.',
+    ],
 ];

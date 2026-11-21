@@ -33,6 +33,7 @@ class CalculatorController extends Controller
             'urls' => $this->calculatorCatalogService->lookupUrls(),
             'confidenceOptions' => Confidence::options(),
             'sourceKindOptions' => SourceKind::selectableOptions(),
+            ...$this->calculatorCatalogService->extraProps($calculator),
         ]);
     }
 

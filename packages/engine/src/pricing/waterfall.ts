@@ -19,7 +19,7 @@ import type { MissingData } from '../contract';
 import { dec, isDecimalString, type Dec } from '../core/decimal';
 import { missing, ok, type Result } from '../core/result';
 import { INPUT_REASONS } from '../sourced-input';
-import { resolveTaxRegime, type TaxQuery, type TaxRegime } from './tax';
+import { applyProductTax, productTaxState, resolveProductTax, type ProductTaxState, type TaxQuery, type TaxRegime, type TaxSetting } from './tax';
 import type { ConfidencePolicy } from '../trace/sourced';
 import { decOf, inputLeaf, traced, type Traced } from '../trace/trace';
 
@@ -267,21 +267,30 @@ export interface ForwardWaterfallInput {
   retailerMarginPct?: string;
   returnsPct?: string;
   promoPct?: string;
-  /** Dated tax regimes of the product family, the family/type to use and the date the price is valid on. */
-  tax?: { regimes: readonly TaxRegime[] } & TaxQuery;
+  /**
+   * The product's tax setting (disabled or a rate), the dated regimes the rate is checked against, the family/type
+   * and the date the price is valid on. No setting is `missing`, never 0 %.
+   */
+  tax?: { setting?: TaxSetting; regimes: readonly TaxRegime[] } & TaxQuery;
   policy: ConfidencePolicy;
 }
 
 export interface ForwardWaterfallResult {
-  /** Traced steps in order: unit_cost, [factory_net_price], factory_price, wholesaler_purchase_price, retailer_purchase_price, price_ex_vat, shelf_price_incl_vat. */
+  /** Traced steps in order: unit_cost, [factory_net_price], factory_price, wholesaler_purchase_price, retailer_purchase_price, price_ex_vat, then (tax applied only) shelf_price_incl_vat. */
   steps: { key: string; value: Traced }[];
   factoryPrice: Traced;
   wholesalerPurchasePrice: Traced;
   /** Wholesale price: what the retailer pays. */
   retailerPurchasePrice: Traced;
   priceExVat: Traced;
-  vatAmount: Traced;
-  shelfPriceInclVat: Traced;
+  /** What the price result says about tax: disabled (no tax line) or applied at a rate (a 0 % rate is still a line). */
+  tax: ProductTaxState;
+  /** The tax line; null when tax is disabled. */
+  vatAmount: Traced | null;
+  /** Price including tax; null when tax is disabled (the price to the consumer is then `consumerPrice`). */
+  shelfPriceInclVat: Traced | null;
+  /** The price the consumer pays: with tax when applied, the price without tax when disabled. */
+  consumerPrice: Traced;
 }
 
 /** Cost => factory => wholesale => retail => + VAT. Missing/invalid inputs are all listed. */
@@ -306,7 +315,7 @@ export function forwardWaterfall(input: ForwardWaterfallInput): Result<ForwardWa
   const vat =
     input.tax === undefined
       ? missing<never>([{ property: 'waterfall.tax', reason: INPUT_REASONS.MISSING }])
-      : resolveTaxRegime(input.tax.regimes, input.tax, input.policy);
+      : resolveProductTax(input.tax.setting, input.tax.regimes, input.tax, input.policy);
   if (!vat.ok || gaps.length > 0) {
     return missing([...(vat.ok ? [] : vat.missing), ...gaps], vat.warnings);
   }
@@ -332,13 +341,23 @@ export function forwardWaterfall(input: ForwardWaterfallInput): Result<ForwardWa
   const wholesalerBuys = push('wholesaler_purchase_price', traced('add', 'Wholesaler purchase price = factory price + distribution', decOf(factory).plus(distribution.value), 'EGP', [factory, distribution]));
   const retailerBuys = push('retailer_purchase_price', traced('margin', `Wholesale price = wholesaler price + wholesaler margin (${basis})`, applyMargin(decOf(wholesalerBuys), at('wholesalerMarginPct'), basis), 'EGP', [wholesalerBuys, pctLeaf('Wholesaler margin %', 'wholesalerMarginPct')]));
   const exVat = push('price_ex_vat', traced('margin', `Price excl. VAT = wholesale price + retailer margin (${basis})`, applyMargin(decOf(retailerBuys), at('retailerMarginPct'), basis), 'EGP', [retailerBuys, pctLeaf('Retailer margin %', 'retailerMarginPct')]));
-  const taxed = vat.value;
-  const vatRate = dec(taxed.regime.ratePct);
-  const vatAmount = traced('mul', 'VAT amount = price excl. VAT × VAT/100', decOf(exVat).mul(vatRate.div(100)), 'EGP', [exVat, taxed.leaf]);
-  const shelf = push('shelf_price_incl_vat', traced('add', 'Shelf price = price excl. VAT + VAT', decOf(exVat).plus(decOf(vatAmount)), 'EGP', [exVat, vatAmount]));
+  const { taxAmount: vatAmount, priceWithTax } = applyProductTax(exVat, vat.value);
+  if (vatAmount !== null) {
+    push('shelf_price_incl_vat', priceWithTax);
+  }
 
   return ok(
-    { steps, factoryPrice: factory, wholesalerPurchasePrice: wholesalerBuys, retailerPurchasePrice: retailerBuys, priceExVat: exVat, vatAmount, shelfPriceInclVat: shelf },
+    {
+      steps,
+      factoryPrice: factory,
+      wholesalerPurchasePrice: wholesalerBuys,
+      retailerPurchasePrice: retailerBuys,
+      priceExVat: exVat,
+      tax: productTaxState(vat.value),
+      vatAmount,
+      shelfPriceInclVat: vatAmount === null ? null : priceWithTax,
+      consumerPrice: priceWithTax,
+    },
     vat.warnings,
   );
 }

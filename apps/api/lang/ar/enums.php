@@ -121,6 +121,11 @@ return [
         'reference' => 'مرجع علمي',
         'community' => 'مصدر مجتمعي',
         'lab_measurement' => 'قياس معملي',
+        'owner_decision' => 'قرار صاحب المشروع',
         'unverified_entry' => 'إدخال غير موثّق',
+    ],
+    'tax_mode' => [
+        'disabled' => 'تعطيل الضريبة',
+        'rate' => 'نسبة',
     ],
 ];

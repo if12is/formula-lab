@@ -18,4 +18,7 @@ return [
     ],
 
     'groups' => ['chemistry', 'conversion', 'fragrance'],
+
+    /* Where the soap property maps (a published convention each, with its source and confidence) live: engine data. */
+    'soap_property_maps_path' => base_path('../../packages/engine/data/soap-property-maps'),
 ];

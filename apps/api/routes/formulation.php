@@ -50,6 +50,7 @@ Route::prefix('formulas')->name('formulas.')->group(function (): void {
     Route::prefix('{formula}')->whereUuid('formula')->scopeBindings()->group(function (): void {
         Route::get('/', [FormulaController::class, 'show'])->name('show');
         Route::get('compare', [FormulaVersionController::class, 'compare'])->name('compare');
+        Route::put('tax', [FormulaController::class, 'updateTax'])->name('tax.update');
         Route::put('ifra-category', [FormulaController::class, 'updateIfraCategory'])->name('ifra-category.update');
         Route::get('versions/{version:version}/edit', [FormulaVersionController::class, 'edit'])->whereNumber('version')->name('versions.edit');
         Route::post('versions/{version:version}', [FormulaVersionController::class, 'store'])->whereNumber('version')->name('versions.store');

@@ -14,6 +14,7 @@ use App\Models\TradeMaterial;
 use App\Models\User;
 use App\Services\Compliance\ComplianceEditorService;
 use App\Services\Material\MaterialOptionService;
+use App\Services\Tax\TaxRegimeService;
 use Illuminate\Support\Facades\DB;
 
 /** Everything the formula editor page needs, and the save of an edited version as a new version row. */
@@ -25,6 +26,7 @@ final class FormulaEditorService
         private FormulaHistoryService $formulaHistoryService,
         private RecordFormulaBalanceAction $recordFormulaBalance,
         private ComplianceEditorService $complianceEditorService,
+        private TaxRegimeService $taxRegimeService,
     ) {}
 
     /**
@@ -70,6 +72,8 @@ final class FormulaEditorService
             'history' => $this->formulaHistoryService->history($formula, $version),
             // The rule sets the compliance panel hands to the engine (it runs in the browser, on the draft being edited).
             'compliance' => ['ruleSets' => $this->complianceEditorService->ruleSets()],
+            // The product's tax setting and the dated regimes the engine checks it against (pricing panel).
+            'tax' => $this->taxRegimeService->editorProps($formula),
         ];
     }
 

@@ -13,6 +13,6 @@ Route::prefix('calculators')->name('calculators.')->group(function (): void {
     Route::get('/', [CalculatorController::class, 'index'])->name('index');
     Route::get('materials', [CalculatorController::class, 'materials'])->name('materials.search');
     Route::get('{calculator}', [CalculatorController::class, 'show'])
-        ->whereIn('calculator', (new CalculatorCatalogService)->keys())
+        ->whereIn('calculator', app(CalculatorCatalogService::class)->keys())
         ->name('show');
 });

@@ -38,7 +38,7 @@ Request:
   ]
 }
 ```
-- `entity` ∈ `product | supplier | purchase | batch | stock_movement`. `purchase` payloads embed their items (see §5). `op` ∈ `upsert | delete` (delete = tombstone, payload `{"deleted_at": "..."}` only).
+- `entity` ∈ `product | supplier | customer | purchase | batch | stock_movement` (`customer` added by §8: merchants and the uuid of their price list). `purchase` payloads embed their items (see §5). `op` ∈ `upsert | delete` (delete = tombstone, payload `{"deleted_at": "..."}` only).
 - `cursor`: opaque, produced by Sanad for the **last item** of the batch (`base64url("Y-m-d H:i:s|uuid")`, same scheme as `StoreCatalogService::cursor`, ordering `updated_at, uuid`). Max 200 items/batch (matches Sanad PAGE_SIZE spirit; FL may reject larger with 422).
 - **Push cursors are per entity.** Sanad keeps one cursor for each entity (`product`, `supplier`, `purchase`, `batch`, `stock_movement`) and each request carries items of **one entity only**; the request's `cursor` is that entity's cursor after the batch. A cursor of one entity is never valid for another. Cursors advance only after a `2xx`.
 - Items must be ordered by `(updated_at, uuid)` ascending; parents before children is NOT required (purchase embeds items; unknown `supplier_uuid`/`product_uuid` are accepted and resolved lazily).
@@ -64,7 +64,7 @@ Response `200`:
 - `accepted` = items applied or already-identical (no-op). `conflicts[]` items are **not** applied; Sanad records each in `SyncConflict` (`table_name = 'formula_lab.<entity>'`, `direction='push'`, `status='pending'`) and logs the run in `SyncLog`. `cursor` advances past conflicted items (they live in SyncConflict now).
 - `reason` ∈ `formula_lab_newer | invalid_reference | schema_mismatch`.
 - **Conflict naming (read carefully; the two sides name things from their own point of view).** In Formula Lab's `/changes` response, `local_*` = **Formula Lab's** copy (what FL already holds) and `central_*` = the **incoming Sanad** copy (what Sanad just sent). Sanad's `SyncConflict` uses its own point of view, so when recording a push conflict Sanad **swaps** them: `SyncConflict.local_payload` / `local_updated_at` = **Sanad's** copy (response `central_*`), and `SyncConflict.central_payload` / `central_updated_at` = **Formula Lab's** copy (response `local_*`, plus `conflict_reason`).
-- `skipped[]` (additive): items whose `entity` Formula Lab does not know are not applied and are listed as `{entity, uuid, reason: "unknown_entity"}`; they never cause a 4xx/5xx and do not count in `accepted`. Sanad pushes one entity per request (supplier, product, purchase, batch, stock_movement); Formula Lab stores `batch` as a reference only and accepts `stock_movement` without storing it until the actual-cost phase (Q).
+- `skipped[]` (additive): items whose `entity` Formula Lab does not know are not applied and are listed as `{entity, uuid, reason: "unknown_entity"}`; they never cause a 4xx/5xx and do not count in `accepted`. Sanad pushes one entity per request (supplier, customer, product, purchase, batch, stock_movement); Formula Lab stores `batch` as a reference only and accepts `stock_movement` without storing it until the actual-cost phase (Q).
 - Partial failure of the whole request ⇒ non-2xx and **nothing** applied (the batch is atomic); Sanad retries with the same `Idempotency-Key`.
 
 ## 3. Sanad pulls from Formula Lab
@@ -85,7 +85,7 @@ Returns pending work for this link, ordered by an increasing opaque cursor.
   "has_more": false
 }
 ```
-`type` ∈ `production_order | product_upsert | wholesale_prices`. Every item also carries `produced_at` (ISO-8601 UTC, set when Formula Lab enqueued it; additive field) which Sanad uses to detect a local price edit made after the suggestion was produced. Items stay in the outbox until acked; re-reading is safe. A `failed` ack re-queues the item as a new outbox row (new `id`, `retry_of` = old id), at most 5 failures per item (§3.2).
+`type` ∈ `production_order | product_upsert | wholesale_prices | price_list_upsert` (`price_list_upsert`: §8). Every item also carries `produced_at` (ISO-8601 UTC, set when Formula Lab enqueued it; additive field) which Sanad uses to detect a local price edit made after the suggestion was produced. Items stay in the outbox until acked; re-reading is safe. A `failed` ack re-queues the item as a new outbox row (new `id`, `retry_of` = old id), at most 5 failures per item (§3.2).
 
 Payloads:
 - **production_order** (approved only; immutable once published — corrections are a new `external_id`):
@@ -131,7 +131,7 @@ Headers include `Idempotency-Key`. Request:
 Hosted by Sanad Desktop under `/api/v1/manufacturing/*`. Auth §1. Rate limit `throttle:120,1`. These are called by Formula Lab's `SanadClient` only when it can reach Sanad on the LAN; the Sanad-initiated link (§2/§3) is the default.
 
 ### 4.1 Reads (`manufacturing:read`)
-`GET /api/v1/manufacturing/{products|purchases|suppliers|stock}?updated_since=<iso>&cursor=<opaque>&kind=<item_kind>`
+`GET /api/v1/manufacturing/{products|purchases|suppliers|customers|stock}?updated_since=<iso>&cursor=<opaque>&kind=<item_kind>`
 ```json
 { "data": [ { } ], "next_cursor": "opaque-or-null" }
 ```
@@ -157,6 +157,8 @@ Upsert a finished good (or raw material/packaging) by uuid.
 }
 ```
 All money/rate fields are decimal strings (§0): a JSON number in `cost_price`, `sell_price`, `wholesale_price`, `guide_price` or `tax_rate` is `422`.
+
+`tax_rate` (Formula Lab proposal, to be confirmed by Sanad, see HUMAN-TODO TAX): `null` means tax is disabled on the product (no tax line), `"0.00"` means taxed at 0 %, any other value is the rate.
 
 Response `200` (existing) or `201` (created): `{"uuid": "…", "item_kind": "finished_good", "is_sellable": true, "updated_at": "…"}`. Sanad rounds money to its storage precision (currently 2 dp) and returns stored values; FL keeps the unrounded engine value. `item_kind` is immutable once the product has stock movements (⇒ 422).
 
@@ -225,6 +227,7 @@ All decimals are strings; `*_uuid` replace Sanad integer FKs, except branches, w
  "cost_price":"41.20","sell_price":"0.00","wholesale_price":null,"guide_price":null,"tax_rate":"14.00","stock":"120.000000","status":"published","updated_at":""}
 // supplier
 {"uuid":"","code":null,"name":"","name_en":null,"tax_number":null,"payment_terms":30,"is_active":true,"updated_at":""}
+// customer: see §8.5 (pricing fields only)
 // purchase (items embedded)
 {"uuid":"","invoice_number":"","reference_number":null,"supplier_uuid":"","purchase_date":"2026-11-20","status":"received",
  "subtotal":"2575.00","tax_amount":"360.50","discount_amount":"0.00","total":"2935.50","branch_code":null,"updated_at":"",
@@ -255,3 +258,72 @@ Field provenance (Sanad columns): Product `app/Models/Product.php:75`, Purchase 
 - Client retries `429/503/network` with exponential backoff (1s, 2s, 4s … cap 60s, max 8 tries), reusing the same `Idempotency-Key`.
 - Cursors advance only after a `2xx` (push cursors are per entity, see §2; the pull cursor advances after a successful ack, see §3.2). Both sides must tolerate duplicate delivery.
 - Max request body 2 MB; max 200 `items` per push, 100 per outbox page.
+
+## 8. Price lists (price per product and per merchant) — delta, Sanad `feat/customer-price-lists`
+Formula Lab publishes the final manufactured product (§3.1 `product_upsert`, `item_kind: finished_good`) **and** prices per product and per merchant. A merchant is a Sanad **customer**; a **price list** is a named set of per-product prices; a customer points at **at most one** list. Everything below follows §0 (decimal strings, ISO timestamps, Arabic `{message}` errors, `Idempotency-Key` on every `PUT`/`POST`, additive within v1).
+
+### 8.1 Sale price precedence (Sanad side, informational)
+Per sale line, first match wins: **manual price on the invoice > the customer's price-list item > wholesale price (cost plus / wholesale plus / catalog wholesale) > product sell price**. A list applies only when it is `is_active`, the customer is on it and the product has an item on it; otherwise pricing falls through unchanged. The list price is a **base-unit** price: for a sold unit whose list price differs from the product sell price Sanad scales it by the same ratio it uses for the wholesale price. Sale lines priced from a list are stamped `pricing_mode = "price_list"`. Formula Lab never sets prices on sale lines; it only maintains lists.
+
+### 8.2 `PUT /api/v1/manufacturing/price-lists/{uuid}` (`manufacturing:write`, idempotent)
+Upsert a list by uuid (FL generates and owns the uuid), optionally with item rows.
+```json
+{
+  "name": "تجار القاهرة",
+  "currency": "EGP",
+  "is_active": true,
+  "items": [
+    {"product_uuid": "…", "price": "31.00"},
+    {"product_uuid": "…", "price": null}
+  ]
+}
+```
+- `name` required (max 255). `currency` optional, **only `EGP` is accepted** (anything else ⇒ `422`; Sanad has no FX). `is_active` optional (default `true` on create, unchanged on update). `items` optional, **max 500 rows per request**.
+- Item row: `product_uuid` (Sanad product uuid, unique within the request) and `price`, which **must be present**: a decimal string **> 0** upserts the price; `null` removes the product from the list. A JSON number, `"0"`, a negative or a non-decimal string ⇒ `422` (`items.N.price`). Sanad rounds to 2 dp and returns the stored value.
+- Unknown / trashed `product_uuid` ⇒ `422` with `errors."items.N.product_uuid"`; the request is **atomic** (nothing applied, the list is not created).
+- Omitted `items` leaves existing items alone; **items not mentioned are never deleted**. To drop a product send `price: null`. (Publish a full snapshot by sending every item and `null` for the ones to drop.)
+- Response `201` (created) / `200`:
+```json
+{"uuid":"…","name":"تجار القاهرة","currency":"EGP","is_active":true,"created":true,
+ "items":[{"product_uuid":"…","price":"31.00"}],"removed":["…"],"items_count":12,"updated_at":"2026-11-21T09:30:00Z"}
+```
+`items` / `removed` echo only the rows of this request (stored values); `items_count` is the list's total after the request.
+
+### 8.3 `PUT /api/v1/manufacturing/price-lists/{uuid}/items` (`manufacturing:write`, idempotent)
+Same item semantics as §8.2, items only: body `{"items": [{"product_uuid","price"}…]}` (`items` required, 1-500 rows). Unknown list uuid ⇒ `404 {"message":"قائمة الأسعار غير موجودة."}`. Response `200`: same shape as §8.2 with `created: false`.
+
+### 8.4 `PUT /api/v1/manufacturing/customers/{uuid}/price-list` (`manufacturing:write`, idempotent)
+Assign a merchant to a list, or detach it. `price_list_uuid` **must be present**: a list uuid assigns, `null` detaches.
+```json
+{"price_list_uuid": "…"}
+```
+Response `200` = the customer payload of §8.5 (with the new `price_list_uuid`). Errors: unknown customer uuid ⇒ `404 {"message":"العميل غير موجود."}`; unknown list uuid ⇒ `422` (`errors.price_list_uuid`); **inactive list** ⇒ `422` (`errors.price_list_uuid`); missing key ⇒ `422`. Assigning a customer to its current list is a no-op.
+
+### 8.5 Customers feed — `GET /api/v1/manufacturing/customers?updated_since=<iso>&cursor=<opaque>` (`manufacturing:read`)
+Same envelope and paging as §4.1 (`{data, next_cursor}`, order `(updated_at, uuid)`, page size 100, +1 lookahead, opaque cursor). Archived customers are tombstones `{"uuid","deleted":true,"deleted_at"}`. A customer row carries **only what pricing needs** (no balances, phones, addresses):
+```json
+{"uuid":"…","code":"CLT-0001","name":"تاجر الجملة","name_en":null,"is_active":true,"is_wholesale":false,
+ "price_list_uuid":"…","updated_at":"2026-11-21T09:30:00Z"}
+```
+`price_list_uuid` is `null` when the customer has no list. A customer permanently deleted in Sanad (not archived) leaves no tombstone.
+
+### 8.6 Sanad-initiated link
+- **Push (§2)**: new `entity: "customer"` (own per-entity cursor), payload exactly the §8.5 row. Customers that lose their list or are archived arrive as normal `upsert` / `delete` ops. Formula Lab that does not know `customer` answers `skipped[]` (`unknown_entity`); that is not an error.
+- **Pull (§3.1)**: new outbox `type: "price_list_upsert"`. Payload (every item carries `produced_at` as usual):
+```json
+{
+  "uuid": "…", "name": "تجار القاهرة", "currency": "EGP", "is_active": true,
+  "items": [{"product_uuid": "…", "price": "31.00"}, {"product_uuid": "…", "price": null}],
+  "assign_customers": ["<customer uuid>"],
+  "unassign_customers": ["<customer uuid>"]
+}
+```
+`uuid` + `name` required; `items` rules as §8.2 (atomic; `price: null` removes). `assign_customers` points those customers at this list (unknown customer ⇒ whole item `failed`, code `unknown_customer`; an inactive list cannot receive customers). `unassign_customers` detaches only customers currently on **this** list. All three of `items`, `assign_customers`, `unassign_customers` are optional.
+- **Ack** (§3.2): `applied` with `result {"uuid","created","items_upserted","items_removed","customers_assigned"}`; `failed` with `error.code` ∈ `invalid_payload` (shape/currency/price format) | `validation` (unknown `product_uuid`) | `unknown_customer`; `conflict` with `result {"reason":"local_price_list_changed"}`.
+- **Conflict**: if a person edited the list in Sanad (UI) **after** the item's `produced_at`, Sanad does not apply the item, records a `SyncConflict` (`table_name = formula_lab.price_list_upsert`, `direction = pull`; `local_payload` = Sanad's current list with its items, `central_payload` = the received payload) and acks `conflict` (not re-queued, a person decides — same rule as `product_upsert` / `wholesale_prices`). Writes made by Formula Lab itself (API or link) never count as local edits. Customer assignments are last-write-wins and never conflict.
+- Idempotency is domain-level: re-applying the same payload is a no-op (same list uuid, same prices).
+
+### 8.7 Notes for Formula Lab
+- FL owns list uuids; create a list once with §8.2, then address it by uuid forever. Sanad also lets people create lists by hand: FL only sees those as `price_list_uuid` on customers (they have no feed of their own) and must not assume every `price_list_uuid` it receives is one it created.
+- A list must be `is_active` for sales to use it; deactivate with `PUT … {"name","is_active":false}` (customers stay assigned but are priced as if they had no list).
+- Prices are plain per-product base-unit prices. Nothing in this section changes `sell_price` / `wholesale_price` / `guide_price` (§4.2 / §4.5 stay as they are).

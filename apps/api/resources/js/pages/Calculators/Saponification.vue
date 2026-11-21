@@ -9,6 +9,7 @@ import { computed, reactive } from 'vue';
 import { FormField, SegmentedControl } from '@kit';
 import CalculatorLayout from '../../components/calculators/CalculatorLayout.vue';
 import LineList from '../../components/calculators/LineList.vue';
+import SoapPropertiesBlock from '../../components/calculators/SoapPropertiesBlock.vue';
 import MaterialPicker from '../../components/calculators/MaterialPicker.vue';
 import DecimalField from '../../components/form/DecimalField.vue';
 import QuantityInput from '../../components/form/QuantityInput.vue';
@@ -23,6 +24,8 @@ defineProps({
     urls: { type: Object, required: true },
     confidenceOptions: { type: Array, required: true },
     sourceKindOptions: { type: Array, required: true },
+    /** The soap property maps offered as sources of the indicators (engine data, each with its source and confidence). */
+    soapPropertyMaps: { type: Array, default: () => [] },
 });
 
 const { t } = useI18n();
@@ -32,6 +35,7 @@ const state = reactive(blankSoap(nextKey()));
 
 const fallbackName = (n) => t('calculators.saponification.oil_n', { n });
 const outcome = computed(() => runSoap(state, fallbackName));
+const names = computed(() => oilNames(state.lines, fallbackName));
 
 const hrefOf = (id) => path('materials.show', { material: id, tab: 'properties' });
 const entities = computed(() => {
@@ -84,5 +88,7 @@ const removeOil = (key) => { state.lines = state.lines.filter((line) => line.key
                 </template>
             </LineList>
         </div>
+
+        <SoapPropertiesBlock v-if="soapPropertyMaps.length" :maps="soapPropertyMaps" :state="state" :names="names" :fallback-name="fallbackName" />
     </CalculatorLayout>
 </template>

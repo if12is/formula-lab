@@ -1,5 +1,5 @@
 /** Saponification (F-06): lye for a set of oils at a superfat, with the lye's water in three equivalent ways. */
-import { soapLye } from '@fl/engine';
+import { soapIndicators, soapLye } from '@fl/engine';
 import { EMPTY, isBlank, outcomeOf, row, toQty, typed } from './common';
 import { resolvedProperty } from '../engine';
 import { blankSourced, fillFromMaterial, toSourced, withProvenanceOf } from './sourced';
@@ -17,6 +17,9 @@ export const blankOil = (key) => ({
     rangeMax: '',
     /** A material's own SAP range ({ min, max } as sourced values), when it has one in the SAP's unit. */
     materialRange: null,
+    /** Fatty acid percentages of the oil by acid key (text), with ONE source and confidence for the whole profile. */
+    acids: {},
+    acidSource: { sourceId: null, sourceTitle: '', confidence: null, validFrom: null },
 });
 
 export const blankSoap = (firstKey) => ({
@@ -24,6 +27,8 @@ export const blankSoap = (firstKey) => ({
     purity: blankSourced('%w/w'),
     superfat: '',
     water: { method: WATER_METHODS[0], value: '' },
+    /** Id of the soap property map chosen as the source of the indicators, '' for none. */
+    propertyMap: '',
     lines: [blankOil(firstKey)],
 });
 
@@ -108,4 +113,38 @@ export function applyMaterialToOil(line, option) {
         const sourced = (value) => ({ value, sourceId: candidate.sourceId, confidence: candidate.confidence, validFrom: candidate.validFrom });
         line.materialRange = { min: sourced(candidate.min), max: sourced(candidate.max) };
     }
+}
+
+/**
+ * Soap-property indicators (engine soapIndicators) for the oils, by the chosen property map (a convention, data with its own
+ * source and confidence). Each oil's fatty acid profile is typed with one source and confidence; an acid without a value, or an
+ * oil without a source, goes to the engine as nothing so it reports it missing, never as 0.
+ * Returns { state: 'empty' | 'missing' | 'ready', indicators, blended, missing }.
+ */
+export function runSoapProperties(state, map, fallbackOf) {
+    const empty = { state: 'empty', indicators: {}, blended: {}, missing: [] };
+    const touched = state.lines.some((line) => Object.values(line.acids).some((value) => !isBlank(value)));
+
+    if (!map || !touched) {
+        return empty;
+    }
+
+    const names = oilNames(state.lines, fallbackOf);
+    const oils = state.lines.map((line, index) => {
+        const source = line.acidSource;
+        const complete = source.sourceId && source.confidence && source.validFrom;
+        const fattyAcids = Object.fromEntries(Object.entries(line.acids)
+            .filter(([, value]) => !isBlank(value) && complete)
+            .map(([acid, value]) => [acid, { value: typed(value), sourceId: source.sourceId, confidence: source.confidence, validFrom: source.validFrom }]));
+        const mass = toQty(line.mass).to('g').value.toFixed();
+
+        return { oilId: names[index], mass, fattyAcids };
+    });
+    const result = soapIndicators(oils, map);
+
+    if (!result.ok) {
+        return { ...empty, state: 'missing', missing: result.missing };
+    }
+
+    return { state: 'ready', indicators: result.value.indicators, blended: result.value.blendedProfile, missing: [] };
 }

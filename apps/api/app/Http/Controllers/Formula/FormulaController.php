@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Formula;
 
+use App\Exceptions\Domain\InvalidTaxSettingException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Formula\StoreFormulaRequest;
 use App\Http\Requests\Formula\UpdateFormulaIfraCategoryRequest;
+use App\Http\Requests\Formula\UpdateFormulaTaxRequest;
 use App\Models\Formula;
 use App\Services\Formula\FormulaEditorService;
 use App\Services\Formula\FormulaListService;
@@ -53,6 +55,18 @@ class FormulaController extends Controller
         $this->formulaService->setIfraCategory($formula, $request->validated('ifra_category'));
 
         return back()->with('success', __('compliance.ifra.saved'));
+    }
+
+    /** The product's tax (disabled, or one of the allowed rates), saved on the formula from the pricing panel. */
+    public function updateTax(UpdateFormulaTaxRequest $request, Formula $formula): RedirectResponse
+    {
+        try {
+            $this->formulaService->setTax($formula, $request->taxMode(), $request->taxRatePct());
+        } catch (InvalidTaxSettingException $exception) {
+            return back()->withErrors(['tax_setting' => $exception->getMessage()]);
+        }
+
+        return back()->with('success', __('tax.saved'));
     }
 
     /** A formula opens at its latest version. */

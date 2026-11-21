@@ -32,6 +32,9 @@ class FormulationDemoSeeder extends Seeder
 
     public function run(FormulaVersionService $versions): void
     {
+        // The pricing panel of the editor needs the dated tax regimes.
+        $this->call(TaxRegimeSeeder::class);
+
         DB::transaction(function () use ($versions): void {
             DB::select('select pg_advisory_xact_lock(hashtext(?))', [self::LOCK_KEY]);
             $this->seed($versions);

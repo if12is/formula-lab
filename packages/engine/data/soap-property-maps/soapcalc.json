@@ -1,0 +1,16 @@
+{
+  "id": "soapcalc",
+  "version": "1.0.0",
+  "sourceId": "soapcalc-convention",
+  "sourceTitle": "SoapCalc soap-quality convention",
+  "confidence": "L6_community",
+  "pendingVerification": true,
+  "properties": {
+    "hardness": { "terms": [{ "acid": "lauric", "coef": "1" }, { "acid": "myristic", "coef": "1" }, { "acid": "palmitic", "coef": "1" }, { "acid": "stearic", "coef": "1" }] },
+    "cleansing": { "terms": [{ "acid": "lauric", "coef": "1" }, { "acid": "myristic", "coef": "1" }] },
+    "conditioning": { "terms": [{ "acid": "oleic", "coef": "1" }, { "acid": "ricinoleic", "coef": "1" }, { "acid": "linoleic", "coef": "1" }, { "acid": "linolenic", "coef": "1" }] },
+    "bubbly": { "terms": [{ "acid": "lauric", "coef": "1" }, { "acid": "myristic", "coef": "1" }, { "acid": "ricinoleic", "coef": "1" }] },
+    "creamy": { "terms": [{ "acid": "palmitic", "coef": "1" }, { "acid": "stearic", "coef": "1" }, { "acid": "ricinoleic", "coef": "1" }] }
+  },
+  "notMapped": ["iodine", "ins"]
+}

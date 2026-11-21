@@ -18,6 +18,8 @@ enum SourceKind: string
     case LabMeasurement = 'lab_measurement';
     /** System-made: the shared source of prices typed into the formula editor. Never offered in forms. */
     case UnverifiedEntry = 'unverified_entry';
+    /** System-made: a decision the owner recorded (for example the tax a product may use). Never offered in forms. */
+    case OwnerDecision = 'owner_decision';
 
     /**
      * The kinds a person may pick when creating a source.
@@ -28,7 +30,7 @@ enum SourceKind: string
     {
         return array_values(array_filter(
             self::options(),
-            fn (array $option): bool => $option['value'] !== self::UnverifiedEntry->value,
+            fn (array $option): bool => ! in_array($option['value'], [self::UnverifiedEntry->value, self::OwnerDecision->value], true),
         ));
     }
 

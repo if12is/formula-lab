@@ -5,6 +5,8 @@ namespace App\Services\Calculator;
 /** The calculators of config/calculators.php, shaped for the index cards and for each calculator page's lookups. */
 final class CalculatorCatalogService
 {
+    public function __construct(private SoapPropertyMapService $soapPropertyMapService) {}
+
     /** @return list<string> */
     public function keys(): array
     {
@@ -35,6 +37,16 @@ final class CalculatorCatalogService
                     ->all(),
             ])
             ->all();
+    }
+
+    /**
+     * Props only some calculators take: the saponification page offers the soap property maps as selectable sources.
+     *
+     * @return array<string, mixed>
+     */
+    public function extraProps(string $key): array
+    {
+        return $key === 'saponification' ? ['soapPropertyMaps' => $this->soapPropertyMapService->options()] : [];
     }
 
     /** @return array<string, string> */
