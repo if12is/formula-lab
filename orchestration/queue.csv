@@ -138,7 +138,7 @@
 137,Y-08,Y,agent,,todo,واجهة 'ليه اتمنع القرار' بتعرض كل شرط فاشل والخطوة المطلوبة
 138,J-01,J,agent,,todo,تعريف Tier Profile: قيود active min/max، مكونات إلزامية/ممنوعة، حدود frame، حد عطر، حد تكلفة، سعر مستهدف
 139,J-02,J,agent,A-09,todo,ملء profiles لـ 5 منتجات × 3 فئات من: المواصفة المصرية (حد أدنى) + CPDat/HERA (نطاقات) + الكيميائي (قرار)
-140,J-03,J,agent,,todo,ربط HiGHS (WASM) في packages/optimizer مع تثبيت الإصدار والإعدادات
+140,J-03,J,agent,,done,ربط HiGHS (WASM) في packages/optimizer مع تثبيت الإصدار والإعدادات
 141,J-04,J,agent,,todo,بناء الـ LP من (profile + مواد متاحة + أسعار مؤرخة)
 142,J-05,J,agent,J-03,todo,Tie-breaking حتمي (لو حلين بنفس التكلفة: ترتيب ثابت بالـ id)
 143,J-06,J,agent,,todo,Infeasibility: إرجاع القيود المتعارضة بالعربي (مثلًا: السعر المستهدف أقل من أقل تكلفة ممكنة بـ X جنيه)
