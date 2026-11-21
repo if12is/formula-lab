@@ -38,3 +38,9 @@ Laravel 12 + PostgreSQL + Inertia + Vue 3 + Taif Kit + Tailwind 4 · `packages/e
 
 ## أوامر
 `pnpm test` · `pnpm typecheck` · `pnpm lint` · `pnpm test:php` (أو `cd apps/api && php artisan test`) · `pnpm e2e`
+
+## قواعد الواجهة والكود (طلب صاحب المشروع 2026-11-21)
+- كود نضيف من غير تكرار: كل component أو منطق مكرر يبقى مصدر واحد (single source of truth). مكونات الشاشات المشتركة (فلاتر، selectors، جداول) تتعمل مرة واحدة وتتعاد في كل الصفحات.
+- كل نصوص الواجهة في ملفات لغة (`apps/api/lang/ar/*.php` + JSON للـ frontend)، ممنوع نص ثابت جوه الـ components. عربي RTL افتراضي ومظبوط (logical classes، `<bdi>` للأرقام).
+- كل صفحة قائمة فيها فلاتر بتحكم كامل (بحث، فلترة بكل الأعمدة المهمة، ترتيب، حفظ الحالة في الـ URL، مسح الفلاتر).
+- الـ selectors بتدعم البحث (Combobox/Typeahead) وسهلة على الموبايل.
