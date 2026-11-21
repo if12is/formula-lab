@@ -44,3 +44,4 @@
 | 2026-11-21 | S-01 | done | Taif Kit v1.8.0 + createKit + AppShell + RTL + ثيم من السيرفر + ملفات لغة ar/en هي المصدر الوحيد للنصوص + فحص i18n في lint | 102 اختبار Laravel ✓، e2e 12 ✓، evidence/S-01 |
 | 2026-11-21 | J-03 | done | HiGHS 1.8.0 WASM مثبت + إعدادات حتمية (seed 0، thread واحد، simplex) | نفس الحل في 1000 تشغيلة |
 | 2026-11-21 | J-01 | done | Tier Profile type + validator؛ القيم null = ناقصة وبتوقف الحل (مفيش profiles متعبية — J-02 بشري) | profile.test.ts |
+| 2026-11-21 | J-04 | done | بناء الـ LP من profile + خامات بأسعار مؤرخة، والحل بيتحقق بـ Decimal بالظبط بعد التقريب | فحص يدوي مني: 50%/100% active ≥60 ⇒ 14 جنيه/كجم ✓ |
