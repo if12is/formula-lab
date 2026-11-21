@@ -13,7 +13,7 @@ function fill(text, params) {
  *
  *   const { t } = useI18n();
  *   t('nav.dashboard');
- *   t('filters.active_count', { count: 3 });
+ *   t('filters.rows_per_page');
  *
  * A missing key prints the key itself (visible in review) and warns once in development.
  */

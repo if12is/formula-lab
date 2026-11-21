@@ -97,9 +97,9 @@ export function resetExchangeRates(): void {
   execSync(`php artisan tinker --execute='App\\Models\\ExchangeRate::query()->delete();'`, { cwd: 'apps/api', stdio: 'pipe' });
 }
 
-/** Picks the display currency in the topbar menu (the server keeps it in a cookie). */
+/** Picks the display currency in the Display menu's currency section (the server keeps it in a cookie). */
 export async function setDisplayCurrency(page: Page, name: RegExp | string): Promise<void> {
-  await page.getByRole('button', { name: 'العملة المعروضة' }).click();
+  await page.getByRole('button', { name: 'العرض' }).click();
   await page.getByRole('menuitemradio', { name }).click();
   await page.keyboard.press('Escape');
 }

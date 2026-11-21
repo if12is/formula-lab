@@ -80,7 +80,7 @@ test.describe('top navigation', () => {
     await expect(bar(page).getByRole('button', { name: 'التركيبات' })).toHaveAttribute('aria-current', 'true');
   });
 
-  test('keeps the language, currency and display controls at the end of the bar, in both directions', async ({ page }) => {
+  test('keeps the language and display controls (the display currency is inside the Display menu) at the end of the bar, in both directions', async ({ page }) => {
     await page.goto('/');
     await setNavLayout(page, 'topbar');
 
@@ -96,11 +96,10 @@ test.describe('top navigation', () => {
 
       const navBox = await bar(page).boundingBox();
       const display = await inBar.getByRole('button', { name: /^(العرض|Display)$/ }).boundingBox();
-      const currency = await inBar.getByRole('button', { name: /عملة|currency/i }).first().boundingBox();
       const locale = await inBar.getByRole('button', { name: /العربية|English|AR|EN|ع/ }).first().boundingBox();
-      expect(navBox && display && currency && locale).toBeTruthy();
+      expect(navBox && display && locale).toBeTruthy();
       // The controls sit on the far side of the items: right of them in LTR, left of them in RTL.
-      for (const box of [display!, currency!, locale!]) {
+      for (const box of [display!, locale!]) {
         if (direction === 'ltr') {
           expect(box.x).toBeGreaterThan(navBox!.x + navBox!.width - 1);
         } else {

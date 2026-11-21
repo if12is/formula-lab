@@ -1,12 +1,12 @@
 <script setup>
 /**
- * The topbar's display-currency menu, next to the kit's Display menu: choose the currency shown beside EGP figures
- * (EGP stays primary). Saved in a cookie by the server (PUT /settings/display-currency), like the theme and the language.
- * The kit's Display menu has no slot for extra settings, so this sits beside it (kit suggestion: HUMAN-TODO.md).
+ * The display-currency section of the kit's Display menu (AppShell #theme-extra -> ThemeMenu #extra): choose the currency
+ * shown beside EGP figures (EGP stays primary). Saved in a cookie by the server (PUT /settings/display-currency), like the
+ * theme and the language. It renders menu content only; the kit draws the menu and the separator above it.
  */
 import { computed } from 'vue';
 import { router } from '@inertiajs/vue3';
-import { Dropdown, DropdownLabel, DropdownRadioGroup, DropdownRadioItem, IconButton } from '@kit';
+import { DropdownLabel, DropdownRadioGroup, DropdownRadioItem } from '@kit';
 import { useDisplayCurrency } from '../../composables/useDisplayCurrency';
 import { useI18n } from '../../composables/useI18n';
 import { path } from '../../lib/routes';
@@ -23,14 +23,9 @@ function choose(currency) {
 </script>
 
 <template>
-    <Dropdown align="end" content-class="w-64">
-        <template #trigger>
-            <IconButton icon="ph:currency-circle-dollar" :label="t('exchange_rates.display.menu')" data-testid="display-currency-menu" />
-        </template>
-        <DropdownLabel>{{ t('exchange_rates.display.menu') }}</DropdownLabel>
-        <DropdownRadioGroup :model-value="code" @update:model-value="choose">
-            <DropdownRadioItem v-for="choice in choices" :key="choice.value" :value="choice.value">{{ choice.label }}</DropdownRadioItem>
-        </DropdownRadioGroup>
-        <p class="px-3 pb-2 pt-1 text-label text-ink-3">{{ t('exchange_rates.display.hint') }}</p>
-    </Dropdown>
+    <DropdownLabel>{{ t('exchange_rates.display.menu') }}</DropdownLabel>
+    <DropdownRadioGroup :model-value="code" data-testid="display-currency-menu" @update:model-value="choose">
+        <DropdownRadioItem v-for="choice in choices" :key="choice.value" :value="choice.value">{{ choice.label }}</DropdownRadioItem>
+    </DropdownRadioGroup>
+    <p class="px-3 pb-2 pt-1 text-label text-ink-3">{{ t('exchange_rates.display.hint') }}</p>
 </template>

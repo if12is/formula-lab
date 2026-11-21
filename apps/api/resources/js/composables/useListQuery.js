@@ -90,9 +90,15 @@ export function useListQuery(schema) {
     const page = computed({ get: () => state.page, set: (value) => { state.page = value; } });
     const per = computed({ get: () => state.per, set: (value) => assign('per', value) });
 
-    /** Filters in the shape of the kit's FilterBar `values` (number ranges are handled by getRange / setRange). */
+    /** Filters in the shape of the kit's FilterBar `values`: a date range is { start, end }, a number range [from, to]; both are null when empty. */
     const filterValues = computed({
-        get: () => Object.fromEntries(schema.filters.filter((f) => f.type !== 'number-range').map((filter) => {
+        get: () => Object.fromEntries(schema.filters.map((filter) => {
+            if (filter.type === 'number-range') {
+                const range = ['_min', '_max'].map((suffix) => (state[filter.key + suffix] === '' ? null : Number(state[filter.key + suffix])));
+
+                return [filter.key, range.some((end) => end !== null) ? range : null];
+            }
+
             if (filter.type === 'date-range') {
                 const [from, to] = RANGE_SUFFIXES['date-range'].map((suffix) => state[filter.key + suffix]);
 
@@ -105,7 +111,12 @@ export function useListQuery(schema) {
             for (const filter of schema.filters) {
                 const value = next[filter.key];
 
-                if (filter.type === 'date-range') {
+                if (filter.type === 'number-range') {
+                    const [from, to] = value ?? [null, null];
+
+                    assign(`${filter.key}_min`, from === null || from === undefined ? '' : String(from));
+                    assign(`${filter.key}_max`, to === null || to === undefined ? '' : String(to));
+                } else if (filter.type === 'date-range') {
                     assign(filter.key + '_from', value?.start ?? '');
                     assign(filter.key + '_to', value?.end ?? '');
                 } else if (filter.type === 'multiselect') {
@@ -118,13 +129,6 @@ export function useListQuery(schema) {
             }
         },
     });
-
-    /** A number range as the kit's NumberRangeInput wants it: [from, to], an open end is null. */
-    const getRange = (key) => ['_min', '_max'].map((suffix) => (state[key + suffix] === '' ? null : Number(state[key + suffix])));
-    const setRange = (key, [from, to]) => {
-        assign(`${key}_min`, from === null || from === undefined ? '' : String(from));
-        assign(`${key}_max`, to === null || to === undefined ? '' : String(to));
-    };
 
     const isActive = (filter) => {
         if (RANGE_SUFFIXES[filter.type]) {
@@ -149,5 +153,5 @@ export function useListQuery(schema) {
         resetPage();
     }
 
-    return { schema, state, search, sort, page, per, filterValues, getRange, setRange, isActive, activeCount, clear, busy };
+    return { schema, state, search, sort, page, per, filterValues, isActive, activeCount, clear, busy };
 }

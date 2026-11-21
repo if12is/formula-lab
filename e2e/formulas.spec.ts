@@ -154,7 +154,7 @@ test('the formulas list keeps its filters in the address across a reload', async
   await page.reload();
   await expect(page).toHaveURL(/latest_status=draft/);
   await expect(page.getByRole('searchbox')).toHaveValue('DEMO');
-  await expect(page.getByText('الفلاتر النشطة: 2')).toBeVisible();
+  await expect(page.locator('[data-filter-count]')).toHaveText('1'); // the kit counts filters; the search text is not one
   await expect(page.locator('tbody tr')).toHaveCount(1);
 
   // Nothing matches: the filtered-empty state offers the way out.
@@ -169,7 +169,7 @@ test('the formulas list keeps its filters in the address across a reload', async
 test('the materials library keeps its filters, with a filtered-empty state, across a reload', async ({ page }) => {
   await page.goto('/materials?search=Demo&status=active&sort=trade_name&dir=desc');
   await expect(page.locator('tbody tr').first()).toContainText('Demo Water');
-  await expect(page.getByText('الفلاتر النشطة: 2')).toBeVisible();
+  await expect(page.locator('[data-filter-count]')).toHaveText('1'); // the kit counts filters; the search text is not one
 
   await page.locator('[data-filter-controls]').getByRole('button', { name: 'مربوطة بسند' }).click();
   await expect(page).toHaveURL(/has_sanad_link=1/);

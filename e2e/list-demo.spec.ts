@@ -44,7 +44,7 @@ test('search, select filter and sort live in the URL and survive a reload', asyn
   await expect(page).toHaveURL(/status=active/);
   await expect(rows(page)).toHaveCount(8);
   await expect(rows(page).first()).toContainText('E2E Material 24');
-  await expect(page.getByText('الفلاتر النشطة: 2')).toBeVisible();
+  await expect(page.locator('[data-filter-count]')).toHaveText('1'); // the kit counts filters; the search text is not one
 });
 
 test('clear all resets search and filters but keeps the sort', async ({ page }) => {
@@ -71,7 +71,8 @@ test('page two keeps filters, and a filter change returns to page one', async ({
 test('filtered-empty state offers a way out', async ({ page }) => {
   await page.goto('/__dev/list-demo?search=zzzz-no-match');
   await expect(page.getByText('لا توجد نتائج تطابق هذه الفلاتر')).toBeVisible();
-  await page.getByRole('button', { name: 'مسح كل الفلاتر' }).click();
+  // The kit's Clear all is on the bar when only search text is typed.
+  await page.getByRole('button', { name: 'مسح الكل', exact: true }).click();
   await expect(rows(page)).not.toHaveCount(0);
 });
 

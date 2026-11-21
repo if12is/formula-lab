@@ -2,7 +2,7 @@ import './bootstrap';
 import '../css/app.css';
 import { createInertiaApp, router } from '@inertiajs/vue3';
 import { ZiggyVue } from 'ziggy-js';
-import { arLabels, createKit } from '@kit';
+import { arLabels, createKit, defineLabels } from '@kit';
 import { inertiaKit } from '@kit/adapters/inertia';
 import AppLayout from './layouts/AppLayout.vue';
 import { inertiaReplaceQuery } from './composables/useListQuery';
@@ -35,7 +35,7 @@ createInertiaApp({
                 ...inertiaKit({
                     loading: true,
                     locale: (current) => ({ code: current.props.locale?.current ?? 'ar', dir: current.props.locale?.direction ?? 'rtl' }),
-                    labels: { ar: { ...arLabels, ...kitLabels } },
+                    labels: { ar: defineLabels(kitLabels, arLabels), en: defineLabels(kitLabels) },
                     theme: {
                         prop: 'theme.preference',
                         save: (preference) => router.put('/settings/theme', { preference }, { preserveState: true, preserveScroll: true, showProgress: false }),
@@ -46,7 +46,6 @@ createInertiaApp({
                         },
                     },
                 }),
-                labels: kitLabels,
                 // The server applies list filters, so the kit writes list state through an Inertia GET.
                 replaceQuery: inertiaReplaceQuery,
                 brand: { name: page.props.translations?.['app.name'] ?? '', legal: page.props.translations?.['app.legal'] },

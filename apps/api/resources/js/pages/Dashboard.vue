@@ -28,7 +28,7 @@ const kpis = [
                 :key="kpi.id"
                 :label="t(kpi.labelKey)"
                 :value="null"
-                :hint="t('dashboard.no_data_reason')"
+                :reason="t('dashboard.no_data_reason')"
                 :icon="kpi.icon"
             />
         </section>

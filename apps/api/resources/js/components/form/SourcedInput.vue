@@ -11,7 +11,8 @@
  * and `confidence-options` only to use it outside a calculator page.
  *
  * The model is a blankSourced() object; its fields are edited in place. `units` with more than one entry shows a unit
- * Select under the value; one unit is printed as the suffix; none (a dimensionless HLB) prints `unit-key`'s text if given.
+ * Select under the value (the row is three columns in a card, about 150px for the value: a Select inside the suffix leaves the
+ * input no width even with the kit's 1.10 addon sizing, so this is a layout choice and not a kit workaround); one unit is printed as the suffix; none (a dimensionless HLB) prints `unit-key`'s text if given.
  * `fromMaterial` ({ id, label }) says the value was prefilled from a material's property (resolveValue) and clears
  * as soon as the person edits value or source.
  */

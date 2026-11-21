@@ -71,8 +71,10 @@ function switchLocale(code) {
 
         <template #topbar-end>
             <LocaleSwitcher :model-value="locale" :locales="locales" compact @update:model-value="switchLocale" />
-            <DisplayCurrencyMenu />
         </template>
+
+        <!-- The display currency is one more section of the kit's Display menu. -->
+        <template #theme-extra><DisplayCurrencyMenu /></template>
 
         <!-- Placeholder until sign-in exists (the users table and its settings come later). -->
         <template #user>

@@ -2,7 +2,7 @@
 /**
  * The control row above every list: search, filters, sort and "clear all", driven by the schema the
  * server sends (App\Http\Filters\ListQuery) and the state held by useListQuery. Built on the kit's
- * FilterBar, so chips, keyboard handling and the filtered-empty flow are the kit's. Write a list page
+ * FilterBar, so chips, number ranges, the active count, Clear all, keyboard handling and the filtered-empty flow are the kit's. Write a list page
  * with this and nothing else; never assemble a FilterBar by hand.
  *
  *   const query = useListQuery(props.list.schema);
@@ -13,7 +13,7 @@
  * from `optionsUrl` ([{ value, label }] as JSON). The sort control lists schema.sorts.
  */
 import { computed, onMounted, reactive } from 'vue';
-import { Badge, Button, FilterBar, FormField, IconButton, NumberRangeInput, Popover, Select } from '@kit';
+import { FilterBar, IconButton, Select } from '@kit';
 import { useI18n } from '../../composables/useI18n';
 import { resolveOptions } from '../../lib/options';
 
@@ -38,11 +38,10 @@ onMounted(() => {
     });
 });
 
-const KIT_TYPES = { boolean: 'flag', 'date-range': 'date-range' };
+const KIT_TYPES = { boolean: 'flag', 'date-range': 'date-range', 'number-range': 'number-range' };
 
-/** The schema in the shape of the kit's FilterBar `filters`; number ranges are drawn here instead. */
+/** The schema in the shape of the kit's FilterBar `filters`. */
 const barFilters = computed(() => schema.value.filters
-    .filter((filter) => filter.type !== 'number-range')
     .map((filter) => ({
         key: filter.key,
         type: KIT_TYPES[filter.type],
@@ -51,11 +50,6 @@ const barFilters = computed(() => schema.value.filters
         multiple: filter.type === 'multiselect',
         options: resolveOptions(filter.options ?? remote[filter.key], t),
     })));
-
-// The kit's FilterBar shows its own "Clear all" (filters and search) once it draws chips; ours covers the rest.
-const barHasChips = computed(() => schema.value.filters.some((filter) => filter.type !== 'number-range' && props.query.isActive(filter)));
-
-const numberRanges = computed(() => schema.value.filters.filter((filter) => filter.type === 'number-range'));
 
 const sortOptions = computed(() => schema.value.sorts.map((sort) => ({ value: sort.key, label: t(sort.labelKey) })));
 const sortKey = computed({
@@ -80,26 +74,6 @@ function toggleDirection() {
         :visible="visible"
     >
         <template #end>
-            <Popover v-for="filter in numberRanges" :key="filter.key" width="w-80" align="end">
-                <template #trigger>
-                    <Button
-                        variant="secondary"
-                        size="sm"
-                        icon="ph:arrows-left-right"
-                        icon-end="ph:caret-down"
-                        :class="query.isActive(filter) && 'border-primary-line bg-primary-soft text-primary-ink hover:bg-primary-soft'"
-                    >{{ t(filter.labelKey) }}</Button>
-                </template>
-                <FormField :label="t(filter.labelKey)">
-                    <NumberRangeInput
-                        :model-value="query.getRange(filter.key)"
-                        :placeholders="[t('filters.min'), t('filters.max')]"
-                        @update:model-value="(range) => query.setRange(filter.key, range)"
-                    />
-                </FormField>
-                <Button v-if="query.isActive(filter)" variant="link" size="sm" class="mt-3" @click="query.setRange(filter.key, [null, null])">{{ t('filters.clear_range') }}</Button>
-            </Popover>
-
             <Select
                 v-if="sortOptions.length"
                 v-model="sortKey"
@@ -118,10 +92,6 @@ function toggleDirection() {
                 @click="toggleDirection"
             />
 
-            <template v-if="query.activeCount.value">
-                <Badge tone="accent" mono>{{ t('filters.active_count', { count: query.activeCount.value }) }}</Badge>
-                <Button v-if="!barHasChips" variant="ghost" size="sm" icon="ph:funnel-x" @click="query.clear()">{{ t('filters.clear_all') }}</Button>
-            </template>
         </template>
     </FilterBar>
 </template>
