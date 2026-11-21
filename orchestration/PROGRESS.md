@@ -18,3 +18,4 @@
 | 2026-11-21 | C-04 | done | core/round.ts | vitest ✓ + coverage 100% للملف + فحص يدوي مستقل (evidence/C) |
 | 2026-11-21 | C-05 | done | core/fx.ts | vitest ✓ + coverage 100% للملف + فحص يدوي مستقل (evidence/C) |
 | 2026-11-21 | C-09 | done | core/count-units.ts | vitest ✓ + coverage 100% للملف + فحص يدوي مستقل (evidence/C) |
+| 2026-11-21 | C-06 | done | property tests fast-check 5×10,000 (seed 42) | tests/core.prop.test.ts |

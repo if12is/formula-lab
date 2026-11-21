@@ -1,0 +1,29 @@
+import { describe, it, expect } from 'vitest';
+import * as E from './index';
+import { densityFromWW, vvFromWW } from './core/alcohol';
+const unwrap = (r: any) => { if (!r.ok) throw new Error(JSON.stringify(r)); return r.value; };
+describe('orchestrator independent hand checks', () => {
+  it('volumeToMass 2.5 L @ 1.032 g/mL = 2580 g', () => {
+    const m = unwrap(E.volumeToMass(E.qty('2.5','L'), {value:'1.032',unit:'g/mL',sourceId:'s',confidence:'L1_coa_batch'} as any, 'g'));
+    expect(m.value.toString()).toBe('2580');
+  });
+  it('fx 100 USD @ 48.25 = 4825 EGP', () => {
+    const r = unwrap(E.convertMoney(E.qty('100','USD'), 'EGP', {from:'USD',to:'EGP',rate:'48.25',date:'2026-11-20',sourceId:'cbe',source:'CBE'} as any));
+    expect(JSON.stringify(r)).toContain('4825');
+  });
+  it('1000 pieces / 24 per carton = 41 r16', () => {
+    const r = unwrap(E.piecesToCartons('1000', {unitsPerCarton:'24', cartonsPerPallet:'50'} as any));
+    console.log(JSON.stringify(r));
+  });
+  it('round money 12.345 EGP half-even -> 12.34; 12.355 -> 12.36', () => {
+    expect(E.roundMoney(E.qty('12.345','EGP'))).toBe('12.34');
+    expect(E.roundMoney(E.qty('12.355','EGP'))).toBe('12.36');
+  });
+  it('no mass->volume without density', () => {
+    const r: any = E.massToVolume(E.qty('1','kg'), undefined as any, 'L');
+    expect(r.ok).toBe(false);
+  });
+  it('alcohol 40 %w/w', () => {
+    console.log('rho40', JSON.stringify(densityFromWW('40')), 'vv40', JSON.stringify(vvFromWW('40')));
+  });
+});

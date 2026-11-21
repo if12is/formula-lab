@@ -12,7 +12,7 @@
 11,C-03,C,agent,C-02,done,تحويلات الكتلة/الحجم بكثافة صريحة فقط
 12,C-04,C,agent,C-01,done,سياسة التقريب للعرض (وزن 0.1 جم، فلوس 0.01 جنيه، نسب 0.001%)
 13,C-05,C,agent,C-02,done,تحويل العملات بسعر صرف مؤرخ (مصدر: CBE)
-14,C-06,C,agent,C-03,todo,Property-based tests (fast-check): التحويل ذهابًا وعودة بدون فقد
+14,C-06,C,agent,C-03,done,Property-based tests (fast-check): التحويل ذهابًا وعودة بدون فقد
 15,C-07,C,agent,,done,"نوع Result<T, MissingData[]> بدل throw للداتا الناقصة"
 16,C-08,C,agent,,todo,جداول OIML R 22 الكحولية (كثافة ↔ %v/v ↔ %w/w عند 20°C) كجدول حتمي + interpolation
 17,C-09,C,agent,,done,وحدات العد: قطعة، كرتونة، بالتة + تحويلات (عبوات/كرتونة، كراتين/بالتة)
