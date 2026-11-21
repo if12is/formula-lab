@@ -29,3 +29,13 @@ interface EngineOutput {
 - الأرقام strings داخل الـ JSON (عشان مفيش float في النقل).
 - `inputHash` = SHA-256 لـ canonical JSON للمدخلات ⇒ نفس الـ hash = نفس الناتج حرفيًا.
 - أي قيمة confidence أقل من `allowConfidenceBelow` ⇒ تحذير، و L7 ⇒ missing إلا لو فيه override موقّع.
+
+## الإصدارات (Versioning)
+الكود الفعلي للعقد: [`packages/engine/src/contract.ts`](../../packages/engine/src/contract.ts) والـ hashing في [`packages/engine/src/hash.ts`](../../packages/engine/src/hash.ts) (canonical JSON + SHA-256 عبر `@noble/hashes`، أي `number` في الـ payload بيرمي error).
+
+- `ENGINE_VERSION` semver:
+  - **patch** = مفيش أي تغيير في أي ناتج (إصلاح داخلي، أداء، refactor).
+  - **minor** = حقول جديدة بس (additive)، والنواتج الموجودة زي ما هي حرفيًا.
+  - **major** = أي تغيير في أي ناتج رقمي (قاعدة حساب، تقريب، ترتيب، صيغة hash).
+- كل `EngineOutput` بيحمل `engineVersion` و`datasetVersion` (ADR 003) والاتنين داخلين في `inputHash`.
+- النتايج المخزّنة بتحتفظ بالـ `engineVersion` اللي طلّعها ومبتتحسبش تاني بصمت.

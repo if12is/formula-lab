@@ -6,7 +6,7 @@
 5,B-05,B,agent,,done,كتابة ADR-003: نسخ الداتا المرجعية immutable ومرقمة
 6,B-06,B,agent,B-01,done,"إعداد CI (GitHub Actions/Gitea): lint, typecheck, vitest, pest, playwright"
 7,B-07,B,agent,B-01,done,"إعداد بيئة dev بـ Docker Compose (Postgres, Redis, Laravel, Vite)"
-8,B-08,B,agent,B-02,todo,تحديد عقد المحرك: Input/Output types + versioning (engineVersion في كل ناتج)
+8,B-08,B,agent,B-02,done,تحديد عقد المحرك: Input/Output types + versioning (engineVersion في كل ناتج)
 9,C-01,C,agent,,todo,"تبني decimal.js (precision 34, ROUND_HALF_EVEN داخليًا)"
 10,C-02,C,agent,,todo,"نوع Quantity<Unit> (kg, g, mg, L, mL, %w/w, %w/v, mg KOH/g, EGP, USD, mPa·s)"
 11,C-03,C,agent,C-02,todo,تحويلات الكتلة/الحجم بكثافة صريحة فقط
