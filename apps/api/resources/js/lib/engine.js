@@ -3,7 +3,7 @@
  * arithmetic on a formula or a price: every figure shown comes out of the engine (draftSummary, balanceQs,
  * calculate, resolveValue). This file only prepares what the engine takes and sorts what it gives back.
  */
-import { ENGINE_VERSION, balanceQs, calculate, draftSummary, isDecimalString, resolveValue, sourcedEgp } from '@fl/engine';
+import { ENGINE_VERSION, balanceQs, calculate, draftSummary, inputLeaf, isDecimalString, resolveValue, sourcedEgp, traced } from '@fl/engine';
 
 /** Arabic-Indic and Persian digits, and the Arabic decimal separators, typed into a number field become plain ASCII text. */
 export function normalizeDecimalText(text) {
@@ -21,6 +21,18 @@ const engineId = (line) => line.material_id ?? `pending:${line.key}`;
 
 /** A q.s. line without a share yet is the one the engine will fill in, so the sum leaves it out. */
 const counted = (lines) => lines.filter((line) => !(line.is_qs && line.percent === ''));
+
+/**
+ * The sum of the percentages as an engine trace (engine `traced`): the sum is draftSummary's, the leaves are the lines
+ * that hold a valid percentage, so the explain panel can show what the Σ is made of. Null when no line has a percentage.
+ */
+export function sumTraced(lines, labelOf, sum) {
+    const leaves = lines
+        .filter((line) => line.material_id && isDecimalString(line.percent))
+        .map((line) => inputLeaf(`${labelOf(line.material_id)} percent`, line.percent, '%w/w'));
+
+    return leaves.length ? traced('sum', 'Σ % w/w', sum, '%w/w', leaves) : null;
+}
 
 /**
  * The sum, its deviation from 100 and the problems per line, from the engine's draftSummary.
@@ -88,17 +100,18 @@ export function pickPrice(prices, materialId) {
  * Returns:
  *   state    'empty' | 'incomplete' | 'ready'
  *   perKg    decimal string, or null when the engine could not cost it
+ *   perKgTraced  the engine's { value, unit, trace } behind perKg, or null
  *   missing  [{ materialId, property, reason }] straight from the engine (prices, formula problems)
  *   warnings [{ key, details[] }]
  *   prices   { [materialId]: chosen quote }
  */
 export function costLines(lines, materials, datasetVersion) {
     if (lines.length === 0) {
-        return { state: 'empty', perKg: null, missing: [], warnings: [], prices: {} };
+        return { state: 'empty', perKg: null, perKgTraced: null, missing: [], warnings: [], prices: {} };
     }
 
     if (lines.some((line) => !line.material_id)) {
-        return { state: 'incomplete', perKg: null, missing: [], warnings: [], prices: {} };
+        return { state: 'incomplete', perKg: null, perKgTraced: null, missing: [], warnings: [], prices: {} };
     }
 
     const engineLines = lines.map((line) => ({ materialId: line.material_id, percentWW: line.percent }));
@@ -147,6 +160,7 @@ export function costLines(lines, materials, datasetVersion) {
     return {
         state: 'ready',
         perKg: output.results['cost.materialPerKg']?.value ?? null,
+        perKgTraced: output.results['cost.materialPerKg'] ?? null,
         missing,
         warnings: warnings.map((warning) => {
             const [key, ...details] = warning.split(':');
@@ -167,6 +181,36 @@ export const REJECT_REASON_KEYS = {
     'invalid candidate': 'materials.resolve.reasons.invalid',
 };
 
+/** A stored property row as the engine's resolveValue Candidate. */
+const candidateOf = (row) => ({
+    _id: row.id,
+    value: row.value ?? undefined,
+    min: row.min ?? undefined,
+    max: row.max ?? undefined,
+    unit: row.unit,
+    sourceId: row.source_id,
+    confidence: row.confidence,
+    validFrom: row.valid_from,
+    lotNo: row.lot_no ?? undefined,
+});
+
+/**
+ * The one value the engine would use for a property of a material (resolveValue), with the row it came from, or null
+ * when the material has none: { row, candidate }. Used by the calculators to prefill a sourced input.
+ */
+export function resolvedProperty(rows, property) {
+    const group = rows.filter((row) => row.property === property);
+    const result = resolveValue(property, group.map(candidateOf));
+
+    if (!result.ok || result.value.chosenBy !== 'rule') {
+        return null;
+    }
+
+    const candidate = result.value.chosen;
+
+    return { candidate, row: group.find((row) => row.id === candidate._id) };
+}
+
 /**
  * Engine value resolution for every property of a material (resolveValue, D-04).
  * `rows` are the property rows from the server. Returns a list per property:
@@ -181,17 +225,7 @@ export function resolveProperties(rows) {
     }
 
     return [...byProperty].map(([property, group]) => {
-        const candidates = group.map((row) => ({
-            _id: row.id,
-            value: row.value ?? undefined,
-            min: row.min ?? undefined,
-            max: row.max ?? undefined,
-            unit: row.unit,
-            sourceId: row.source_id,
-            confidence: row.confidence,
-            validFrom: row.valid_from,
-            lotNo: row.lot_no ?? undefined,
-        }));
+        const candidates = group.map(candidateOf);
         const result = resolveValue(property, candidates);
         const resolution = result.ok ? result.value : null;
         const rejected = new Map((resolution?.rejected ?? []).map((entry) => [entry.candidate._id, entry]));

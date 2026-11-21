@@ -54,6 +54,14 @@ describe('diluteEthanol: mass balance', () => {
     expect(parts).toBeGreaterThan(Number(r.totalVolume.value));
   });
 
+  it('contraction is reported by the engine: 592.8483 + 500.9010 - 1069.3528 = 24.3964 mL, 2.2305 % of the parts', () => {
+    const r = run();
+    expect(r.contractionVolume.value.startsWith('24.3964')).toBe(true);
+    expect(r.contractionVolume.unit).toBe('mL');
+    expect(r.contractionPct.value.startsWith('2.2305')).toBe(true);
+    expect(r.contractionVolume.trace.inputs).toHaveLength(3);
+  });
+
   it('target given as a VOLUME: 1000 mL of 40 %w/w weighs 1000 x 0.9351450331484 = 935.1450331484 g; source = half = 467.5725165742 g', () => {
     const r = run({ batch: { volume: qty('1', 'L') } });
     expect(r.totalMass.value).toBe('935.1450331484');

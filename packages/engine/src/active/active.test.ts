@@ -138,6 +138,11 @@ describe('waterToReachTarget (w = m × (A_cur / A_target − 1))', () => {
     expect(r.ok && [r.value.waterMass.value, r.value.finalMass.value]).toEqual(['542', '1542']);
   });
 
+  it('a missing current active is reported as input.missing, not thrown', () => {
+    const r = waterToReachTarget({ existingMass: qty('1000', 'g'), currentActive: undefined, targetActivePct: '10', policy: {} });
+    expect(!r.ok && r.missing).toEqual([{ materialId: undefined, property: 'currentActive', reason: 'input.missing' }]);
+  });
+
   it('chains from a computed blend (traced current active) and keeps its trace', () => {
     const blend = activeMatterOfBlend({ lines: [sles('150'), capb('100'), labsa('20'), water('730')], policy: {} });
     if (!blend.ok) {

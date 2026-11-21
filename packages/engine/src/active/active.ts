@@ -140,7 +140,7 @@ export function rawMassForTarget(input: DilutionInput): Result<Dilution> {
 export interface WaterToTargetInput {
   existingMass: Quantity;
   /** Current active %: a sourced value, or a traced result such as activeMatterOfBlend().activeMatterPct. */
-  currentActive: SourcedScalar | Traced;
+  currentActive: SourcedScalar | Traced | undefined;
   targetActivePct: string;
   policy: ConfidencePolicy;
 }
@@ -150,8 +150,8 @@ export interface WaterToTarget {
   finalMass: Traced;
 }
 
-function isTraced(x: SourcedScalar | Traced): x is Traced {
-  return 'trace' in x;
+function isTraced(x: SourcedScalar | Traced | undefined): x is Traced {
+  return x !== undefined && 'trace' in x;
 }
 
 /** Water to add to an existing batch so its active falls to the target: w = m x (A_cur / A_target - 1). */

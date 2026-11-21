@@ -15,7 +15,7 @@ final class SourceService
         private EnsureUnverifiedSourceAction $ensureUnverifiedSource,
     ) {}
 
-    /** @return list<array{value: string, label: string, description: string}> */
+    /** @return list<array{value: string, label: string, description: string, retrieved_at: string}> */
     public function search(string $term): array
     {
         return Source::query()
@@ -41,13 +41,18 @@ final class SourceService
         return ($this->ensureUnverifiedSource)();
     }
 
-    /** @return array{value: string, label: string, description: string} */
+    /**
+     * `retrieved_at` travels with the option: a value typed against this source is dated by it (calculator inputs).
+     *
+     * @return array{value: string, label: string, description: string, retrieved_at: string}
+     */
     public function option(Source $source): array
     {
         return [
             'value' => $source->getKey(),
             'label' => $source->kind === SourceKind::UnverifiedEntry->value ? SourceKind::UnverifiedEntry->label() : $source->title,
             'description' => SourceKind::labelFor($source->kind).' · '.$source->retrieved_at->toDateString(),
+            'retrieved_at' => $source->retrieved_at->toDateString(),
         ];
     }
 }

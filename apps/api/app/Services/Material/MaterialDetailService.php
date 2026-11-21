@@ -18,7 +18,7 @@ final class MaterialDetailService
     ) {}
 
     /**
-     * @return array{material: array<string, mixed>, properties: list<array<string, mixed>>, prices: list<array<string, mixed>>, audit: list<array<string, mixed>>, propertyNames: list<string>}
+     * @return array{material: array<string, mixed>, properties: list<array<string, mixed>>, prices: list<array<string, mixed>>, audit: list<array<string, mixed>>}
      */
     public function detail(TradeMaterial $material): array
     {
@@ -31,7 +31,6 @@ final class MaterialDetailService
             'properties' => $properties,
             'prices' => $prices,
             'audit' => $this->audit($material),
-            'propertyNames' => PropertyValue::query()->distinct()->orderBy('property')->limit(config('formula.search_limit') * 20)->pluck('property')->all(),
         ];
     }
 
@@ -67,7 +66,7 @@ final class MaterialDetailService
      *
      * @return list<array<string, mixed>>
      */
-    private function properties(TradeMaterial $material): array
+    public function properties(TradeMaterial $material): array
     {
         return PropertyValue::query()
             ->with('source')

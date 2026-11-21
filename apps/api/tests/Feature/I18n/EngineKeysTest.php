@@ -12,8 +12,8 @@ use Tests\TestCase;
  */
 class EngineKeysTest extends TestCase
 {
-    /** Quoted lowercase keys in the engine that are result names or trace labels, not messages. */
-    private const NOT_MESSAGES = ['cost.batch', 'cost.packaging', 'batch.remainder', 'input.days'];
+    /** Quoted lowercase keys in the engine that are result names, property names or trace labels, not messages. */
+    private const NOT_MESSAGES = ['cost.batch', 'cost.packaging', 'batch.remainder', 'input.days', 'water.ratio'];
 
     /** @return list<string> */
     private function engineMessageKeys(): array
@@ -26,7 +26,7 @@ class EngineKeysTest extends TestCase
                 continue;
             }
 
-            preg_match_all('/[\'"`]((?:formula|cost|confidence|input|density|batch|engine)\.[a-z0-9_]+)(?![A-Za-z0-9_.])/', (string) file_get_contents($file->getPathname()), $matches);
+            preg_match_all('/[\'"`]((?:formula|cost|confidence|input|density|batch|engine|soap|water|neutralize|active|alcohol|fragrance|percent_from_weight)\.[a-z0-9_]+)(?![A-Za-z0-9_.])/', (string) file_get_contents($file->getPathname()), $matches);
             array_push($keys, ...$matches[1]);
         }
 
@@ -43,7 +43,7 @@ class EngineKeysTest extends TestCase
     {
         $keys = $this->engineMessageKeys();
 
-        foreach (['formula.sum_not_100', 'formula.qs_balance_not_positive', 'cost.price_missing', 'confidence.l7_requires_signed_override', 'confidence.below_policy', 'input.missing', 'engine.version_mismatch'] as $key) {
+        foreach (['formula.sum_not_100', 'formula.qs_balance_not_positive', 'cost.price_missing', 'confidence.l7_requires_signed_override', 'confidence.below_policy', 'input.missing', 'engine.version_mismatch', 'soap.no_oils', 'water.concentration_must_be_below_100', 'neutralize.theoretical_start_final_ph_measured', 'active.target_exceeds_raw', 'alcohol.basis_required', 'fragrance.ifra_unknown', 'percent_from_weight.batch_not_positive'] as $key) {
             $this->assertContains($key, $keys);
         }
     }

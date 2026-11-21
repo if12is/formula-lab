@@ -19,6 +19,11 @@ return [
         'L6_community' => 'Community source',
         'L7_estimate' => 'Estimate',
     ],
+    'check_status' => [
+        'PASS' => 'Pass',
+        'FAIL' => 'Fail',
+        'UNKNOWN' => 'Unknown',
+    ],
     'formula_status' => [
         'draft' => 'Draft',
         'lab_testing' => 'In lab testing',

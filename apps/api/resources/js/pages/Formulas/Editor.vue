@@ -13,6 +13,7 @@ import { computed, ref, watch } from 'vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { path } from '../../lib/routes';
 import { Alert, Badge, Button, Card, DescriptionList, FieldError, FormField, IconButton, Input, PageHeader, RadioGroup, Select, StickyBar, Textarea, Tooltip } from '@kit';
+import ExplainableNum from '../../components/explain/ExplainableNum.vue';
 import EntitySelect from '../../components/form/EntitySelect.vue';
 import ConfidenceBadge from '../../components/materials/ConfidenceBadge.vue';
 import MaterialFormModal from '../../components/materials/MaterialFormModal.vue';
@@ -21,7 +22,7 @@ import StatusBadge from '../../components/StatusBadge.vue';
 import { useFormulaDraft } from '../../composables/useFormulaDraft';
 import { useI18n } from '../../composables/useI18n';
 import { useSuggestions } from '../../composables/useSuggestions';
-import { isDecimalString, normalizeDecimalText } from '../../lib/engine';
+import { isDecimalString, normalizeDecimalText, sumTraced } from '../../lib/engine';
 
 const props = defineProps({
     formula: { type: Object, default: null },
@@ -93,6 +94,14 @@ const lineError = (line, index) => fieldError(index, 'trade_material_id')
     ?? (lineProblems(line)[0] ? issueText(lineProblems(line)[0]) : null);
 
 const cost = computed(() => draft.cost.value);
+
+/* What the explain panel can name: each material by its name (the engine labels it by id), each price by its source. */
+const entities = computed(() => Object.fromEntries(Object.entries(draft.materials).map(([id, material]) => [id, { label: material.label, href: path('materials.show', { material: id }) }])));
+const sources = computed(() => Object.fromEntries(Object.entries(draft.materials).flatMap(([id, material]) => (material.prices ?? []).map((price) => [
+    price.source_id,
+    { title: price.source_title ?? null, href: path('materials.show', { material: id, tab: 'prices' }) },
+]))));
+const sumTrace = computed(() => sumTraced(draft.lines.value, draft.labelOf, draft.summary.value.sum));
 const formulaGaps = computed(() => cost.value.missing.filter((gap) => gap.property === 'formula'));
 const priceGaps = computed(() => {
     const byMaterial = new Map();
@@ -330,7 +339,7 @@ const percentValid = (line) => line.percent === '' || isDecimalString(line.perce
                 <div class="flex flex-col gap-4">
                     <div class="flex flex-wrap items-baseline gap-2">
                         <span class="type-metric text-ink" data-testid="cost-per-kg">
-                            <Num :value="cost.perKg" :decimals="2" :reason-key="costGapReason" />
+                            <ExplainableNum :traced="cost.perKgTraced" :value="cost.perKg" :decimals="2" :reason-key="costGapReason" :label="t('formulas.totals.cost')" :entities="entities" :sources="sources" />
                         </span>
                         <span v-if="cost.perKg !== null" class="text-label text-ink-3">{{ t('formulas.units.egp_per_kg') }}</span>
                     </div>
@@ -387,7 +396,7 @@ const percentValid = (line) => line.percent === '' || isDecimalString(line.perce
                 <span class="flex flex-wrap items-center gap-x-6 gap-y-2">
                     <span class="flex flex-col">
                         <span class="eyebrow text-ink-3">{{ t('formulas.totals.sum') }}</span>
-                        <span class="type-metric text-ink" data-testid="sum"><Num :value="draft.summary.value.sum" :decimals="3" /> %</span>
+                        <span class="type-metric text-ink" data-testid="sum"><ExplainableNum :value="draft.summary.value.sum" :trace="sumTrace?.trace" unit="%w/w" :decimals="3" :label="t('formulas.totals.sum')" :entities="entities" :sources="sources" /> %</span>
                     </span>
                     <span class="flex flex-col gap-1">
                         <Badge v-if="draft.summary.value.withinTolerance" tone="success" icon="ph:check-circle" data-testid="deviation">{{ t('formulas.totals.balanced') }}</Badge>
@@ -398,7 +407,7 @@ const percentValid = (line) => line.percent === '' || isDecimalString(line.perce
                     <span class="flex flex-col">
                         <span class="eyebrow text-ink-3">{{ t('formulas.totals.cost') }}</span>
                         <span class="flex items-baseline gap-1 text-ink" data-testid="bar-cost">
-                            <Num :value="cost.perKg" :decimals="2" :reason-key="costGapReason" />
+                            <ExplainableNum :traced="cost.perKgTraced" :value="cost.perKg" :decimals="2" :reason-key="costGapReason" :label="t('formulas.totals.cost')" :entities="entities" :sources="sources" />
                             <span v-if="cost.perKg !== null" class="text-label text-ink-3">{{ t('formulas.units.egp_per_kg') }}</span>
                             <Tooltip v-else-if="estimateGap" :content="t('formulas.cost.not_reliable_estimate')">
                                 <Badge tone="danger" icon="ph:warning" tabindex="0">{{ t('formulas.cost.not_reliable_short') }}</Badge>

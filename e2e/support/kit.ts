@@ -49,3 +49,30 @@ export async function setTheme(page: Page, theme: 'light' | 'dark'): Promise<voi
 
 /** Lets the kit's page-enter animation finish before a screenshot or a measurement. */
 export const settle = (page: Page): Promise<void> => page.waitForTimeout(700);
+
+/**
+ * Fills a calculator's SourcedInput, found by its legend: the value, the source (searched and picked) and the confidence level.
+ * The date comes from the source on its own.
+ */
+export async function fillSourced(page: Page, legend: string | RegExp, value: string, source: string, confidence: string | RegExp): Promise<void> {
+  const group = page.getByRole('group', { name: legend });
+  await group.getByLabel(/^قيمة/).fill(value);
+  await pickRecord(page, group.getByRole('combobox', { name: /^مصدر/ }), source);
+  await pickOption(page, group.getByRole('combobox', { name: /^ثقة/ }), confidence);
+}
+
+/** The result row of a calculator by its key, e.g. `result(page, 'lye_used')`. */
+export const result = (page: Page, key: string): Locator => page.locator(`[data-result="${key}"]`);
+
+/** The sources the demo seeder creates (the SourcedInput finds them by searching). */
+export const DEMO_SOURCE = 'Demo supplier data sheet';
+export const DEMO_COA = 'Demo batch certificate';
+export const CONFIDENCE_TDS = 'نشرة بيانات المورد (TDS)';
+export const CONFIDENCE_COA = 'شهادة تحليل الدفعة (COA)';
+export const CONFIDENCE_REFERENCE = 'مرجع علمي';
+
+/** The pages that show a calculator or a result: no sideways scroll, in RTL. */
+export async function expectRtlAndFits(page: Page): Promise<void> {
+  await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+  await expectNoHorizontalScroll(page);
+}

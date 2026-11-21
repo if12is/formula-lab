@@ -134,6 +134,10 @@ export interface AlcoholDilution {
   /** Volumes of the ingredients before mixing (OIML densities of the source and of water). */
   sourceVolume: Traced;
   waterVolume: Traced;
+  /** Volume lost on mixing: V_source + V_water - V_mix (mL). Positive for ethanol-water. */
+  contractionVolume: Traced;
+  /** Contraction as % of the ingredients' volume before mixing. */
+  contractionPct: Traced;
 }
 
 const kgM3ToGPerMl = (rho: Dec): Dec => rho.div(1000);
@@ -172,17 +176,26 @@ export function diluteEthanol(input: AlcoholDilutionInput): Result<AlcoholDiluti
         traced('div', label, decOf(mass).div(decOf(density)), 'mL', [mass, density]);
       return map(
         ethanolMassBalance(source, target, totalMass, input.sourceMaterialId),
-        ({ sourceMass, waterMass }): AlcoholDilution => ({
-          sourcePctWW: source.pctWW,
-          targetPctWW: target.pctWW,
-          targetDensity,
-          sourceMass,
-          waterMass,
-          totalMass,
-          totalVolume,
-          sourceVolume: volumeOf('Source volume before mixing (mL)', sourceMass, sourceDensity),
-          waterVolume: volumeOf('Water volume before mixing (mL)', waterMass, waterDensity),
-        }),
+        ({ sourceMass, waterMass }): AlcoholDilution => {
+          const sourceVolume = volumeOf('Source volume before mixing (mL)', sourceMass, sourceDensity);
+          const waterVolume = volumeOf('Water volume before mixing (mL)', waterMass, waterDensity);
+          const parts = decOf(sourceVolume).plus(decOf(waterVolume));
+          const lost = parts.minus(decOf(totalVolume));
+          const contractionVolume = traced('sub', 'Contraction = V_source + V_water - V_mix (mL)', lost, 'mL', [sourceVolume, waterVolume, totalVolume]);
+          return {
+            sourcePctWW: source.pctWW,
+            targetPctWW: target.pctWW,
+            targetDensity,
+            sourceMass,
+            waterMass,
+            totalMass,
+            totalVolume,
+            sourceVolume,
+            waterVolume,
+            contractionVolume,
+            contractionPct: traced('div', 'Contraction as % of the volume before mixing', lost.div(parts).mul(100), '%v/v', [contractionVolume, sourceVolume, waterVolume]),
+          };
+        },
       );
     });
   });

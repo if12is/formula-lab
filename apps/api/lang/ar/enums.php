@@ -19,6 +19,11 @@ return [
         'L6_community' => 'مصدر مجتمعي',
         'L7_estimate' => 'تقدير',
     ],
+    'check_status' => [
+        'PASS' => 'نجح',
+        'FAIL' => 'فشل',
+        'UNKNOWN' => 'غير معروف',
+    ],
     'formula_status' => [
         'draft' => 'مسودة',
         'lab_testing' => 'قيد التجربة في المعمل',

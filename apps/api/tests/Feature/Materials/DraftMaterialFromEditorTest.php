@@ -43,6 +43,14 @@ class DraftMaterialFromEditorTest extends TestCase
         $this->assertSame('unverified_entry', $source->kind);
     }
 
+    public function test_a_price_names_its_source_so_the_explain_panel_can_show_it(): void
+    {
+        $this->postJson('/materials/draft', ['trade_name' => 'Fragrance X', 'price_per_kg' => '85.5'])
+            ->assertCreated()
+            ->assertJsonPath('prices.0.source_id', Price::query()->firstOrFail()->source_id)
+            ->assertJsonPath('prices.0.source_title', __('enums.source_kind.unverified_entry'));
+    }
+
     public function test_every_unverified_price_shares_one_source(): void
     {
         $this->postJson('/materials/draft', ['trade_name' => 'A', 'price_per_kg' => '1']);

@@ -2,6 +2,7 @@
 
 namespace App\Services\Material;
 
+use App\Enums\SourceKind;
 use App\Models\Price;
 use App\Models\TradeMaterial;
 use Illuminate\Support\Collection;
@@ -39,6 +40,7 @@ final class MaterialOptionService
     public function forMaterials(Collection $materials): array
     {
         $prices = Price::query()
+            ->with('source')
             ->whereIn('trade_material_id', $materials->map(fn (TradeMaterial $material) => $material->getKey())->all())
             ->get()
             ->groupBy('trade_material_id');
@@ -68,6 +70,7 @@ final class MaterialOptionService
                 'per_unit' => $price->per_unit,
                 'quoted_on' => $price->quoted_on->toDateString(),
                 'source_id' => $price->source_id,
+                'source_title' => $price->source->kind === SourceKind::UnverifiedEntry->value ? SourceKind::UnverifiedEntry->label() : $price->source->title,
                 'confidence' => $price->confidence->value,
             ])->values()->all(),
         ];

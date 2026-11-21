@@ -66,7 +66,7 @@ class FormulationDemoSeeder extends Seeder
         ] as $row) {
             PropertyValue::factory()->create([...$row, 'entity_type' => 'trade_material', 'entity_id' => $sles->id, 'property' => 'density', 'unit' => 'g/mL']);
         }
-        PropertyValue::factory()->range('68', '72')->create(['entity_type' => 'trade_material', 'entity_id' => $sles->id, 'property' => 'active_matter', 'unit' => '%', 'confidence' => Confidence::L2SupplierTds, 'source_id' => $tds->id]);
+        PropertyValue::factory()->range('68', '72')->create(['entity_type' => 'trade_material', 'entity_id' => $sles->id, 'property' => 'active_matter', 'unit' => '%w/w', 'confidence' => Confidence::L2SupplierTds, 'source_id' => $tds->id]);
 
         Price::factory()->create(['trade_material_id' => $sles->id, 'amount' => '38.5', 'quoted_on' => '2026-03-01', 'source_id' => $tds->id, 'confidence' => Confidence::L2SupplierTds]);
         Price::factory()->create(['trade_material_id' => $sles->id, 'amount' => '36', 'quoted_on' => '2026-01-10', 'source_id' => $reference->id, 'confidence' => Confidence::L5Reference]);

@@ -5,6 +5,7 @@ namespace App\Http\Requests\Material;
 use App\Enums\Confidence;
 use App\Http\Requests\Concerns\TranslatesValidationMessages;
 use App\Support\DecimalCompare;
+use App\Support\PropertyRegistry;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
@@ -24,11 +25,11 @@ class StorePropertyValueRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'property' => ['required', 'string', 'max:100'],
+            'property' => ['required', 'string', Rule::in(PropertyRegistry::keys())],
             'value' => ['nullable', 'string', 'regex:'.self::DECIMAL],
             'min' => ['nullable', 'string', 'regex:'.self::DECIMAL],
             'max' => ['nullable', 'string', 'regex:'.self::DECIMAL],
-            'unit' => ['required', 'string', 'max:32'],
+            'unit' => ['required', 'string', Rule::in(PropertyRegistry::unitsFor((string) $this->input('property')))],
             'source_id' => ['required', 'uuid', 'exists:sources,id'],
             'confidence' => ['required', Rule::enum(Confidence::class)],
             'valid_from' => ['required', 'date_format:Y-m-d'],

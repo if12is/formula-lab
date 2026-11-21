@@ -30,9 +30,9 @@ test.describe('app shell', () => {
   });
 
   test('a section that is not built yet shows the coming-soon page', async ({ page }) => {
-    await page.goto('/calculators');
+    await page.goto('/compliance');
     await expect(page.getByRole('heading', { level: 1, name: 'هذه الشاشة قيد التنفيذ' })).toBeVisible();
-    await expect(page.locator('#kit-sidebar').getByRole('link', { name: 'الحاسبات' }).first()).toHaveAttribute('aria-current', 'page');
+    await expect(page.locator('#kit-sidebar').getByRole('link', { name: 'المطابقة' }).first()).toHaveAttribute('aria-current', 'page');
   });
 
   test('switching the theme to dark sets data-mode=dark and survives a reload', async ({ page }) => {

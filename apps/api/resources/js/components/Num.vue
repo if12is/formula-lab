@@ -8,6 +8,10 @@
  *   <Num :value="item.cost" :decimals="2" />       a decimal string stays exact: it is never turned into a float
  *   <Num :value="null" reason-key="dashboard.no_data_reason" />    "—" with the reason as a tooltip
  *
+ * A range is ONE bdi, so its two ends and the unit keep their left-to-right order inside Arabic text:
+ *
+ *   <Num :value="68" :up-to="72" :decimals="0" />      68 – 72 (the unit goes in the #suffix slot, inside the same bdi)
+ *
  * A missing value prints "—", never 0, and says why (CLAUDE.md rule 2).
  */
 import { computed } from 'vue';
@@ -17,6 +21,8 @@ import { useI18n } from '../composables/useI18n';
 const props = defineProps({
     /** A number, or a decimal string from the server (kept as text so no precision is lost). */
     value: { type: [Number, String], default: null },
+    /** The other end of a range: renders "value – upTo" as one left-to-right unit. */
+    upTo: { type: [Number, String], default: null },
     /** Fixed number of decimal places; omit to show the value as it is. */
     decimals: { type: Number, default: undefined },
     /** Any Intl.NumberFormat options (style, currency, notation...). */
@@ -27,15 +33,18 @@ const props = defineProps({
 
 const { t, locale, numbering } = useI18n();
 
+const isEmpty = (value) => value === null || value === undefined || value === '';
+
 const text = computed(() => {
-    if (props.value === null || props.value === undefined || props.value === '') {
+    if (isEmpty(props.value)) {
         return null;
     }
 
     const fixed = props.decimals === undefined ? {} : { minimumFractionDigits: props.decimals, maximumFractionDigits: props.decimals };
-
     // Intl accepts a numeric string and formats it exactly, so decimals from the engine never pass through float.
-    return new Intl.NumberFormat(locale.value, { numberingSystem: numbering.value, ...fixed, ...props.options }).format(props.value);
+    const format = new Intl.NumberFormat(locale.value, { numberingSystem: numbering.value, ...fixed, ...props.options });
+
+    return isEmpty(props.upTo) ? format.format(props.value) : `${format.format(props.value)} – ${format.format(props.upTo)}`;
 });
 </script>
 

@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { expectNoHorizontalScroll, fillDate, pickOption, seedFormulationDemo, settle, stamp } from './support/kit';
+import { expectNoHorizontalScroll, fillDate, pickOption, pickRecord, seedFormulationDemo, settle, stamp } from './support/kit';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -27,8 +27,8 @@ test('create a material, add a property with a new source, add a price and see t
   // 2. A property value with a source created on the spot.
   await page.getByRole('button', { name: 'إضافة قيمة خاصية' }).first().click();
   const property = page.getByRole('dialog');
-  await property.getByLabel(/^الخاصية/).fill('density');
-  await property.getByLabel(/^الوحدة/).fill('g/mL');
+  await pickRecord(page, property.getByRole('combobox', { name: /^الخاصية/ }), 'الكثافة');
+  await expect(property.getByRole('combobox', { name: /^الوحدة/ })).toContainText('g/mL');
   await property.getByLabel(/^القيمة/).fill('1.26');
   await property.getByRole('button', { name: 'مصدر جديد' }).click();
   const source = page.getByRole('dialog').last();

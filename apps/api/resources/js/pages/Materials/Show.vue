@@ -19,6 +19,7 @@ import PropertyValueText from '../../components/materials/PropertyValueText.vue'
 import Num from '../../components/Num.vue';
 import StatusBadge from '../../components/StatusBadge.vue';
 import { useI18n } from '../../composables/useI18n';
+import { useProperties } from '../../composables/useProperties';
 import { pickPrice, resolveProperties } from '../../lib/engine';
 
 const props = defineProps({
@@ -26,7 +27,6 @@ const props = defineProps({
     properties: { type: Array, required: true },
     prices: { type: Array, required: true },
     audit: { type: Array, required: true },
-    propertyNames: { type: Array, required: true },
     tab: { type: String, required: true },
     statusOptions: { type: Array, required: true },
     confidenceOptions: { type: Array, required: true },
@@ -36,6 +36,7 @@ const props = defineProps({
 
 const { t, has, locale } = useI18n();
 const { confirm } = useConfirm();
+const { label: propertyLabel } = useProperties();
 
 const tab = ref(props.tab);
 const editing = ref(false);
@@ -118,7 +119,7 @@ async function removeProperty(row) {
     const confirmed = await confirm({
         tone: 'danger',
         title: t('materials.property.remove_title'),
-        description: t('materials.property.remove_description', { property: row.property }),
+        description: t('materials.property.remove_description', { property: propertyLabel(row.property) }),
         confirmLabel: t('materials.remove'),
     });
 
@@ -191,11 +192,11 @@ async function removePrice(row) {
                 </EmptyState>
 
                 <div v-else class="flex flex-col gap-4">
-                    <Card v-for="group in groups" :key="group.property" :data-property="group.property" :title="group.property">
+                    <Card v-for="group in groups" :key="group.property" :data-property="group.property" :title="propertyLabel(group.property)">
                         <template #actions>
                             <span v-if="group.resolution?.chosenBy === 'rule'" class="flex flex-wrap items-center gap-2 text-label text-ink-2">
                                 {{ t('materials.resolve.picked') }}
-                                <span class="font-semibold text-ink"><PropertyValueText :value="group.resolution.chosen.value ?? null" :min="group.resolution.chosen.min ?? null" :max="group.resolution.chosen.max ?? null" /> <bdi dir="ltr">{{ group.resolution.chosen.unit }}</bdi></span>
+                                <span class="font-semibold text-ink"><PropertyValueText :value="group.resolution.chosen.value ?? null" :min="group.resolution.chosen.min ?? null" :max="group.resolution.chosen.max ?? null" :unit="group.resolution.chosen.unit" /></span>
                                 <ConfidenceBadge :confidence="group.resolution.chosen.confidence" />
                             </span>
                         </template>
@@ -210,7 +211,7 @@ async function removePrice(row) {
                             :row-key="(entry) => entry.row.id"
                             :row-tone="(entry) => (entry.conflicted ? 'warning' : null)"
                             :mobile-columns="['picked', 'value', 'confidence']"
-                            :caption="group.property"
+                            :caption="propertyLabel(group.property)"
                         >
                             <template #cell-picked="{ row: entry }">
                                 <Badge v-if="entry.picked" tone="success" icon="ph:check-circle">{{ t('materials.resolve.chosen') }}</Badge>
@@ -233,7 +234,7 @@ async function removePrice(row) {
                                     icon="ph:trash"
                                     variant="danger-soft"
                                     size="sm"
-                                    :label="t('materials.property.remove_label', { property: group.property })"
+                                    :label="t('materials.property.remove_label', { property: propertyLabel(group.property) })"
                                     @click="removeProperty(entry.row)"
                                 />
                             </template>
@@ -315,7 +316,6 @@ async function removePrice(row) {
             :urls="urls"
             :confidence-options="confidenceOptions"
             :source-kind-options="sourceKindOptions"
-            :property-suggestions="propertyNames"
         />
         <PriceModal v-model:open="addingPrice" :material-id="material.id" :urls="urls" :confidence-options="confidenceOptions" :source-kind-options="sourceKindOptions" />
     </div>

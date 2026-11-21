@@ -8,7 +8,9 @@ import { computed, ref, watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import { path } from '../../lib/routes';
 import { Button, DatePicker, FormField, Input, Modal, SegmentedControl, Select } from '@kit';
+import EntitySelect from '../form/EntitySelect.vue';
 import { useI18n } from '../../composables/useI18n';
+import { useProperties } from '../../composables/useProperties';
 import { normalizeDecimalText } from '../../lib/engine';
 import SourceSelect from './SourceSelect.vue';
 
@@ -17,11 +19,11 @@ const props = defineProps({
     urls: { type: Object, required: true },
     confidenceOptions: { type: Array, required: true },
     sourceKindOptions: { type: Array, required: true },
-    propertySuggestions: { type: Array, default: () => [] },
 });
 
 const open = defineModel('open', { type: Boolean, default: false });
 const { t } = useI18n();
+const { options: propertyOptions, unitsOf } = useProperties();
 
 const blank = () => ({ property: '', value: '', min: '', max: '', unit: '', source_id: null, confidence: undefined, valid_from: null, lot_no: '' });
 const form = useForm(blank());
@@ -30,6 +32,13 @@ const modes = computed(() => [
     { value: 'value', label: t('materials.property.mode_value') },
     { value: 'range', label: t('materials.property.mode_range') },
 ]);
+
+// The registry fixes which units a property may be stored in; one unit is chosen for the person.
+const unitOptions = computed(() => unitsOf(form.property).map((unit) => ({ value: unit, label: unit })));
+watch(() => form.property, (property) => {
+    const units = unitsOf(property);
+    form.unit = units.includes(form.unit) ? form.unit : (units[0] ?? '');
+});
 
 watch(open, (isOpen) => {
     if (isOpen) {
@@ -55,12 +64,16 @@ function submit() {
 <template>
     <Modal v-model:open="open" :title="t('materials.property.title')" :description="t('materials.property.description')" size="lg">
         <form id="property-form" class="grid gap-4 sm:grid-cols-2" novalidate @submit.prevent="submit">
-            <FormField :label="t('materials.property.name')" :hint="t('materials.property.name_hint')" :error="form.errors.property" required>
-                <Input v-model="form.property" maxlength="100" list="property-names" ltr />
-                <datalist id="property-names"><option v-for="name in propertySuggestions" :key="name" :value="name" /></datalist>
-            </FormField>
+            <EntitySelect
+                v-model="form.property"
+                label-key="materials.property.name"
+                hint-key="materials.property.name_hint"
+                :options="propertyOptions"
+                :error="form.errors.property"
+                required
+            />
             <FormField :label="t('materials.property.unit')" :hint="t('materials.property.unit_hint')" :error="form.errors.unit" required>
-                <Input v-model="form.unit" maxlength="32" ltr />
+                <Select v-model="form.unit" :options="unitOptions" :placeholder="t('common.select_placeholder')" :disabled="unitOptions.length === 0" />
             </FormField>
 
             <FormField :label="t('materials.property.kind')" class="sm:col-span-2">

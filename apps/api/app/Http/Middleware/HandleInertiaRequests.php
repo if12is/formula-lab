@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\PropertyRegistry;
 use App\Support\Translations;
 use App\Support\UiPreferences;
 use Illuminate\Http\Request;
@@ -57,6 +58,8 @@ class HandleInertiaRequests extends Middleware
                 'error' => fn () => $request->session()->get('error'),
                 'warning' => fn () => $request->session()->get('warning'),
             ],
+            // The known material properties (key, label key, units): selectors and labels read this one list.
+            'propertyRegistry' => fn (): array => PropertyRegistry::options(),
             'theme' => ['preference' => UiPreferences::theme($request)],
             // The whole dictionary travels once per locale; later visits leave it out.
             'translations' => Inertia::once(fn (): array => Translations::for($locale))->as("translations.{$locale}"),
