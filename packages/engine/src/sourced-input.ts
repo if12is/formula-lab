@@ -19,6 +19,7 @@ export const INPUT_REASONS = {
   NOT_DATED: 'input.not_dated',
   OUT_OF_RANGE: 'input.out_of_range',
   INVALID_MASS: 'input.invalid_mass',
+  INVALID_VOLUME: 'input.invalid_volume',
 } as const;
 
 export interface SourcedNumberSpec {
@@ -99,4 +100,18 @@ export function resolveMassG(
   }
   const grams = dec(mass.to('g').value);
   return ok({ value: grams, leaf: inputLeaf(label, grams, 'g') });
+}
+
+/** A strictly positive volume as a millilitres trace leaf. Non-volume units and non-positive values are reported. */
+export function resolveVolumeMl(
+  materialId: string | undefined,
+  property: string,
+  label: string,
+  volume: Quantity,
+): Result<ResolvedNumber> {
+  if (dimensionOf(volume.unit) !== 'volume' || volume.value.lte(0)) {
+    return missing([{ materialId, property, reason: INPUT_REASONS.INVALID_VOLUME }]);
+  }
+  const ml = dec(volume.to('mL').value);
+  return ok({ value: ml, leaf: inputLeaf(label, ml, 'mL') });
 }

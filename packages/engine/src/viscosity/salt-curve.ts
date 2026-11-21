@@ -4,7 +4,8 @@
  * (outside the measured salt range => missing/out_of_measured_range). No built-in curve.
  */
 import type { Confidence, MissingData } from '../contract';
-import { D, type Dec } from '../core/decimal';
+import type { Dec } from '../core/decimal';
+import { duplicateXs, interpolateAt, solveForY, sortKnots } from '../core/interpolate';
 import { CONFIDENCE_RANK, parseDec } from '../core/parse';
 import { missing, ok, type Result } from '../core/result';
 
@@ -51,13 +52,9 @@ function prepare(points: readonly SaltPoint[]): Result<Pt[]> {
   if (pts.length < 2) {
     return missing([gap('need_at_least_2_points')]);
   }
-  pts.sort((a, b) => a.x.comparedTo(b.x));
-  for (let i = 1; i < pts.length; i++) {
-    if (pts[i]!.x.eq(pts[i - 1]!.x)) {
-      gaps.push(gap(`duplicate_salt_pct: ${pts[i]!.x.toFixed()}`));
-    }
-  }
-  return gaps.length > 0 ? missing(gaps) : ok(pts);
+  const sorted = sortKnots(pts);
+  const duplicates = duplicateXs(sorted).map((x) => gap(`duplicate_salt_pct: ${x.toFixed()}`));
+  return duplicates.length > 0 ? missing(duplicates) : ok(sorted);
 }
 
 function bracketOf(a: Pt, b: Pt): Bracket {
@@ -89,26 +86,17 @@ export function viscosityAt(points: readonly SaltPoint[], saltPct: string): Resu
     return missing([gap('invalid_input', 'saltPct')]);
   }
   const pts = prepared.value;
-  const first = pts[0]!;
-  const last = pts[pts.length - 1]!;
-  if (x.lt(first.x) || x.gt(last.x)) {
+  const at = interpolateAt(pts, x);
+  if (at === null) {
+    const first = pts[0]!;
+    const last = pts[pts.length - 1]!;
     return missing([
       gap(`out_of_measured_range: ${x.toFixed()} not in [${first.x.toFixed()}, ${last.x.toFixed()}]`, 'viscosity_mPas'),
     ]);
   }
-  for (let i = 0; i < pts.length; i++) {
-    const p = pts[i]!;
-    if (x.eq(p.x)) {
-      return ok({ viscosity_mPas: p.y.toFixed(), bracket: bracketOf(p, p), confidence: p.src.confidence });
-    }
-    const next = pts[i + 1]!;
-    if (x.lt(next.x)) {
-      const y = p.y.plus(x.minus(p.x).mul(next.y.minus(p.y)).div(next.x.minus(p.x)));
-      return ok({ viscosity_mPas: y.toFixed(), bracket: bracketOf(p, next), confidence: worst(p, next) });
-    }
-  }
-  /* c8 ignore next */
-  throw new Error('unreachable: x within range but no segment found');
+  const lo = pts[at.lo]!;
+  const hi = pts[at.hi]!;
+  return ok({ viscosity_mPas: at.y.toFixed(), bracket: bracketOf(lo, hi), confidence: worst(lo, hi) });
 }
 
 export interface SaltSolution {
@@ -141,55 +129,20 @@ export function saltForViscosity(points: readonly SaltPoint[], targetMPas: strin
     return missing([gap('invalid_input', 'targetViscosity')]);
   }
   const pts = prepared.value;
-  const solutions: SaltSolution[] = [];
-  let up = false;
-  let down = false;
-  for (let i = 0; i + 1 < pts.length; i++) {
-    const a = pts[i]!;
-    const b = pts[i + 1]!;
-    up = up || b.y.gt(a.y);
-    down = down || b.y.lt(a.y);
-    const lo = D.min(a.y, b.y);
-    const hi = D.max(a.y, b.y);
-    if (t.lt(lo) || t.gt(hi)) {
-      continue;
-    }
-    const segment = bracketOf(a, b);
-    const confidence = worst(a, b);
-    if (a.y.eq(b.y)) {
-      solutions.push({ saltPct: a.x.toFixed(), saltPctTo: b.x.toFixed(), segment, confidence });
-    } else if (t.eq(a.y)) {
-      solutions.push({ saltPct: a.x.toFixed(), segment, confidence });
-    } else if (t.eq(b.y)) {
-      solutions.push({ saltPct: b.x.toFixed(), segment, confidence });
-    } else {
-      const x = a.x.plus(t.minus(a.y).mul(b.x.minus(a.x)).div(b.y.minus(a.y)));
-      solutions.push({ saltPct: x.toFixed(), segment, confidence });
-    }
-  }
-  // A knot shared by two segments yields the same point twice; keep the first. A point that lies
-  // inside a flat-interval solution is redundant.
-  const intervals = solutions.filter((s) => s.saltPctTo !== undefined);
-  const seen = new Set<string>();
-  const unique = solutions.filter((s) => {
-    if (s.saltPctTo === undefined) {
-      const x = new D(s.saltPct);
-      if (intervals.some((i) => x.gte(i.saltPct) && x.lte(i.saltPctTo!))) {
-        return false;
-      }
-    }
-    const key = `${s.saltPct}|${s.saltPctTo ?? ''}`;
-    if (seen.has(key)) {
-      return false;
-    }
-    seen.add(key);
-    return true;
+  const { solutions: found, monotonic } = solveForY(pts, t);
+  const solutions = found.map((f): SaltSolution => {
+    const a = pts[f.lo]!;
+    const b = pts[f.hi]!;
+    return {
+      saltPct: f.x.toFixed(),
+      ...(f.xTo !== undefined && { saltPctTo: f.xTo.toFixed() }),
+      segment: bracketOf(a, b),
+      confidence: worst(a, b),
+    };
   });
-  unique.sort((p, q) => new D(p.saltPct).comparedTo(new D(q.saltPct)));
-  if (unique.length === 0) {
+  if (solutions.length === 0) {
     return missing([gap(`viscosity_not_on_curve: ${t.toFixed()}`, 'saltPct')]);
   }
-  const monotonic = !(up && down);
-  const warnings = unique.length > 1 ? ['multiple_salt_levels_give_target_viscosity'] : [];
-  return ok({ solutions: unique, monotonic }, warnings);
+  const warnings = solutions.length > 1 ? ['multiple_salt_levels_give_target_viscosity'] : [];
+  return ok({ solutions, monotonic }, warnings);
 }

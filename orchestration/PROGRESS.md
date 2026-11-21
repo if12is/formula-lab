@@ -54,3 +54,4 @@
 | 2026-11-21 | G-10 | done | Sanad mock بنفس العقد: SanadFake لـ Http::fake + mock server على /__mock/sanad (local/testing بس) | MockSanadRoutesTest ✓ |
 | 2026-11-21 | G-05 | done | مزامنة الأصناف: ربط صريح خامة ↔ منتج Sanad (مش بالاسم)، ونشر خامة جديدة كـ raw_material غير قابلة للبيع | SanadItemSyncTest ✓ |
 | 2026-11-21 | G-04 | done | ناحية Formula Lab: أجهزة Sanad بـ tokens وصلاحيات، idempotency، POST /changes لـ cache قراءة بس، outbox + ack، وSanadClient لوضع الـ LAN | 249 اختبار Laravel ✓ — 9 اختلافات في العقد متسجلة للتوحيد |
+| 2026-11-21 | K-07 | done | كمية الحمض/القلوي لـ pH مستهدف من منحنى معايرة مقاس (interpolation مشترك في core) | pH 6.6 ⇒ 0.15%، 500 جم ⇒ 0.75 جم |
