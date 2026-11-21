@@ -4,9 +4,9 @@
  * breadcrumbs derived from it, and the theme, language and user controls in the topbar. Pages render
  * only their own `<div class="kit-page">`.
  */
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import { router, usePage } from '@inertiajs/vue3';
-import { AppShell, Breadcrumbs, DropdownItem, LocaleSwitcher, NavItem, SidebarSection, UserMenu } from '@kit';
+import { AppShell, Breadcrumbs, DropdownItem, LocaleSwitcher, NavItem, SidebarSection, UserMenu, toast } from '@kit';
 import { useI18n } from '../composables/useI18n';
 import { findNavigationItem, homeItem, navigation } from '../config/navigation';
 
@@ -27,6 +27,19 @@ const crumbs = computed(() => {
         { label: t(current.labelKey) },
     ];
 });
+
+// Server flash messages ({ success, error, warning }) arrive already translated; each one becomes a kit toast.
+watch(
+    () => page.props.flash,
+    (flash) => {
+        for (const type of ['success', 'error', 'warning']) {
+            if (flash?.[type]) {
+                toast[type](flash[type]);
+            }
+        }
+    },
+    { immediate: true },
+);
 
 function switchLocale(code) {
     if (code !== locale.value) {

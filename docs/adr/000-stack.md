@@ -60,3 +60,6 @@ Owner asked for the latest versions: Laravel 12 → 13, Inertia 2 → 3, Vite 7 
 - Own commerce tables (purchasing, stock, sales): duplicates Sanad and causes drift.
 - Building UI components from scratch: Taif Kit already covers the need.
 - Server calling Sanad Central or the POS directly: the POS is behind NAT; an outbound-initiated design avoids inbound exposure.
+
+## Revision 2026-11-21 (Laravel conventions)
+Laravel tests are PHPUnit classes, not Pest (owner's house style, mirrors sanad-central). Pest and its plugins were removed from `apps/api`.

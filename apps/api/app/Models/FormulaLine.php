@@ -3,7 +3,8 @@
 namespace App\Models;
 
 use App\Casts\DecimalString;
-use App\Exceptions\ImmutableRecordException;
+use App\Enums\FormulaStatus;
+use App\Exceptions\Domain\ImmutableRecordException;
 use App\Support\DecimalNormalizer;
 use Database\Factories\FormulaLineFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -25,7 +26,7 @@ class FormulaLine extends Model
         $guard = function (self $line): void {
             $versionId = $line->getRawOriginal('formula_version_id') ?? $line->formula_version_id;
             $approved = FormulaVersion::query()->whereKey($versionId)
-                ->where('status', 'approved')->exists();
+                ->where('status', FormulaStatus::Approved)->exists();
             if ($approved) {
                 throw ImmutableRecordException::approvedFormulaVersion((string) $versionId);
             }

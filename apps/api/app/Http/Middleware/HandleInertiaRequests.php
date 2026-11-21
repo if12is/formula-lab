@@ -51,6 +51,12 @@ class HandleInertiaRequests extends Middleware
                     ->values()
                     ->all(),
             ],
+            // Flashed messages are translated where they are flashed; the layout shows them as toasts.
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
+                'warning' => fn () => $request->session()->get('warning'),
+            ],
             'theme' => ['preference' => UiPreferences::theme($request)],
             // The whole dictionary travels once per locale; later visits leave it out.
             'translations' => Inertia::once(fn (): array => Translations::for($locale))->as("translations.{$locale}"),

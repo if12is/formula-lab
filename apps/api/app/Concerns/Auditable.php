@@ -51,7 +51,7 @@ trait Auditable
      */
     private function writeAudit(AuditAction $action, ?array $before, ?array $after): void
     {
-        AuditLog::create([
+        AuditLog::query()->create([
             'table_name' => $this->getTable(),
             'record_id' => (string) $this->getKey(),
             'action' => $action,

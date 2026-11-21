@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Enums\FormulaStatus;
-use App\Exceptions\ImmutableRecordException;
+use App\Exceptions\Domain\ImmutableRecordException;
 use App\Support\CanonicalJson;
 use Database\Factories\FormulaVersionFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -73,6 +73,7 @@ class FormulaVersion extends Model
         return $this->lines->map(fn (FormulaLine $line): array => $line->canonical())->all();
     }
 
+    /** @param  list<array<string, mixed>>  $canonicalLines */
     public static function hashLines(array $canonicalLines): string
     {
         return CanonicalJson::hash($canonicalLines);

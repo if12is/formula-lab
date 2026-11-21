@@ -11,7 +11,7 @@ use App\Support\DecimalNormalizer;
  * Out of scope for now: a "sources diff" (lines whose materials' chosen property sources
  * changed between the versions); it needs the value-selection rule of D-04.
  */
-class FormulaDiffService
+final class FormulaDiffService
 {
     /**
      * Lines are matched by trade material (n-th occurrence of a material pairs with the n-th in the

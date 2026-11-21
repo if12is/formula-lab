@@ -57,6 +57,15 @@ test.describe('app shell', () => {
     await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
     await expect(page.getByRole('heading', { level: 1, name: 'Dashboard' })).toBeVisible();
+    // The server flashes the confirmation in the newly chosen language; the layout shows it as a kit toast.
+    await expect(page.locator('[data-sonner-toast]').getByText('Language saved.')).toBeVisible();
+  });
+
+  test('saving the theme shows the server confirmation as a toast', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('button', { name: 'العرض' }).click();
+    await page.getByRole('menuitemradio', { name: 'داكن' }).click();
+    await expect(page.locator('[data-sonner-toast]').getByText('تم حفظ المظهر.')).toBeVisible();
   });
 });
 

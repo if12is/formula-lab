@@ -2,9 +2,13 @@
 
 namespace App\Enums;
 
+use App\Enums\Concerns\HasOptions;
+
 /** Confidence level of a stored value (plan/00-research/02-interim-data-sources.md). */
 enum Confidence: string
 {
+    use HasOptions;
+
     case L1CoaBatch = 'L1_coa_batch';
     case L2SupplierTds = 'L2_supplier_tds';
     case L3Standard = 'L3_standard';

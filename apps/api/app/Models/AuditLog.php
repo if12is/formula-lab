@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Enums\AuditAction;
-use App\Exceptions\ImmutableRecordException;
+use App\Exceptions\Domain\ImmutableRecordException;
 use Database\Factories\AuditLogFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

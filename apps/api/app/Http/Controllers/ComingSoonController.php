@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use Inertia\Inertia;
-use Inertia\Response;
+use Inertia\Response as InertiaResponse;
 
 class ComingSoonController extends Controller
 {
-    public function __invoke(string $section): Response
+    public function __invoke(string $section): InertiaResponse
     {
         return Inertia::render('ComingSoon', ['section' => $section]);
     }

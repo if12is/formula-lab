@@ -2,6 +2,7 @@
 
 namespace App\Http\Filters;
 
+use App\Enums\FilterType;
 use BackedEnum;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;

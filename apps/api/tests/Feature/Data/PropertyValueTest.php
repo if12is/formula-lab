@@ -1,79 +1,99 @@
 <?php
 
+namespace Tests\Feature\Data;
+
 use App\Enums\Confidence;
 use App\Models\PropertyValue;
 use App\Models\Source;
 use App\Models\Substance;
 use App\Models\TradeMaterial;
 use Illuminate\Database\QueryException;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
+use Tests\TestCase;
 
-it('stores a property as a single value', function () {
-    $pv = PropertyValue::factory()->create(['value' => '1.050', 'min' => null, 'max' => null]);
+class PropertyValueTest extends TestCase
+{
+    use RefreshDatabase;
 
-    $fresh = $pv->fresh();
-    expect($fresh->value)->toBe('1.050')->and($fresh->min)->toBeNull()->and($fresh->max)->toBeNull();
-});
+    public function test_it_stores_a_property_as_a_single_value(): void
+    {
+        $pv = PropertyValue::factory()->create(['value' => '1.050', 'min' => null, 'max' => null]);
 
-it('stores a property as a range', function () {
-    $pv = PropertyValue::factory()->range('187', '194')->create();
-
-    $fresh = $pv->fresh();
-    expect($fresh->value)->toBeNull()->and($fresh->min)->toBe('187')->and($fresh->max)->toBe('194');
-});
-
-it('stores an open-ended range with only a max', function () {
-    $pv = PropertyValue::factory()->create(['value' => null, 'max' => '0.5']);
-
-    $fresh = $pv->fresh();
-    expect($fresh->min)->toBeNull()->and($fresh->max)->toBe('0.5');
-});
-
-it('rejects a row with neither a value nor a bound', function () {
-    expect(fn () => DB::transaction(fn () => PropertyValue::factory()->create(['value' => null])))
-        ->toThrow(QueryException::class, 'property_values_has_value_check');
-});
-
-it('rejects a range with min above max', function () {
-    expect(fn () => DB::transaction(fn () => PropertyValue::factory()->range('10', '5')->create()))
-        ->toThrow(QueryException::class, 'property_values_range_order_check');
-});
-
-it('requires a source', function () {
-    expect(fn () => DB::transaction(fn () => PropertyValue::factory()->create(['source_id' => null])))
-        ->toThrow(QueryException::class);
-});
-
-it('accepts every confidence level and rejects an unknown one', function () {
-    foreach (Confidence::cases() as $level) {
-        PropertyValue::factory()->create(['confidence' => $level]);
+        $fresh = $pv->fresh();
+        $this->assertSame('1.050', $fresh->value);
+        $this->assertNull($fresh->min);
+        $this->assertNull($fresh->max);
     }
-    expect(PropertyValue::count())->toBe(count(Confidence::cases()));
 
-    $pv = PropertyValue::first();
-    expect(fn () => DB::transaction(fn () => DB::table('property_values')->where('id', $pv->id)->update(['confidence' => 'L9_guess'])))
-        ->toThrow(QueryException::class, 'property_values_confidence_check');
-});
+    public function test_it_stores_a_property_as_a_range(): void
+    {
+        $pv = PropertyValue::factory()->range('187', '194')->create();
 
-it('rejects float values', function () {
-    expect(fn () => PropertyValue::factory()->create(['value' => 1.5]))->toThrow(InvalidArgumentException::class);
-});
+        $fresh = $pv->fresh();
+        $this->assertNull($fresh->value);
+        $this->assertSame('187', $fresh->min);
+        $this->assertSame('194', $fresh->max);
+    }
 
-it('attaches to substances and trade materials through the entity relation', function () {
-    $substance = Substance::factory()->create();
-    $material = TradeMaterial::factory()->create();
-    $source = Source::factory()->create();
+    public function test_it_stores_an_open_ended_range_with_only_a_max(): void
+    {
+        $pv = PropertyValue::factory()->create(['value' => null, 'max' => '0.5']);
 
-    $a = PropertyValue::factory()->create(['entity_type' => 'substance', 'entity_id' => $substance->id, 'source_id' => $source->id]);
-    $b = PropertyValue::factory()->create(['entity_type' => 'trade_material', 'entity_id' => $material->id, 'source_id' => $source->id]);
+        $fresh = $pv->fresh();
+        $this->assertNull($fresh->min);
+        $this->assertSame('0.5', $fresh->max);
+    }
 
-    expect($a->entity->is($substance))->toBeTrue()
-        ->and($b->entity->is($material))->toBeTrue()
-        ->and($substance->propertyValues)->toHaveCount(1)
-        ->and($a->source->is($source))->toBeTrue();
-});
+    public function test_it_rejects_a_row_with_neither_a_value_nor_a_bound(): void
+    {
+        $this->assertThrowsException(QueryException::class, fn () => DB::transaction(fn () => PropertyValue::factory()->create(['value' => null])), 'property_values_has_value_check');
+    }
 
-it('rejects an unknown entity type', function () {
-    expect(fn () => DB::transaction(fn () => PropertyValue::factory()->create(['entity_type' => 'supplier'])))
-        ->toThrow(QueryException::class, 'property_values_entity_type_check');
-});
+    public function test_it_rejects_a_range_with_min_above_max(): void
+    {
+        $this->assertThrowsException(QueryException::class, fn () => DB::transaction(fn () => PropertyValue::factory()->range('10', '5')->create()), 'property_values_range_order_check');
+    }
+
+    public function test_it_requires_a_source(): void
+    {
+        $this->assertThrowsException(QueryException::class, fn () => DB::transaction(fn () => PropertyValue::factory()->create(['source_id' => null])));
+    }
+
+    public function test_it_accepts_every_confidence_level_and_rejects_an_unknown_one(): void
+    {
+        foreach (Confidence::cases() as $level) {
+            PropertyValue::factory()->create(['confidence' => $level]);
+        }
+        $this->assertSame(count(Confidence::cases()), PropertyValue::count());
+
+        $pv = PropertyValue::first();
+        $this->assertThrowsException(QueryException::class, fn () => DB::transaction(fn () => DB::table('property_values')->where('id', $pv->id)->update(['confidence' => 'L9_guess'])), 'property_values_confidence_check');
+    }
+
+    public function test_it_rejects_float_values(): void
+    {
+        $this->assertThrowsException(InvalidArgumentException::class, fn () => PropertyValue::factory()->create(['value' => 1.5]));
+    }
+
+    public function test_it_attaches_to_substances_and_trade_materials_through_the_entity_relation(): void
+    {
+        $substance = Substance::factory()->create();
+        $material = TradeMaterial::factory()->create();
+        $source = Source::factory()->create();
+
+        $a = PropertyValue::factory()->create(['entity_type' => 'substance', 'entity_id' => $substance->id, 'source_id' => $source->id]);
+        $b = PropertyValue::factory()->create(['entity_type' => 'trade_material', 'entity_id' => $material->id, 'source_id' => $source->id]);
+
+        $this->assertTrue($a->entity->is($substance));
+        $this->assertTrue($b->entity->is($material));
+        $this->assertCount(1, $substance->propertyValues);
+        $this->assertTrue($a->source->is($source));
+    }
+
+    public function test_it_rejects_an_unknown_entity_type(): void
+    {
+        $this->assertThrowsException(QueryException::class, fn () => DB::transaction(fn () => PropertyValue::factory()->create(['entity_type' => 'supplier'])), 'property_values_entity_type_check');
+    }
+}

@@ -2,6 +2,7 @@
 
 namespace App\Services\Reference;
 
+use App\Actions\Reference\PublishDatasetVersionAction;
 use App\Models\DatasetVersion;
 use App\Support\CanonicalJson;
 use App\Support\DecimalNormalizer;
@@ -14,8 +15,12 @@ use Illuminate\Support\Facades\DB;
  * Timestamps and author ids are excluded: they do not change the data, so re-importing the same
  * data yields the same hash.
  */
-class DatasetSnapshotService
+final class DatasetSnapshotService
 {
+    public function __construct(
+        private PublishDatasetVersionAction $publishDatasetVersion,
+    ) {}
+
     public const SCHEMA = 'fl.dataset/1';
 
     /** @var array<string, array{columns: list<string>, decimals: list<string>}> */
@@ -65,15 +70,11 @@ class DatasetSnapshotService
         $snapshot = $this->snapshot($tenantId);
         $hash = $this->hash($snapshot);
 
-        return DatasetVersion::query()->find($hash) ?? DatasetVersion::create([
-            'id' => $hash,
-            'notes' => $notes,
-            'manifest' => [
-                'schema' => self::SCHEMA,
-                'tenantId' => $tenantId,
-                'counts' => array_map('count', array_intersect_key($snapshot, self::TABLES)),
-            ],
-        ]);
+        return ($this->publishDatasetVersion)($hash, [
+            'schema' => self::SCHEMA,
+            'tenantId' => $tenantId,
+            'counts' => array_map('count', array_intersect_key($snapshot, self::TABLES)),
+        ], $notes);
     }
 
     /**

@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers\Dev;
 
-use App\Enums\TradeMaterialStatus;
 use App\Http\Controllers\Controller;
-use App\Http\Filters\ListQuery;
-use App\Models\TradeMaterial;
+use App\Services\Dev\ListDemoService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Inertia\Response;
+use Inertia\Response as InertiaResponse;
 
 /**
  * Test-only playground (routes exist only in local and testing) that exercises the
@@ -18,31 +16,15 @@ use Inertia\Response;
  */
 class ListDemoController extends Controller
 {
-    public function index(Request $request): Response
-    {
-        $list = ListQuery::for(TradeMaterial::query(), $request)
-            ->search(['trade_name', 'grade', 'function'])
-            ->select('status', TradeMaterialStatus::class)
-            ->select('function', optionsUrl: route('dev.list-demo.functions'), labelKey: 'dev.list_demo.filters.function')
-            ->boolean('is_mixture', labelKey: 'dev.list_demo.filters.is_mixture')
-            ->dateRange('created_at')
-            ->sortable(['trade_name', 'grade', 'status', 'created_at'], default: 'trade_name', labelPrefix: 'dev.list_demo.columns')
-            ->perPage(10, [10, 25, 50])
-            ->paginate(fn (TradeMaterial $material): array => [
-                'id' => $material->id,
-                'trade_name' => $material->trade_name,
-                'grade' => $material->grade,
-                'function' => $material->function,
-                'status' => $material->status->value,
-                'is_mixture' => $material->is_mixture,
-                'created_at' => $material->created_at?->toDateString(),
-            ]);
+    public function __construct(
+        private ListDemoService $listDemoService,
+    ) {}
 
+    public function index(Request $request): InertiaResponse
+    {
         return Inertia::render('Dev/ListDemo', [
-            'list' => $list,
-            'materialOptions' => TradeMaterial::query()->orderBy('trade_name')->limit(8)->get(['id', 'trade_name'])
-                ->map(fn (TradeMaterial $material): array => ['value' => $material->id, 'label' => $material->trade_name])
-                ->all(),
+            'list' => $this->listDemoService->list($request, route('dev.list-demo.functions')),
+            'materialOptions' => $this->listDemoService->materialOptions(),
             'searchUrl' => route('dev.list-demo.materials'),
         ]);
     }
@@ -50,27 +32,12 @@ class ListDemoController extends Controller
     /** JSON for server-searched selects: [{ value, label, description }]. */
     public function materials(Request $request): JsonResponse
     {
-        $term = trim((string) $request->query('q', ''));
-
-        $results = TradeMaterial::query()
-            ->when($term !== '', fn ($query) => $query->where('trade_name', 'ilike', '%'.addcslashes($term, '\\%_').'%'))
-            ->orderBy('trade_name')
-            ->limit(10)
-            ->get(['id', 'trade_name', 'function'])
-            ->map(fn (TradeMaterial $material): array => [
-                'value' => $material->id,
-                'label' => $material->trade_name,
-                'description' => $material->function,
-            ]);
-
-        return response()->json($results);
+        return response()->json($this->listDemoService->searchMaterials(trim((string) $request->query('q', ''))));
     }
 
     /** JSON options for the "function" filter: [{ value, label }]. */
     public function functions(): JsonResponse
     {
-        $functions = TradeMaterial::query()->whereNotNull('function')->distinct()->orderBy('function')->pluck('function');
-
-        return response()->json($functions->map(fn (string $function): array => ['value' => $function, 'label' => $function])->values());
+        return response()->json($this->listDemoService->functionOptions());
     }
 }

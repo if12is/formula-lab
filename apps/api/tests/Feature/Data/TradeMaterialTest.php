@@ -1,55 +1,69 @@
 <?php
 
+namespace Tests\Feature\Data;
+
 use App\Enums\TradeMaterialStatus;
 use App\Models\Substance;
 use App\Models\TradeMaterial;
 use Illuminate\Database\QueryException;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
+use Tests\TestCase;
 
-it('lets one substance have several trade grades', function () {
-    $substance = Substance::factory()->create(['cas' => '1-11-1', 'mw' => '288.380']);
-    TradeMaterial::factory()->for($substance)->create(['trade_name' => 'Material A 70%', 'grade' => '70']);
-    TradeMaterial::factory()->for($substance)->create(['trade_name' => 'Material A 28%', 'grade' => '28']);
+class TradeMaterialTest extends TestCase
+{
+    use RefreshDatabase;
 
-    expect($substance->tradeMaterials)->toHaveCount(2)
-        ->and($substance->tradeMaterials->pluck('grade')->sort()->values()->all())->toBe(['28', '70']);
-});
+    public function test_it_lets_one_substance_have_several_trade_grades(): void
+    {
+        $substance = Substance::factory()->create(['cas' => '1-11-1', 'mw' => '288.380']);
+        TradeMaterial::factory()->for($substance)->create(['trade_name' => 'Material A 70%', 'grade' => '70']);
+        TradeMaterial::factory()->for($substance)->create(['trade_name' => 'Material A 28%', 'grade' => '28']);
 
-it('stores a mixture without a substance and keeps Sanad references as soft uuids', function () {
-    $sanadProduct = fake()->uuid();
-    $material = TradeMaterial::factory()->mixture()->create([
-        'sanad_product_uuid' => $sanadProduct,
-        'sanad_supplier_uuid' => fake()->uuid(),
-    ]);
+        $this->assertCount(2, $substance->tradeMaterials);
+        $this->assertSame(['28', '70'], $substance->tradeMaterials->pluck('grade')->sort()->values()->all());
+    }
 
-    $fresh = $material->fresh();
-    expect($fresh->substance_id)->toBeNull()
-        ->and($fresh->is_mixture)->toBeTrue()
-        ->and($fresh->status)->toBe(TradeMaterialStatus::Draft)
-        ->and($fresh->sanad_product_uuid)->toBe($sanadProduct);
-});
+    public function test_it_stores_a_mixture_without_a_substance_and_keeps_sanad_references_as_soft_uuids(): void
+    {
+        $sanadProduct = fake()->uuid();
+        $material = TradeMaterial::factory()->mixture()->create([
+            'sanad_product_uuid' => $sanadProduct,
+            'sanad_supplier_uuid' => fake()->uuid(),
+        ]);
 
-it('keeps molecular weight exact, with no float rounding', function () {
-    $substance = Substance::factory()->create(['mw' => '288.38000000000000000001']);
+        $fresh = $material->fresh();
+        $this->assertNull($fresh->substance_id);
+        $this->assertTrue($fresh->is_mixture);
+        $this->assertSame(TradeMaterialStatus::Draft, $fresh->status);
+        $this->assertSame($sanadProduct, $fresh->sanad_product_uuid);
+    }
 
-    expect($substance->fresh()->mw)->toBe('288.38000000000000000001');
-});
+    public function test_it_keeps_molecular_weight_exact_with_no_float_rounding(): void
+    {
+        $substance = Substance::factory()->create(['mw' => '288.38000000000000000001']);
 
-it('rejects a float molecular weight', function () {
-    expect(fn () => Substance::factory()->create(['mw' => 288.38]))->toThrow(InvalidArgumentException::class);
-});
+        $this->assertSame('288.38000000000000000001', $substance->fresh()->mw);
+    }
 
-it('refuses a duplicate CAS but allows several substances without one', function () {
-    Substance::factory()->create(['cas' => '1-11-1']);
-    Substance::factory()->count(2)->create(['cas' => null]);
+    public function test_it_rejects_a_float_molecular_weight(): void
+    {
+        $this->assertThrowsException(InvalidArgumentException::class, fn () => Substance::factory()->create(['mw' => 288.38]));
+    }
 
-    expect(fn () => DB::transaction(fn () => Substance::factory()->create(['cas' => '1-11-1'])))
-        ->toThrow(QueryException::class);
-});
+    public function test_it_refuses_a_duplicate_cas_but_allows_several_substances_without_one(): void
+    {
+        Substance::factory()->create(['cas' => '1-11-1']);
+        Substance::factory()->count(2)->create(['cas' => null]);
 
-it('refuses an unknown trade material status at the database level', function () {
-    $material = TradeMaterial::factory()->create();
+        $this->assertThrowsException(QueryException::class, fn () => DB::transaction(fn () => Substance::factory()->create(['cas' => '1-11-1'])));
+    }
 
-    expect(fn () => DB::transaction(fn () => DB::table('trade_materials')->where('id', $material->id)->update(['status' => 'archived'])))
-        ->toThrow(QueryException::class);
-});
+    public function test_it_refuses_an_unknown_trade_material_status_at_the_database_level(): void
+    {
+        $material = TradeMaterial::factory()->create();
+
+        $this->assertThrowsException(QueryException::class, fn () => DB::transaction(fn () => DB::table('trade_materials')->where('id', $material->id)->update(['status' => 'archived'])));
+    }
+}
