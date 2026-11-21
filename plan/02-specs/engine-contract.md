@@ -10,9 +10,13 @@ interface EngineInput {
   engineVersion: string;          // semver, pinned
   datasetVersion: string;         // hash of reference data snapshot
   formula: { lines: { materialId: string; percentWW: string }[]; productDensity?: SourcedValue };
-  batch?: { size: Quantity /* kg or L */; wastagePct: string; packSize: Quantity; packCost: string };
-  prices: Record<string /*materialId*/, SourcedValue /* EGP/kg dated */>;
-  policy: { allowConfidenceBelow?: Confidence /* default L6 */; rounding: 'default' };
+  batch?: { size: Quantity /* kg or L */; wastagePct: string; packSize: Quantity };
+  prices: Record<string /*materialId*/, SourcedValue /* money per kg, dated */>;
+  packaging?: { perPack: SourcedValue /* EGP per pack, dated; required when batch is given, else missing 'packaging.perPack' */ };
+  pricing?: { marginPct: string /* 0 <= m < 100 */ };
+  fxRates?: FxRate[];             // dated explicit rates; no defaults. Non-EGP price without a rate => missing
+  policy: { allowConfidenceBelow?: Confidence /* default L6 */; rounding: 'default';
+            overrides?: { materialId?: string; property: string; signedBy: string; reason: string }[] /* signed permission for L7 */ };
 }
 
 interface EngineOutput {
