@@ -14,7 +14,7 @@
 13,C-05,C,agent,C-02,done,تحويل العملات بسعر صرف مؤرخ (مصدر: CBE)
 14,C-06,C,agent,C-03,done,Property-based tests (fast-check): التحويل ذهابًا وعودة بدون فقد
 15,C-07,C,agent,,done,"نوع Result<T, MissingData[]> بدل throw للداتا الناقصة"
-16,C-08,C,agent,,todo,جداول OIML R 22 الكحولية (كثافة ↔ %v/v ↔ %w/w عند 20°C) كجدول حتمي + interpolation
+16,C-08,C,agent,,done,جداول OIML R 22 الكحولية (كثافة ↔ %v/v ↔ %w/w عند 20°C) كجدول حتمي + interpolation
 17,C-09,C,agent,,done,وحدات العد: قطعة، كرتونة، بالتة + تحويلات (عبوات/كرتونة، كراتين/بالتة)
 18,D-01,D,agent,,todo,"تصميم الـ schema (substances, trade_materials, suppliers, coa, coa_values, specs, prices, sources, dataset_versions, formulas, formula_versions, batches, lab_results, tiers, rules)"
 19,D-02,D,agent,D-01,todo,"فصل substance (مادة كيميائية: CAS, MW) عن trade_material (درجة تجارية: SLES 70% من مورد X)"

@@ -14,4 +14,5 @@ export * from './core/convert';
 export * from './core/round';
 export * from './core/fx';
 export * from './core/count-units';
+export * from './core/alcohol';
 export { canonicalJson, inputHash, outputHash, sha256Hex } from './hash';
