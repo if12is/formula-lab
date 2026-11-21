@@ -34,7 +34,7 @@
 33,F-06,F,agent,F-01,todo,التصبين NaOH/KOH بالنقاوة + 3 طرق للماء + نطاق SAP (min/typ/max)
 34,F-07,F,agent,,todo,خواص الصابون من fatty acid profile (موسومة مؤشر)
 35,F-08,F,agent,,done,HLB: required + blend + Griffin + Davies
-36,F-09,F,agent,,todo,Salt curve: interpolation خطي على قياسات المستخدم فقط، وبرة المدى = خطأ
+36,F-09,F,agent,,done,Salt curve: interpolation خطي على قياسات المستخدم فقط، وبرة المدى = خطأ
 37,F-10,F,agent,F-01,todo,Explain trace: كل رقم ناتج معاه شجرة حسابه ومصادر مدخلاته
 38,F-11,F,agent,A-08,todo,200+ golden test (حالات حقيقية من Phase A محسوبة يدويًا وموقعة من الكيميائي)
 39,F-12,F,agent,F-10,todo,تقرير دفعة PDF موقّع بـ hash (التركيبة + نسخة الداتا + نسخة المحرك)

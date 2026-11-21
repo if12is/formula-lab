@@ -21,3 +21,4 @@
 | 2026-11-21 | C-06 | done | property tests fast-check 5×10,000 (seed 42) | tests/core.prop.test.ts |
 | 2026-11-21 | C-08 | done | جداول OIML R22 عند 20°C من الصيغة الرسمية (A1..A12) + interpolation بدون extrapolation | 50 نقطة من الجدول المطبوع (Table IIIa/IIIb) ✓، coverage 100% |
 | 2026-11-21 | F-08 | done | HLB: required (oil phase) + blend + Griffin + Davies (group numbers مدخلات بمصدر) | فحص يدوي: rHLB=8، f_high=0.62617، Griffin=14 ✓ |
+| 2026-11-21 | F-09 | done | منحنى الملح: interpolation على القياسات بس، بره المدى = missing | فحص يدوي: 1.5% ⇒ 1250 mPa·s، 2.5% ⇒ out_of_measured_range ✓ |
