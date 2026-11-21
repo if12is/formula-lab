@@ -52,3 +52,4 @@
 | 2026-11-21 | F-12 | partial | مستند تقرير الدفعة الحتمي + reportHash (من غير timestamps جوه الـ hash) + verify؛ رسم الـ PDF في S-17 | 24 اختبار: نفس المدخلات ⇒ نفس الـ hash، أي تعديل ⇒ hash مختلف |
 | 2026-11-21 | G-03 | partial | PR في Sanad (feat/manufacturing-api): item_kind/is_sellable، idempotency، tokens، قراءات، upsert، صرف/استلام إنتاج، أسعار جملة، ربط outbound من جهاز المصنع | 60 اختبار جديد ✓، نفس فشل البيئة قبل/بعد (131)؛ PR https://github.com/wasef201/sanad/pull/1 — مستني مراجعة صاحب المشروع |
 | 2026-11-21 | G-10 | done | Sanad mock بنفس العقد: SanadFake لـ Http::fake + mock server على /__mock/sanad (local/testing بس) | MockSanadRoutesTest ✓ |
+| 2026-11-21 | G-05 | done | مزامنة الأصناف: ربط صريح خامة ↔ منتج Sanad (مش بالاسم)، ونشر خامة جديدة كـ raw_material غير قابلة للبيع | SanadItemSyncTest ✓ |

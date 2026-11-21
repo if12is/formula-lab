@@ -45,7 +45,7 @@
 44,G-02,G,agent,,done,تحديد مصدر الحقيقة لكل كيان: Sanad (موردين، مشتريات، مخزون، مبيعات، عملاء، موزعين، أسعار جملة) / Formula Lab (تركيبات، COA، landed cost، تكلفة، فئات، مطابقة، معمل)
 45,G-03,G,human,G-01,partial,تصميم الـ endpoints الناقصة في Sanad (مثلًا: upsert منتج، استلام إنتاج تام، صرف خامات لأمر إنتاج، قراءة مشتريات بتفاصيلها، webhook لتغيّر سعر شراء) — كـ PR منفصل في ريبو sanad
 46,G-04,G,agent,G-03,todo,SanadClient في Formula Lab (Laravel HTTP client، Bearer token، idempotency key، retries، logging)
-47,G-05,G,agent,G-04,todo,مزامنة الأصناف: الخامات والفوارغ والكراتين متسجلة كمنتجات في Sanad بفئات؛ Formula Lab يربطها بـ trade_materials/items بـ external_id
+47,G-05,G,agent,G-04,done,مزامنة الأصناف: الخامات والفوارغ والكراتين متسجلة كمنتجات في Sanad بفئات؛ Formula Lab يربطها بـ trade_materials/items بـ external_id
 48,G-06,G,human,G-04,todo,مزامنة الموردين والمشتريات (قراءة فقط) لحساب متوسط سعر الشراء الفعلي
 49,G-07,G,agent,G-06,todo,Landed cost overlay: بنود الشحن والجمارك والتخليص والتمويل تتسجل في Formula Lab مربوطة بـ purchase_id من Sanad وتتوزع على أصنافه
 50,G-08,G,agent,A-13,todo,FX مؤرخ + VAT مدخلات حسب المصفوفة الضريبية
