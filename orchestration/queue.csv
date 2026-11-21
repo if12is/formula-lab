@@ -113,7 +113,7 @@
 112,N-02,N,human,A-09,todo,ترجمة ES 1562 و ES 4900 لقواعد (بعد شراء النصوص)
 113,N-03,N,agent,E-01,todo,قواعد CosIng Annex II/III/V/VI + قاعدة مجموع النسب ≤ 1
 114,N-04,N,agent,E-07,todo,قواعد IFRA: نسبة العطر × حد شهادة IFRA للعطر حسب الفئة
-115,N-05,N,agent,,todo,UNKNOWN لما الداتا ناقصة (مش PASS)
+115,N-05,N,agent,,done,UNKNOWN لما الداتا ناقصة (مش PASS)
 116,N-06,N,agent,,todo,مولّد قائمة INCI مرتبة تنازليًا (و<1% بأي ترتيب) + تحذيرات Annex III الإلزامية
 117,N-07,N,agent,N-02,todo,مولّد بطاقة منظفات حسب ES 6910 (عربي)
 118,N-08,N,agent,,todo,مساعد ملف إخطار EDA (checklist + المستندات)
