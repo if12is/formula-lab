@@ -63,3 +63,4 @@
 | 2026-11-21 | N-01 | done | Rules DSL بمصدر إلزامي + hash لكل rule set + evaluator (PASS/FAIL/UNKNOWN، مجموع نسب Annex III) | dsl.test.ts، evaluate.test.ts |
 | 2026-11-21 | N-05 | done | داتا ناقصة ⇒ UNKNOWN، عمرها ما تبقى PASS (property-based) | compliance.prop.test.ts |
 | 2026-11-21 | N-06 | done | قائمة INCI تنازلي + حد 1% + دمج المكرر + تحذيرات البطاقة | inci.test.ts |
+| 2026-11-21 | N-09 | partial | قاعدة الميثانول كـ rule data في draft set لحد ما المصدر التنظيمي يتحدد | methanol-rule.test.ts؛ المصدر في HUMAN-TODO |

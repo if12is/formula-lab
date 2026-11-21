@@ -1,0 +1,19 @@
+{
+  "id": "methanol-fragrance",
+  "version": "0.1.0",
+  "status": "draft",
+  "rules": [
+    {
+      "id": "methanol-forbidden-alcoholic-fragrance",
+      "version": "0.1.0",
+      "scope": { "productTypes": ["fine_fragrance", "air_freshener"] },
+      "target": { "substanceCas": "67-56-1" },
+      "operator": "forbidden",
+      "limit": null,
+      "unit": "%w/w",
+      "source": null,
+      "pendingSource": true,
+      "messageKey": "compliance.methanol.forbidden"
+    }
+  ]
+}
