@@ -42,7 +42,7 @@
 41,F-14,F,agent,F-01,todo,مكوّن موازنة معلن (q.s.) واحد للتركيبة يمتص الفرق لـ 100% بدل 'كمّل لأي سطر'، ويتسجل في التاريخ
 42,F-15,F,agent,C-03,todo,حاسبة النسبة من وزن المادة وحجم التشغيلة بوحدات صريحة (جم/كجم/مل بكثافة)
 43,G-01,G,agent,,done,"قراءة كود Sanad (routes/api.php، docs/05-api-contract.md، Models: Product, ProductUnit, Uom, ProductBatch, Supplier, Purchase, PurchaseItem, StockMovement, WholesaleTier, Sale) وكتابة خريطة: إيه موجود وإيه ناقص"
-44,G-02,G,agent,,todo,تحديد مصدر الحقيقة لكل كيان: Sanad (موردين، مشتريات، مخزون، مبيعات، عملاء، موزعين، أسعار جملة) / Formula Lab (تركيبات، COA، landed cost، تكلفة، فئات، مطابقة، معمل)
+44,G-02,G,agent,,done,تحديد مصدر الحقيقة لكل كيان: Sanad (موردين، مشتريات، مخزون، مبيعات، عملاء، موزعين، أسعار جملة) / Formula Lab (تركيبات، COA، landed cost، تكلفة، فئات، مطابقة، معمل)
 45,G-03,G,human,G-01,todo,تصميم الـ endpoints الناقصة في Sanad (مثلًا: upsert منتج، استلام إنتاج تام، صرف خامات لأمر إنتاج، قراءة مشتريات بتفاصيلها، webhook لتغيّر سعر شراء) — كـ PR منفصل في ريبو sanad
 46,G-04,G,agent,G-03,todo,SanadClient في Formula Lab (Laravel HTTP client، Bearer token، idempotency key، retries، logging)
 47,G-05,G,agent,G-04,todo,مزامنة الأصناف: الخامات والفوارغ والكراتين متسجلة كمنتجات في Sanad بفئات؛ Formula Lab يربطها بـ trade_materials/items بـ external_id
