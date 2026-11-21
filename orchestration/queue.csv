@@ -39,7 +39,7 @@
 38,F-11,F,agent,A-08,todo,200+ golden test (حالات حقيقية من Phase A محسوبة يدويًا وموقعة من الكيميائي)
 39,F-12,F,agent,F-10,todo,تقرير دفعة PDF موقّع بـ hash (التركيبة + نسخة الداتا + نسخة المحرك)
 40,F-13,F,agent,G-07,todo,ربط المحرك بتكلفة landed بدل سعر المورد الخام
-41,F-14,F,agent,F-01,todo,مكوّن موازنة معلن (q.s.) واحد للتركيبة يمتص الفرق لـ 100% بدل 'كمّل لأي سطر'، ويتسجل في التاريخ
+41,F-14,F,agent,F-01,done,مكوّن موازنة معلن (q.s.) واحد للتركيبة يمتص الفرق لـ 100% بدل 'كمّل لأي سطر'، ويتسجل في التاريخ
 42,F-15,F,agent,C-03,todo,حاسبة النسبة من وزن المادة وحجم التشغيلة بوحدات صريحة (جم/كجم/مل بكثافة)
 43,G-01,G,agent,,done,"قراءة كود Sanad (routes/api.php، docs/05-api-contract.md، Models: Product, ProductUnit, Uom, ProductBatch, Supplier, Purchase, PurchaseItem, StockMovement, WholesaleTier, Sale) وكتابة خريطة: إيه موجود وإيه ناقص"
 44,G-02,G,agent,,done,تحديد مصدر الحقيقة لكل كيان: Sanad (موردين، مشتريات، مخزون، مبيعات، عملاء، موزعين، أسعار جملة) / Formula Lab (تركيبات، COA، landed cost، تكلفة، فئات، مطابقة، معمل)
