@@ -41,6 +41,7 @@ return [
         'uuid' => 'UUID',
         'name' => 'name',
         'preference' => 'appearance',
+        'layout' => 'navigation layout',
         'locale' => 'language',
         'trade_name' => 'trade name',
         'grade' => 'grade',

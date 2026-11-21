@@ -55,6 +55,47 @@ class InterfaceSettingsTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page->where('theme.preference', 'system'));
     }
 
+    public function test_it_defaults_to_the_sidebar_navigation_layout(): void
+    {
+        $this->get('/')
+            ->assertInertia(fn (Assert $page) => $page->where('theme.navLayout', config('ui.default_nav_layout')))
+            ->assertSee('data-nav-layout="sidebar"', false);
+    }
+
+    public function test_it_saves_a_valid_navigation_layout_in_a_cookie_and_renders_it_on_the_html_element(): void
+    {
+        $this->from('/')->put('/settings/nav-layout', ['layout' => 'topbar'])
+            ->assertRedirect('/')
+            ->assertCookie('fl_nav_layout', 'topbar');
+
+        $this->withCookie('fl_nav_layout', 'topbar')->get('/')
+            ->assertInertia(fn (Assert $page) => $page->where('theme.navLayout', 'topbar'))
+            ->assertSee('data-nav-layout="topbar"', false);
+    }
+
+    public function test_it_rejects_an_unknown_navigation_layout(): void
+    {
+        $this->from('/')->put('/settings/nav-layout', ['layout' => 'floating'])
+            ->assertSessionHasErrors(['layout' => __('validation.in', ['attribute' => __('validation.attributes.layout')])])
+            ->assertCookieMissing('fl_nav_layout');
+
+        $this->from('/')->put('/settings/nav-layout', [])
+            ->assertSessionHasErrors(['layout' => __('validation.required', ['attribute' => __('validation.attributes.layout')])]);
+    }
+
+    public function test_it_ignores_a_tampered_navigation_layout_cookie(): void
+    {
+        $this->withCookie('fl_nav_layout', 'floating')->get('/')
+            ->assertInertia(fn (Assert $page) => $page->where('theme.navLayout', 'sidebar'))
+            ->assertSee('data-nav-layout="sidebar"', false);
+    }
+
+    public function test_it_flashes_a_translated_success_message_when_the_navigation_layout_is_saved(): void
+    {
+        $this->from('/')->put('/settings/nav-layout', ['layout' => 'topbar'])
+            ->assertSessionHas('success', __('settings.nav_layout_saved', [], 'ar'));
+    }
+
     public function test_it_switches_to_english_left_to_right_and_shares_english_text(): void
     {
         $this->from('/')->put('/settings/locale', ['locale' => 'en'])

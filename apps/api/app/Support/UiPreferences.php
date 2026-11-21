@@ -5,7 +5,7 @@ namespace App\Support;
 use Illuminate\Http\Request;
 
 /**
- * The interface preferences a visitor has saved (theme, locale, display currency), read from cookies.
+ * The interface preferences a visitor has saved (theme, navigation layout, locale, display currency), read from cookies.
  * One place for the cookie names, the allowed values and the defaults, so the
  * middleware and the shared Inertia props agree. Saving goes through UiPreferenceService.
  */
@@ -16,6 +16,14 @@ final class UiPreferences
         $saved = $request->cookie(config('ui.cookies.theme'));
 
         return is_string($saved) && in_array($saved, config('ui.themes'), true) ? $saved : 'system';
+    }
+
+    /** Where the navigation goes: 'sidebar' or 'topbar'. */
+    public static function navLayout(Request $request): string
+    {
+        $saved = $request->cookie(config('ui.cookies.nav_layout'));
+
+        return is_string($saved) && in_array($saved, config('ui.nav_layouts'), true) ? $saved : config('ui.default_nav_layout');
     }
 
     public static function locale(Request $request): string

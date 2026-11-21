@@ -39,6 +39,11 @@ createInertiaApp({
                     theme: {
                         prop: 'theme.preference',
                         save: (preference) => router.put('/settings/theme', { preference }, { preserveState: true, preserveScroll: true, showProgress: false }),
+                        // Sidebar or top navigation: the server cookie owns it, exactly like the theme.
+                        navLayout: {
+                            prop: 'theme.navLayout',
+                            save: (layout) => router.put('/settings/nav-layout', { layout }, { preserveState: true, preserveScroll: true, showProgress: false }),
+                        },
                     },
                 }),
                 labels: kitLabels,

@@ -1,13 +1,14 @@
 /**
- * The sidebar, defined once. Labels are lang keys (lang/<locale>/nav.php); icons are Phosphor.
+ * The navigation (sidebar or top bar), defined once. Labels are lang keys (lang/<locale>/nav.php); icons are Phosphor.
  * AppLayout renders it and derives the breadcrumbs from it. Sections not built yet point at the
  * ComingSoon placeholder (config/ui.php `placeholder_sections`); a section leaves that list when
- * it gets its own route. An item with a `parentId` is listed in the sidebar and shows that item before it in the breadcrumbs.
+ * it gets its own route. A group without `labelKey` is unlabelled: its items sit in the top bar as plain
+ * links (and at the top of the sidebar); a labelled group is a dropdown in the top bar and a section in the sidebar.
+ * The same definition serves both layouts. An item with a `parentId` is listed in the sidebar and shows that item before it in the breadcrumbs.
  */
 export const navigation = [
     {
         id: 'overview',
-        labelKey: 'nav.groups.overview',
         items: [{ id: 'dashboard', href: '/', icon: 'ph:squares-four', labelKey: 'nav.dashboard', exact: true }],
     },
     {

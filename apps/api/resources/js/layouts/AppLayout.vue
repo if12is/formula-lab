@@ -1,6 +1,6 @@
 <script setup>
 /**
- * The persistent layout for every page: the kit's AppShell with the sidebar from config/navigation.js,
+ * The persistent layout for every page: the kit's AppShell with the navigation from config/navigation.js (one definition: a sidebar or the top bar, the kit decides),
  * breadcrumbs derived from it, and the theme, language and user controls in the topbar. Pages render
  * only their own `<div class="kit-page">`.
  */
@@ -55,7 +55,7 @@ function switchLocale(code) {
 <template>
     <AppShell :app-name="t('app.name')">
         <template #nav>
-            <SidebarSection v-for="group in navigation" :key="group.id" :label="t(group.labelKey)">
+            <SidebarSection v-for="group in navigation" :key="group.id" :label="group.labelKey ? t(group.labelKey) : undefined">
                 <NavItem
                     v-for="item in group.items"
                     :key="item.id"

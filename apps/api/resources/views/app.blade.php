@@ -1,12 +1,14 @@
 @php
     $locale = $page['props']['locale'];
     $theme = $page['props']['theme']['preference'];
+    $navLayout = $page['props']['theme']['navLayout'];
 @endphp
 <!DOCTYPE html>
 <html lang="{{ $locale['current'] }}" dir="{{ $locale['direction'] }}"
       data-theme-source="server"
       data-mode="{{ $theme === 'system' ? 'light' : $theme }}"
       data-theme-preference="{{ $theme }}"
+      data-nav-layout="{{ $navLayout }}"
       data-accent="leaf"
       data-reading="standard">
     <head>

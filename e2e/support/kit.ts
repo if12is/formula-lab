@@ -47,6 +47,16 @@ export async function setTheme(page: Page, theme: 'light' | 'dark'): Promise<voi
   await expect(page.locator('html')).toHaveAttribute('data-mode', theme);
 }
 
+/** Switches where the navigation goes through the Display menu and waits for the server to keep it in its cookie. */
+export async function setNavLayout(page: Page, layout: 'sidebar' | 'topbar'): Promise<void> {
+  const saved = page.waitForResponse((response) => response.url().endsWith('/settings/nav-layout') && response.request().method() === 'PUT');
+  await page.getByRole('button', { name: 'العرض' }).click();
+  await page.getByRole('menuitemradio', { name: layout === 'topbar' ? 'تنقل علوي' : 'قائمة جانبية' }).click();
+  expect((await saved).status()).toBeLessThan(400);
+  await page.keyboard.press('Escape');
+  await expect(page.locator('html')).toHaveAttribute('data-nav-layout', layout);
+}
+
 /** Lets the kit's page-enter animation finish before a screenshot or a measurement. */
 export const settle = (page: Page): Promise<void> => page.waitForTimeout(700);
 

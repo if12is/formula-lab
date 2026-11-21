@@ -2,7 +2,6 @@
 
 return [
     'groups' => [
-        'overview' => 'نظرة عامة',
         'formulation' => 'التركيبات',
         'quality' => 'الجودة',
         'operations' => 'التشغيل',

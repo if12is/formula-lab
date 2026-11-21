@@ -63,7 +63,7 @@ class HandleInertiaRequests extends Middleware
             ],
             // The known material properties (key, label key, units): selectors and labels read this one list.
             'propertyRegistry' => fn (): array => PropertyRegistry::options(),
-            'theme' => ['preference' => UiPreferences::theme($request)],
+            'theme' => ['preference' => UiPreferences::theme($request), 'navLayout' => UiPreferences::navLayout($request)],
             // The base currency, the visitor's display currency and the newest rate for it (the second figure next to EGP).
             'currency' => fn (): array => $this->displayCurrencyService->props(UiPreferences::displayCurrency($request)),
             // The whole dictionary travels once per locale; later visits leave it out.

@@ -13,10 +13,17 @@ return [
     /* Theme preferences a person can save (the kit's modes). */
     'themes' => ['system', 'light', 'dark'],
 
+    /* Where the navigation goes: a sidebar or along the top (the kit's navLayout). */
+    'nav_layouts' => ['sidebar', 'topbar'],
+
+    /* The layout used until a person chooses one. */
+    'default_nav_layout' => 'sidebar',
+
     /* Cookie names holding the preferences until users get stored settings. */
     'cookies' => [
         'theme' => 'fl_theme',
         'locale' => 'fl_locale',
+        'nav_layout' => 'fl_nav_layout',
         'display_currency' => 'fl_display_currency',
     ],
 

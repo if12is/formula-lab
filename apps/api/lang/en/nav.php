@@ -2,7 +2,6 @@
 
 return [
     'groups' => [
-        'overview' => 'Overview',
         'formulation' => 'Formulation',
         'quality' => 'Quality',
         'operations' => 'Operations',

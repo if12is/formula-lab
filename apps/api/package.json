@@ -20,7 +20,7 @@
         "@iconify/vue": "^5.0.5",
         "@inertiajs/vue3": "^3.11.0",
         "reka-ui": "^2.11.0",
-        "taif-kit": "github:if12is/taif-kit#v1.8.0",
+        "taif-kit": "github:if12is/taif-kit#ce11a4a",
         "vue": "^3.5",
         "ziggy-js": "^2.7.0"
     }

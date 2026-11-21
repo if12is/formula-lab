@@ -9,6 +9,7 @@ use Inertia\Inertia;
 Route::get('/', fn () => Inertia::render('Dashboard'))->name('home');
 
 Route::put('/settings/theme', [SettingsController::class, 'theme'])->name('settings.theme');
+Route::put('/settings/nav-layout', [SettingsController::class, 'navLayout'])->name('settings.nav-layout');
 Route::put('/settings/locale', [SettingsController::class, 'locale'])->name('settings.locale');
 Route::put('/settings/display-currency', [SettingsController::class, 'displayCurrency'])->name('settings.display-currency');
 

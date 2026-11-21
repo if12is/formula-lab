@@ -39,8 +39,8 @@ importers:
         specifier: ^2.11.0
         version: 2.11.0(vue@3.5.46(typescript@5.9.3))
       taif-kit:
-        specifier: github:if12is/taif-kit#v1.8.0
-        version: git+https://git@github.com:if12is/taif-kit.git#3b7e0bcadf7542d1937cf7ef2164895a429df850(@inertiajs/vue3@3.11.0(axios@1.21.1)(vue@3.5.46(typescript@5.9.3)))(reka-ui@2.11.0(vue@3.5.46(typescript@5.9.3)))(tailwindcss@4.3.5)(vue@3.5.46(typescript@5.9.3))
+        specifier: github:if12is/taif-kit#ce11a4a
+        version: git+https://git@github.com:if12is/taif-kit.git#ce11a4a0a27f52af464e226401ed5b4b60b219a3(@inertiajs/vue3@3.11.0(axios@1.21.1)(vue@3.5.46(typescript@5.9.3)))(reka-ui@2.11.0(vue@3.5.46(typescript@5.9.3)))(tailwindcss@4.3.5)(vue@3.5.46(typescript@5.9.3))
       vue:
         specifier: ^3.5
         version: 3.5.46(typescript@5.9.3)
@@ -1766,9 +1766,9 @@ packages:
     resolution: {integrity: sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==}
     engines: {node: '>=8'}
 
-  taif-kit@git+https://git@github.com:if12is/taif-kit.git#3b7e0bcadf7542d1937cf7ef2164895a429df850:
-    resolution: {commit: 3b7e0bcadf7542d1937cf7ef2164895a429df850, repo: git@github.com:if12is/taif-kit.git, type: git}
-    version: 1.8.0
+  taif-kit@git+https://git@github.com:if12is/taif-kit.git#ce11a4a0a27f52af464e226401ed5b4b60b219a3:
+    resolution: {commit: ce11a4a0a27f52af464e226401ed5b4b60b219a3, repo: git@github.com:if12is/taif-kit.git, type: git}
+    version: 1.9.0
     peerDependencies:
       '@inertiajs/vue3': '>=1.0.0'
       reka-ui: ^2.11.0
@@ -3579,7 +3579,7 @@ snapshots:
     dependencies:
       has-flag: 4.0.0
 
-  taif-kit@git+https://git@github.com:if12is/taif-kit.git#3b7e0bcadf7542d1937cf7ef2164895a429df850(@inertiajs/vue3@3.11.0(axios@1.21.1)(vue@3.5.46(typescript@5.9.3)))(reka-ui@2.11.0(vue@3.5.46(typescript@5.9.3)))(tailwindcss@4.3.5)(vue@3.5.46(typescript@5.9.3)):
+  taif-kit@git+https://git@github.com:if12is/taif-kit.git#ce11a4a0a27f52af464e226401ed5b4b60b219a3(@inertiajs/vue3@3.11.0(axios@1.21.1)(vue@3.5.46(typescript@5.9.3)))(reka-ui@2.11.0(vue@3.5.46(typescript@5.9.3)))(tailwindcss@4.3.5)(vue@3.5.46(typescript@5.9.3)):
     dependencies:
       '@iconify-json/ph': 1.2.2
       '@iconify/vue': 5.0.5(vue@3.5.46(typescript@5.9.3))

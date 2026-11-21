@@ -4,6 +4,7 @@ namespace Tests\Feature\Actions;
 
 use App\Actions\Settings\RememberDisplayCurrencyPreferenceAction;
 use App\Actions\Settings\RememberLocalePreferenceAction;
+use App\Actions\Settings\RememberNavLayoutPreferenceAction;
 use App\Actions\Settings\RememberThemePreferenceAction;
 use Illuminate\Support\Facades\Cookie;
 use Tests\TestCase;
@@ -18,6 +19,17 @@ class RememberUiPreferenceActionsTest extends TestCase
 
         $this->assertNotNull($cookie);
         $this->assertSame('dark', $cookie->getValue());
+        $this->assertEqualsWithDelta(time() + config('ui.cookie_minutes') * 60, $cookie->getExpiresTime(), 5);
+    }
+
+    public function test_it_queues_the_navigation_layout_cookie_with_the_configured_lifetime(): void
+    {
+        app(RememberNavLayoutPreferenceAction::class)('topbar');
+
+        $cookie = Cookie::queued(config('ui.cookies.nav_layout'));
+
+        $this->assertNotNull($cookie);
+        $this->assertSame('topbar', $cookie->getValue());
         $this->assertEqualsWithDelta(time() + config('ui.cookie_minutes') * 60, $cookie->getExpiresTime(), 5);
     }
 
