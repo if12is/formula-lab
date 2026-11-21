@@ -10,6 +10,7 @@ use App\Models\Formula;
 use App\Models\FormulaVersion;
 use App\Services\Formula\FormulaEditorService;
 use App\Services\Formula\FormulaHistoryService;
+use App\Services\Formula\FormulaLabelService;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
@@ -19,6 +20,7 @@ class FormulaVersionController extends Controller
     public function __construct(
         private FormulaEditorService $formulaEditorService,
         private FormulaHistoryService $formulaHistoryService,
+        private FormulaLabelService $formulaLabelService,
     ) {}
 
     public function edit(Formula $formula, FormulaVersion $version): InertiaResponse
@@ -48,6 +50,12 @@ class FormulaVersionController extends Controller
         return redirect()
             ->route('formulas.versions.edit', [$formula, $saved->version])
             ->with('success', __('formulas.version_saved', ['version' => $saved->version]));
+    }
+
+    /** The label page of one version: the INCI list, label warnings and the gaps that stop it being complete. */
+    public function label(Formula $formula, FormulaVersion $version): InertiaResponse
+    {
+        return Inertia::render('Formulas/Label', $this->formulaLabelService->forVersion($formula, $version));
     }
 
     /** The difference between two versions; with no query it compares the last two. */

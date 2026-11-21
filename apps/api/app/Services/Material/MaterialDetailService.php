@@ -3,6 +3,7 @@
 namespace App\Services\Material;
 
 use App\Models\AuditLog;
+use App\Models\MaterialComposition;
 use App\Models\Price;
 use App\Models\PropertyValue;
 use App\Models\TradeMaterial;
@@ -17,10 +18,11 @@ final class MaterialDetailService
     public function __construct(
         private SubstanceService $substanceService,
         private ExchangeRateLookupService $exchangeRateLookup,
+        private MaterialCompositionService $compositionService,
     ) {}
 
     /**
-     * @return array{material: array<string, mixed>, properties: list<array<string, mixed>>, prices: list<array<string, mixed>>, audit: list<array<string, mixed>>}
+     * @return array{material: array<string, mixed>, properties: list<array<string, mixed>>, prices: list<array<string, mixed>>, composition: list<array<string, mixed>>, audit: list<array<string, mixed>>}
      */
     public function detail(TradeMaterial $material): array
     {
@@ -32,6 +34,7 @@ final class MaterialDetailService
             'material' => $this->summary($material, $prices),
             'properties' => $properties,
             'prices' => $prices,
+            'composition' => $this->compositionService->rows($material),
             'audit' => $this->audit($material),
         ];
     }
@@ -49,6 +52,8 @@ final class MaterialDetailService
             'function' => $material->function,
             'status' => $material->status->value,
             'is_mixture' => $material->is_mixture,
+            'composition_complete' => $material->composition_complete,
+            'is_fragrance' => $material->is_fragrance,
             'sanad_linked' => $material->sanad_product_uuid !== null,
             'substance' => $material->substance === null ? null : [
                 'id' => $material->substance->getKey(),
@@ -97,6 +102,7 @@ final class MaterialDetailService
                 'confidence' => $value->confidence->value,
                 'valid_from' => $value->valid_from->toDateString(),
                 'lot_no' => $value->lot_no,
+                'category' => $value->category,
             ])
             ->all();
     }
@@ -139,15 +145,23 @@ final class MaterialDetailService
         $id = (string) $material->getKey();
         $propertyIds = PropertyValue::query()->where('entity_type', 'trade_material')->where('entity_id', $id)->pluck('id')->all();
         $priceIds = Price::query()->where('trade_material_id', $id)->pluck('id')->all();
+        // Components that were deleted since still have their create and delete rows, which carry the material id.
+        $componentIds = array_values(array_unique([
+            ...MaterialComposition::query()->where('trade_material_id', $id)->pluck('id')->all(),
+            ...AuditLog::query()->where('table_name', 'material_compositions')->whereRaw("coalesce(after, before) ->> 'trade_material_id' = ?", [$id])->pluck('record_id')->all(),
+        ]));
 
         return AuditLog::query()
-            ->where(function ($query) use ($id, $propertyIds, $priceIds): void {
+            ->where(function ($query) use ($id, $propertyIds, $priceIds, $componentIds): void {
                 $query->where(fn ($own) => $own->where('table_name', 'trade_materials')->where('record_id', $id))
                     ->orWhere(fn ($values) => $values->where('table_name', 'property_values')->where(fn ($match) => $match
                         ->whereIn('record_id', $propertyIds)
                         ->orWhereRaw("coalesce(after, before) ->> 'entity_id' = ?", [$id])))
                     ->orWhere(fn ($quotes) => $quotes->where('table_name', 'prices')->where(fn ($match) => $match
                         ->whereIn('record_id', $priceIds)
+                        ->orWhereRaw("coalesce(after, before) ->> 'trade_material_id' = ?", [$id])))
+                    ->orWhere(fn ($components) => $components->where('table_name', 'material_compositions')->where(fn ($match) => $match
+                        ->whereIn('record_id', $componentIds)
                         ->orWhereRaw("coalesce(after, before) ->> 'trade_material_id' = ?", [$id])));
             })
             ->orderByDesc('at')

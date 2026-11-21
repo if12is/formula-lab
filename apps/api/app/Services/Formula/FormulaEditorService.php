@@ -12,6 +12,7 @@ use App\Models\FormulaLine;
 use App\Models\FormulaVersion;
 use App\Models\TradeMaterial;
 use App\Models\User;
+use App\Services\Compliance\ComplianceEditorService;
 use App\Services\Material\MaterialOptionService;
 use Illuminate\Support\Facades\DB;
 
@@ -23,6 +24,7 @@ final class FormulaEditorService
         private MaterialOptionService $materialOptionService,
         private FormulaHistoryService $formulaHistoryService,
         private RecordFormulaBalanceAction $recordFormulaBalance,
+        private ComplianceEditorService $complianceEditorService,
     ) {}
 
     /**
@@ -42,9 +44,7 @@ final class FormulaEditorService
      */
     public function forVersion(Formula $formula, FormulaVersion $version): array
     {
-        $version->load('lines');
         $latest = (int) $formula->versions()->reorder()->max('version');
-        $materials = TradeMaterial::query()->with('substance')->whereIn('id', $version->lines->pluck('trade_material_id'))->get();
 
         return [
             ...$this->shared(),
@@ -54,6 +54,7 @@ final class FormulaEditorService
                 'name' => $formula->name,
                 'product_type' => $formula->product_type,
                 'tier' => $formula->tier?->value,
+                'ifra_category' => $formula->ifra_category,
             ],
             'version' => [
                 'number' => $version->version,
@@ -65,6 +66,24 @@ final class FormulaEditorService
                 // Approved versions are immutable; an older version is a base for a new one, never edited in place.
                 'editable' => $version->status !== FormulaStatus::Approved && $version->version === $latest,
             ],
+            ...$this->linesAndMaterials($version),
+            'history' => $this->formulaHistoryService->history($formula, $version),
+            // The rule sets the compliance panel hands to the engine (it runs in the browser, on the draft being edited).
+            'compliance' => ['ruleSets' => $this->complianceEditorService->ruleSets()],
+        ];
+    }
+
+    /**
+     * The lines of a version as the editor and the label page read them, with the materials they use (prices, composition, IFRA limits).
+     *
+     * @return array{lines: list<array<string, mixed>>, materials: object}
+     */
+    public function linesAndMaterials(FormulaVersion $version): array
+    {
+        $version->load('lines');
+        $materials = TradeMaterial::query()->with('substance')->whereIn('id', $version->lines->pluck('trade_material_id'))->get();
+
+        return [
             'lines' => $version->lines->map(fn (FormulaLine $line): array => [
                 'trade_material_id' => $line->trade_material_id,
                 'percent_ww' => $line->percent_ww === null ? '' : $this->plain($line->percent_ww),
@@ -72,7 +91,6 @@ final class FormulaEditorService
                 'phase' => $line->phase ?? '',
             ])->all(),
             'materials' => (object) $this->materialOptionService->forMaterials($materials),
-            'history' => $this->formulaHistoryService->history($formula, $version),
         ];
     }
 

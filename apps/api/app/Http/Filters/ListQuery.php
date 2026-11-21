@@ -40,7 +40,7 @@ final class ListQuery
     /** @var array{columns: list<string>, labelKey: string}|null */
     private ?array $search = null;
 
-    /** @var array<string, array{type: FilterType, column: string, labelKey: string, options: list<array{value: string, label?: string, labelKey?: string}>|null, optionsUrl: string|null}> */
+    /** @var array<string, array{type: FilterType, column: string, labelKey: string, options: list<array{value: string, label?: string, labelKey?: string}>|null, optionsUrl: string|null, using: callable|null}> */
     private array $filters = [];
 
     /** @var array<string, array{column: string, labelKey: string}> */
@@ -80,11 +80,15 @@ final class ListQuery
      * lang `enums.<snake_class>.<value>`), a list of values or option arrays, or null
      * when `$optionsUrl` serves a long list (any scalar is then accepted).
      *
+     * `$using` replaces the plain `where(column, value)` for a filter that is not a column comparison (a value inside a
+     * JSON column, a related row): `fn (Builder $query, string $value): mixed`. The value is whitelisted as usual.
+     *
      * @param  class-string<BackedEnum>|list<string|array{value: string, label?: string, labelKey?: string}>|null  $options
+     * @param  (callable(Builder, string): mixed)|null  $using
      */
-    public function select(string $key, string|array|null $options = null, ?string $column = null, ?string $labelKey = null, ?string $optionsUrl = null): self
+    public function select(string $key, string|array|null $options = null, ?string $column = null, ?string $labelKey = null, ?string $optionsUrl = null, ?callable $using = null): self
     {
-        return $this->addFilter(FilterType::Select, $key, $column, $labelKey, $options, $optionsUrl);
+        return $this->addFilter(FilterType::Select, $key, $column, $labelKey, $options, $optionsUrl, $using);
     }
 
     /**
@@ -255,9 +259,10 @@ final class ListQuery
     /**
      * @param  class-string<BackedEnum>|list<string|array{value: string, label?: string, labelKey?: string}>|null  $options
      */
-    private function addFilter(FilterType $type, string $key, ?string $column, ?string $labelKey, string|array|null $options = null, ?string $optionsUrl = null): self
+    private function addFilter(FilterType $type, string $key, ?string $column, ?string $labelKey, string|array|null $options = null, ?string $optionsUrl = null, ?callable $using = null): self
     {
         $this->filters[$key] = [
+            'using' => $using,
             'type' => $type,
             'column' => $column ?? $key,
             'labelKey' => $labelKey ?? "filters.{$key}",
@@ -412,7 +417,7 @@ final class ListQuery
     }
 
     /**
-     * @param  array{type: FilterType, column: string}  $filter
+     * @param  array{type: FilterType, column: string, using: callable|null}  $filter
      * @param  array<string, mixed>  $applied
      */
     private function applyFilter(Builder $query, string $key, array $filter, array $applied): void
@@ -422,6 +427,12 @@ final class ListQuery
         }
 
         $value = $applied[$key];
+
+        if ($filter['using'] !== null) {
+            ($filter['using'])($query, $value);
+
+            return;
+        }
         $column = $query->qualifyColumn($filter['column']);
 
         match ($filter['type']) {

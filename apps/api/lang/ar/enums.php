@@ -23,6 +23,27 @@ return [
         'PASS' => 'نجح',
         'FAIL' => 'فشل',
         'UNKNOWN' => 'غير معروف',
+        'NOT_APPLICABLE' => 'لا ينطبق',
+    ],
+    'rule_set_status' => [
+        'draft' => 'مسودة',
+        'published' => 'منشورة',
+    ],
+    'rule_operator' => [
+        '<=' => 'لا تزيد عن',
+        '<' => 'أقل من',
+        '>=' => 'لا تقل عن',
+        '>' => 'أكبر من',
+        '==' => 'تساوي',
+        'forbidden' => 'ممنوعة',
+        'required' => 'مطلوبة',
+    ],
+    'rule_target_type' => [
+        'substanceCas' => 'مادة (CAS)',
+        'inci' => 'مادة (INCI)',
+        'function' => 'وظيفة',
+        'materialId' => 'خامة',
+        'field' => 'حقل المنتج',
     ],
     'formula_status' => [
         'draft' => 'مسودة',

@@ -16,4 +16,5 @@ return [
     'available_chlorine' => 'Available chlorine',
     'ph' => 'pH',
     'viscosity' => 'Viscosity',
+    'ifra_limit' => 'IFRA limit for a category',
 ];

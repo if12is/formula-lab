@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Formula\FormulaController;
 use App\Http\Controllers\Formula\FormulaVersionController;
+use App\Http\Controllers\Material\MaterialCompositionController;
 use App\Http\Controllers\Material\MaterialController;
 use App\Http\Controllers\Material\MaterialPriceController;
 use App\Http\Controllers\Material\MaterialPropertyController;
@@ -28,6 +29,10 @@ Route::prefix('materials')->name('materials.')->group(function (): void {
         Route::delete('properties/{propertyValue}', [MaterialPropertyController::class, 'destroy'])->whereUuid('propertyValue')->name('properties.destroy');
         Route::post('prices', [MaterialPriceController::class, 'store'])->name('prices.store');
         Route::delete('prices/{price}', [MaterialPriceController::class, 'destroy'])->whereUuid('price')->name('prices.destroy');
+        Route::post('composition', [MaterialCompositionController::class, 'store'])->name('composition.store');
+        Route::put('composition-flags', [MaterialCompositionController::class, 'flags'])->name('composition.flags');
+        Route::put('composition/{composition}', [MaterialCompositionController::class, 'update'])->whereUuid('composition')->name('composition.update');
+        Route::delete('composition/{composition}', [MaterialCompositionController::class, 'destroy'])->whereUuid('composition')->name('composition.destroy');
     });
 });
 
@@ -45,7 +50,9 @@ Route::prefix('formulas')->name('formulas.')->group(function (): void {
     Route::prefix('{formula}')->whereUuid('formula')->scopeBindings()->group(function (): void {
         Route::get('/', [FormulaController::class, 'show'])->name('show');
         Route::get('compare', [FormulaVersionController::class, 'compare'])->name('compare');
+        Route::put('ifra-category', [FormulaController::class, 'updateIfraCategory'])->name('ifra-category.update');
         Route::get('versions/{version:version}/edit', [FormulaVersionController::class, 'edit'])->whereNumber('version')->name('versions.edit');
         Route::post('versions/{version:version}', [FormulaVersionController::class, 'store'])->whereNumber('version')->name('versions.store');
+        Route::get('versions/{version:version}/label', [FormulaVersionController::class, 'label'])->whereNumber('version')->name('versions.label');
     });
 });

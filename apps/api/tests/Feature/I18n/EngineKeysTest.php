@@ -13,7 +13,7 @@ use Tests\TestCase;
 class EngineKeysTest extends TestCase
 {
     /** Quoted lowercase keys in the engine that are result names, property names or trace labels, not messages. */
-    private const NOT_MESSAGES = ['cost.batch', 'cost.packaging', 'batch.remainder', 'input.days', 'water.ratio'];
+    private const NOT_MESSAGES = ['cost.batch', 'cost.packaging', 'batch.remainder', 'input.days', 'water.ratio', 'compliance.overall'];
 
     /** @return list<string> */
     private function engineMessageKeys(): array
@@ -26,7 +26,7 @@ class EngineKeysTest extends TestCase
                 continue;
             }
 
-            preg_match_all('/[\'"`]((?:formula|cost|confidence|input|density|batch|engine|soap|water|neutralize|active|alcohol|fragrance|percent_from_weight)\.[a-z0-9_]+)(?![A-Za-z0-9_.])/', (string) file_get_contents($file->getPathname()), $matches);
+            preg_match_all('/[\'"`]((?:formula|cost|confidence|input|density|batch|engine|soap|water|neutralize|active|alcohol|fragrance|percent_from_weight|compliance|inci|ifra|dsl)\.[a-z0-9_]+)(?![A-Za-z0-9_.])/', (string) file_get_contents($file->getPathname()), $matches);
             array_push($keys, ...$matches[1]);
         }
 
@@ -43,7 +43,7 @@ class EngineKeysTest extends TestCase
     {
         $keys = $this->engineMessageKeys();
 
-        foreach (['formula.sum_not_100', 'formula.qs_balance_not_positive', 'cost.price_missing', 'confidence.l7_requires_signed_override', 'confidence.below_policy', 'input.missing', 'engine.version_mismatch', 'soap.no_oils', 'water.concentration_must_be_below_100', 'neutralize.theoretical_start_final_ph_measured', 'active.target_exceeds_raw', 'alcohol.basis_required', 'fragrance.ifra_unknown', 'percent_from_weight.batch_not_positive'] as $key) {
+        foreach (['formula.sum_not_100', 'formula.qs_balance_not_positive', 'cost.price_missing', 'confidence.l7_requires_signed_override', 'confidence.below_policy', 'input.missing', 'engine.version_mismatch', 'soap.no_oils', 'water.concentration_must_be_below_100', 'neutralize.theoretical_start_final_ph_measured', 'active.target_exceeds_raw', 'alcohol.basis_required', 'fragrance.ifra_unknown', 'percent_from_weight.batch_not_positive', 'compliance.composition_missing', 'compliance.ruleset_invalid', 'compliance.rule_pending_source', 'inci.composition_incomplete', 'ifra.certificate_missing', 'dsl.source_missing', 'dsl.pending_source_only_in_draft'] as $key) {
             $this->assertContains($key, $keys);
         }
     }
@@ -56,6 +56,33 @@ class EngineKeysTest extends TestCase
             foreach ($this->engineMessageKeys() as $key) {
                 $this->assertArrayHasKey($key, $texts, "lang/{$locale}/engine.php lacks [{$key}]");
                 $this->assertNotSame('', trim($texts[$key]));
+            }
+        }
+    }
+
+    /** The message keys the engine puts in a rule or IFRA result are written in three parts, so the scan above cannot see them. */
+    public function test_the_three_part_message_keys_of_the_compliance_engine_have_texts(): void
+    {
+        foreach (['ar', 'en'] as $locale) {
+            $texts = $this->texts($locale);
+
+            foreach (['compliance.methanol.forbidden', 'compliance.ifra.fragrance_limit', 'compliance.rule.custom'] as $key) {
+                $this->assertArrayHasKey($key, $texts, "lang/{$locale}/engine.php lacks [{$key}]");
+                $this->assertNotSame('', trim($texts[$key]));
+            }
+        }
+    }
+
+    /** The message key a rule shipped in packages/engine/data/rules/*.json uses must be worded too. */
+    public function test_every_message_key_of_a_shipped_rule_file_has_a_text(): void
+    {
+        foreach (glob(base_path('../../packages/engine/data/rules/*.json')) as $file) {
+            $document = json_decode((string) file_get_contents($file), true, 512, JSON_THROW_ON_ERROR);
+
+            foreach ($document['rules'] as $rule) {
+                foreach (['ar', 'en'] as $locale) {
+                    $this->assertArrayHasKey($rule['messageKey'], $this->texts($locale), "{$file}: [{$rule['messageKey']}] is not worded in {$locale}");
+                }
             }
         }
     }
@@ -85,7 +112,7 @@ class EngineKeysTest extends TestCase
         foreach (['ar', 'en'] as $locale) {
             $dictionary = Translations::for($locale);
 
-            foreach (['engine.formula.sum_not_100', 'materials.title', 'formulas.title', 'formulas.cost.not_reliable_estimate', 'materials.resolve.reasons.lower_confidence', 'formulas.totals.balance'] as $key) {
+            foreach (['engine.formula.sum_not_100', 'materials.title', 'formulas.title', 'formulas.cost.not_reliable_estimate', 'materials.resolve.reasons.lower_confidence', 'formulas.totals.balance', 'compliance.title', 'compliance.panel.title', 'formulas.label.title', 'materials.composition.add', 'enums.rule_operator.<=', 'enums.check_status.NOT_APPLICABLE', 'engine.dsl.source_missing', 'engine.inci.name_missing', 'engine.ifra.category_missing'] as $key) {
                 $this->assertArrayHasKey($key, $dictionary, "[{$key}] missing in {$locale}");
             }
         }

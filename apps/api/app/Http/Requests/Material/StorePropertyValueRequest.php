@@ -21,6 +21,14 @@ class StorePropertyValueRequest extends FormRequest
         return true;
     }
 
+    /** Only an IFRA limit has a category; for any other property the field is dropped. */
+    protected function prepareForValidation(): void
+    {
+        if ($this->input('property') !== PropertyRegistry::IFRA_LIMIT) {
+            $this->merge(['category' => null]);
+        }
+    }
+
     /** @return array<string, mixed> */
     public function rules(): array
     {
@@ -34,6 +42,8 @@ class StorePropertyValueRequest extends FormRequest
             'confidence' => ['required', Rule::enum(Confidence::class)],
             'valid_from' => ['required', 'date_format:Y-m-d'],
             'lot_no' => ['nullable', 'string', 'max:100'],
+            // The IFRA category as the certificate names it (free text: no built-in list of categories).
+            'category' => [Rule::requiredIf(fn (): bool => $this->input('property') === PropertyRegistry::IFRA_LIMIT), 'nullable', 'string', 'max:50'],
         ];
     }
 

@@ -73,6 +73,25 @@ export function balanceLines(lines) {
 }
 
 /**
+ * The editor lines as the engine takes them ({ materialId, percentWW }). A q.s. line without a share is balanced first
+ * (engine balanceQs) so cost and compliance can be previewed; the balanced share is never written back to the line.
+ */
+export function engineLines(lines) {
+    const inputs = lines.map((line) => ({ materialId: line.material_id, percentWW: line.percent }));
+    const qs = lines.find((line) => line.is_qs && line.percent === '');
+
+    if (qs) {
+        const balanced = balanceLines(lines);
+
+        if (balanced.ok) {
+            inputs.find((line) => line.materialId === qs.material_id).percentWW = balanced.percent;
+        }
+    }
+
+    return inputs;
+}
+
+/**
  * The exchange rate the server chose for a price (App\Services\Currency\ExchangeRateLookupService: the latest rate dated on
  * or before the quote date) as the engine's FxRate, pinned to that quote date with `forDate` so the engine uses it for prices
  * of that day only. Undefined for an EGP price and for a foreign one the server found no rate for: the engine then reports
@@ -176,16 +195,7 @@ export function costLines(lines, materials, datasetVersion) {
         return { state: 'incomplete', perKg: null, perKgTraced: null, usdShare: null, missing: [], warnings: [], prices: {}, equivalents: {} };
     }
 
-    const engineLines = lines.map((line) => ({ materialId: line.material_id, percentWW: line.percent }));
-    const qs = lines.find((line) => line.is_qs && line.percent === '');
-
-    if (qs) {
-        const balanced = balanceLines(lines);
-
-        if (balanced.ok) {
-            engineLines.find((line) => line.materialId === qs.material_id).percentWW = balanced.percent;
-        }
-    }
+    const lineInputs = engineLines(lines);
 
     const prices = {};
     const sourced = {};
@@ -213,7 +223,7 @@ export function costLines(lines, materials, datasetVersion) {
     const output = calculate({
         engineVersion: ENGINE_VERSION,
         datasetVersion,
-        formula: { lines: engineLines },
+        formula: { lines: lineInputs },
         prices: sourced,
         fxRates,
         policy: { rounding: 'default' },
@@ -232,7 +242,7 @@ export function costLines(lines, materials, datasetVersion) {
     const warnings = [...new Set([...output.warnings, ...lineChecks.flatMap((check) => check.warnings)])];
 
     // The USD-linked share of the material cost, from the engine's per-material breakdown (only when the cost itself is sound).
-    const breakdown = missing.length === 0 ? productCostBreakdown({ lines: engineLines, prices: sourced, fxRates, policy: {} }, '0') : null;
+    const breakdown = missing.length === 0 ? productCostBreakdown({ lines: lineInputs, prices: sourced, fxRates, policy: {} }, '0') : null;
     const exposure = breakdown?.ok ? materialUsdExposure(breakdown.value) : null;
 
     return {
@@ -293,18 +303,21 @@ export function resolvedProperty(rows, property) {
 
 /**
  * Engine value resolution for every property of a material (resolveValue, D-04).
- * `rows` are the property rows from the server. Returns a list per property:
- *   { property, resolution | null, rows: [{ row, picked, reasonKey, conflicted }] }
+ * `rows` are the property rows from the server. Returns a list per property (and category):
+ *   { key, property, category, resolution | null, rows: [{ row, picked, reasonKey, conflicted }] }
  * `conflicted` marks the candidates at the top confidence that disagree on the value.
  */
 export function resolveProperties(rows) {
     const byProperty = new Map();
 
+    // One value is picked per property, and per category for a property that has one (an IFRA limit of each product category).
     for (const row of rows) {
-        byProperty.set(row.property, [...(byProperty.get(row.property) ?? []), row]);
+        const key = row.category ? `${row.property}|${row.category}` : row.property;
+        byProperty.set(key, [...(byProperty.get(key) ?? []), row]);
     }
 
-    return [...byProperty].map(([property, group]) => {
+    return [...byProperty].map(([key, group]) => {
+        const property = group[0].property;
         const candidates = group.map(candidateOf);
         const result = resolveValue(property, candidates);
         const resolution = result.ok ? result.value : null;
@@ -312,7 +325,9 @@ export function resolveProperties(rows) {
         const conflicting = new Set((resolution?.conflict?.candidates ?? []).map((candidate) => candidate._id));
 
         return {
+            key,
             property,
+            category: group[0].category ?? null,
             resolution,
             chosenId: resolution?.chosenBy === 'rule' ? resolution.chosen._id : null,
             rows: group.map((row) => ({

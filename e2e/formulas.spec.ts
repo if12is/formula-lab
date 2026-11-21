@@ -189,10 +189,13 @@ test('the editor works in dark mode and fits a phone, in RTL', async ({ page }) 
   await expect(page).toHaveURL(/\/versions\/3\/edit/);
   const editor = page.url();
 
+  const saved = page.waitForResponse((response) => response.url().endsWith('/settings/theme') && response.request().method() === 'PUT');
   await page.getByRole('button', { name: 'العرض' }).click();
   await page.getByRole('menuitemradio', { name: 'داكن' }).click();
   await page.keyboard.press('Escape');
   await expect(page.locator('html')).toHaveAttribute('data-mode', 'dark');
+  // The server keeps the choice in a cookie: reload only once it has answered.
+  await saved;
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-mode', 'dark');
 

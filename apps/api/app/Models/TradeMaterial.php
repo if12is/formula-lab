@@ -23,7 +23,7 @@ class TradeMaterial extends Model
 
     protected $fillable = [
         'tenant_id', 'substance_id', 'sanad_product_uuid', 'sanad_supplier_uuid',
-        'trade_name', 'grade', 'function', 'is_mixture', 'status',
+        'trade_name', 'grade', 'function', 'is_mixture', 'status', 'composition_complete', 'is_fragrance',
     ];
 
     /** @return array<string, string> */
@@ -31,6 +31,8 @@ class TradeMaterial extends Model
     {
         return [
             'is_mixture' => 'boolean',
+            'composition_complete' => 'boolean',
+            'is_fragrance' => 'boolean',
             'status' => TradeMaterialStatus::class,
         ];
     }
@@ -45,6 +47,12 @@ class TradeMaterial extends Model
     public function prices(): HasMany
     {
         return $this->hasMany(Price::class);
+    }
+
+    /** @return HasMany<MaterialComposition, $this> */
+    public function compositions(): HasMany
+    {
+        return $this->hasMany(MaterialComposition::class)->orderBy('created_at')->orderBy('id');
     }
 
     /** @return MorphMany<PropertyValue, $this> */

@@ -5,6 +5,9 @@ namespace App\Support;
 /** Read side of config/properties.php: the known material property keys, their units and their lang labels. */
 final class PropertyRegistry
 {
+    /** The limit of a fragrance oil's IFRA certificate for one product category (the value's `category`). */
+    public const IFRA_LIMIT = 'ifra_limit';
+
     /** @return list<string> */
     public static function keys(): array
     {

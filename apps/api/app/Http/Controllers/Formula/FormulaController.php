@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Formula;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Formula\StoreFormulaRequest;
+use App\Http\Requests\Formula\UpdateFormulaIfraCategoryRequest;
 use App\Models\Formula;
 use App\Services\Formula\FormulaEditorService;
 use App\Services\Formula\FormulaListService;
@@ -44,6 +45,14 @@ class FormulaController extends Controller
         return redirect()
             ->route('formulas.versions.edit', [$created['formula'], $created['version']->version])
             ->with('success', __('formulas.created'));
+    }
+
+    /** The product's IFRA category, saved on the formula from the compliance panel. */
+    public function updateIfraCategory(UpdateFormulaIfraCategoryRequest $request, Formula $formula): RedirectResponse
+    {
+        $this->formulaService->setIfraCategory($formula, $request->validated('ifra_category'));
+
+        return back()->with('success', __('compliance.ifra.saved'));
     }
 
     /** A formula opens at its latest version. */

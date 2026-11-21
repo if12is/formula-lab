@@ -16,6 +16,7 @@ import { Alert, Badge, Button, Card, DescriptionList, FieldError, FormField, Ico
 import ExplainableNum from '../../components/explain/ExplainableNum.vue';
 import EntitySelect from '../../components/form/EntitySelect.vue';
 import DisplayCurrencyLine from '../../components/currency/DisplayCurrencyLine.vue';
+import CompliancePanel from '../../components/compliance/CompliancePanel.vue';
 import ConfidenceBadge from '../../components/materials/ConfidenceBadge.vue';
 import MaterialFormModal from '../../components/materials/MaterialFormModal.vue';
 import Num from '../../components/Num.vue';
@@ -31,6 +32,8 @@ const props = defineProps({
     lines: { type: Array, required: true },
     materials: { type: Object, required: true },
     history: { type: Array, required: true },
+    /** { ruleSets } for the compliance panel; only an existing formula has one (its product type and IFRA category are saved). */
+    compliance: { type: Object, default: null },
     datasetVersion: { type: String, required: true },
     tierOptions: { type: Array, required: true },
     urls: { type: Object, required: true },
@@ -219,6 +222,7 @@ const percentValid = (line) => line.percent === '' || isDecimalString(line.perce
             </template>
             <template v-if="!creating" #actions>
                 <Button v-if="history.length > 1" :href="historyHref" variant="secondary" icon="ph:git-diff">{{ t('formulas.compare.open') }}</Button>
+                <Button :href="path('formulas.versions.label', [formula.id, version.number])" variant="secondary" icon="ph:tag" data-testid="open-label">{{ t('formulas.label.open') }}</Button>
                 <Button v-if="!editing" icon="ph:git-branch" @click="startedNewVersion = true">{{ t('formulas.editor.new_version') }}</Button>
             </template>
         </PageHeader>
@@ -390,6 +394,8 @@ const percentValid = (line) => line.percent === '' || isDecimalString(line.perce
                     </ul>
                 </div>
             </Card>
+
+            <CompliancePanel v-if="!creating && compliance" :draft="draft" :formula="formula" :rule-sets="compliance.ruleSets" :entities="entities" :sources="sources" />
 
             <Card v-if="editing && !creating" :title="t('formulas.reason.title')">
                 <FormField :label="t('formulas.reason.label')" :hint="t('formulas.reason.hint')" :error="form.errors.reason" required>

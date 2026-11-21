@@ -25,7 +25,7 @@ const open = defineModel('open', { type: Boolean, default: false });
 const { t } = useI18n();
 const { options: propertyOptions, unitsOf } = useProperties();
 
-const blank = () => ({ property: '', value: '', min: '', max: '', unit: '', source_id: null, confidence: undefined, valid_from: null, lot_no: '' });
+const blank = () => ({ property: '', value: '', min: '', max: '', unit: '', source_id: null, confidence: undefined, valid_from: null, lot_no: '', category: '' });
 const form = useForm(blank());
 const mode = ref('value');
 const modes = computed(() => [
@@ -56,6 +56,7 @@ function submit() {
             min: mode.value === 'range' ? normalizeDecimalText(data.min) : null,
             max: mode.value === 'range' ? normalizeDecimalText(data.max) : null,
             confidence: data.confidence ?? null,
+            category: data.property === 'ifra_limit' ? data.category : null,
         }))
         .post(path('materials.properties.store', props.materialId), { preserveScroll: true, onSuccess: () => { open.value = false; } });
 }
@@ -74,6 +75,10 @@ function submit() {
             />
             <FormField :label="t('materials.property.unit')" :hint="t('materials.property.unit_hint')" :error="form.errors.unit" required>
                 <Select v-model="form.unit" :options="unitOptions" :placeholder="t('common.select_placeholder')" :disabled="unitOptions.length === 0" />
+            </FormField>
+
+            <FormField v-if="form.property === 'ifra_limit'" :label="t('materials.property.category')" :hint="t('materials.property.category_hint')" :error="form.errors.category" required class="sm:col-span-2">
+                <Input v-model="form.category" ltr maxlength="50" />
             </FormField>
 
             <FormField :label="t('materials.property.kind')" class="sm:col-span-2">

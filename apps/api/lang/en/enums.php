@@ -23,6 +23,27 @@ return [
         'PASS' => 'Pass',
         'FAIL' => 'Fail',
         'UNKNOWN' => 'Unknown',
+        'NOT_APPLICABLE' => 'Not applicable',
+    ],
+    'rule_set_status' => [
+        'draft' => 'Draft',
+        'published' => 'Published',
+    ],
+    'rule_operator' => [
+        '<=' => 'at most',
+        '<' => 'less than',
+        '>=' => 'at least',
+        '>' => 'greater than',
+        '==' => 'equal to',
+        'forbidden' => 'forbidden',
+        'required' => 'required',
+    ],
+    'rule_target_type' => [
+        'substanceCas' => 'Substance (CAS)',
+        'inci' => 'Substance (INCI)',
+        'function' => 'Function',
+        'materialId' => 'Material',
+        'field' => 'Product field',
     ],
     'formula_status' => [
         'draft' => 'Draft',

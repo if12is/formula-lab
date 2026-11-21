@@ -15,7 +15,7 @@ class Formula extends Model
     /** @use HasFactory<FormulaFactory> */
     use HasFactory, HasUuids;
 
-    protected $fillable = ['tenant_id', 'code', 'name', 'product_type', 'tier'];
+    protected $fillable = ['tenant_id', 'code', 'name', 'product_type', 'tier', 'ifra_category'];
 
     /** @return array<string, string> */
     protected function casts(): array

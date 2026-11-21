@@ -14,6 +14,7 @@ Route::put('/settings/locale', [SettingsController::class, 'locale'])->name('set
 Route::put('/settings/display-currency', [SettingsController::class, 'displayCurrency'])->name('settings.display-currency');
 
 require __DIR__.'/formulation.php';
+require __DIR__.'/compliance.php';
 require __DIR__.'/calculators.php';
 require __DIR__.'/settings.php';
 

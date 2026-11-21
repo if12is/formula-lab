@@ -4,13 +4,15 @@
  *   Properties  sourced values (single or range) per property, with the one the engine's resolveValue picks, why the
  *               others lost, and conflicts highlighted
  *   Prices      dated price quotes with source and confidence; the one the engine would cost with is marked
+ *   Composition the components (CAS / INCI at an exact % w/w, each with its source) the compliance engine reads
  *   Audit       every change to the material, its values and its prices, from audit_log
  * Edit and the add forms are modals; the page keeps the tab in its address.
  */
 import { computed, ref } from 'vue';
 import { Head, router } from '@inertiajs/vue3';
 import { path } from '../../lib/routes';
-import { Alert, Badge, Button, Card, DataTable, DescriptionList, EmptyState, IconButton, PageHeader, TabPanel, Tabs, useConfirm } from '@kit';
+import { Alert, Badge, Button, Card, DataTable, DescriptionList, EmptyState, IconButton, PageHeader, Switch, TabPanel, Tabs, useConfirm } from '@kit';
+import CompositionModal from '../../components/materials/CompositionModal.vue';
 import ConfidenceBadge from '../../components/materials/ConfidenceBadge.vue';
 import MaterialFormModal from '../../components/materials/MaterialFormModal.vue';
 import PriceModal from '../../components/materials/PriceModal.vue';
@@ -20,12 +22,14 @@ import Num from '../../components/Num.vue';
 import StatusBadge from '../../components/StatusBadge.vue';
 import { useI18n } from '../../composables/useI18n';
 import { useProperties } from '../../composables/useProperties';
+import { compositionSummary } from '../../lib/compliance';
 import { pickPrice, priceInEgp, resolveProperties } from '../../lib/engine';
 
 const props = defineProps({
     material: { type: Object, required: true },
     properties: { type: Array, required: true },
     prices: { type: Array, required: true },
+    composition: { type: Array, required: true },
     audit: { type: Array, required: true },
     tab: { type: String, required: true },
     statusOptions: { type: Array, required: true },
@@ -43,6 +47,8 @@ const tab = ref(props.tab);
 const editing = ref(false);
 const addingProperty = ref(false);
 const addingPrice = ref(false);
+const editedComponent = ref(null);
+const componentModal = ref(false);
 
 function selectTab(value) {
     tab.value = value;
@@ -55,6 +61,7 @@ function selectTab(value) {
 const tabs = computed(() => [
     { value: 'properties', label: t('materials.tabs.properties'), count: props.properties.length },
     { value: 'prices', label: t('materials.tabs.prices'), count: props.prices.length },
+    { value: 'composition', label: t('materials.tabs.composition'), count: props.composition.length },
     { value: 'audit', label: t('materials.tabs.audit'), count: props.audit.length },
 ]);
 
@@ -73,6 +80,47 @@ const equivalents = computed(() => Object.fromEntries(props.prices.map((price) =
 const inEgp = (row) => equivalents.value[row.id];
 const addRateHref = (row) => path('settings.exchange-rates.index', { new_currency: row.currency, new_date: row.quoted_on });
 const estimateOnly = computed(() => costingPrice.value?.confidence === 'L7_estimate');
+
+const total = computed(() => (props.composition.length ? compositionSummary(props.composition) : null));
+// Listed as the whole material but not adding up to 100: the engine would trust a list that leaves part of the material out.
+const incompleteTotal = computed(() => total.value !== null && !total.value.withinTolerance && props.material.composition_complete);
+
+const compositionColumns = computed(() => [
+    { key: 'cas', label: t('materials.composition.columns.cas') },
+    { key: 'inci', label: t('materials.composition.columns.inci'), hideBelow: 'sm' },
+    { key: 'pct_ww', label: t('materials.composition.columns.pct'), align: 'end' },
+    { key: 'source', label: t('materials.composition.columns.source'), hideBelow: 'md' },
+    { key: 'confidence', label: t('materials.composition.columns.confidence') },
+    { key: 'valid_from', label: t('materials.composition.columns.valid_from'), hideBelow: 'lg' },
+    { key: 'actions', label: t('materials.composition.columns.actions'), align: 'end' },
+]);
+
+function addComponent() {
+    editedComponent.value = null;
+    componentModal.value = true;
+}
+
+function editComponent(row) {
+    editedComponent.value = row;
+    componentModal.value = true;
+}
+
+function setFlag(flag, value) {
+    router.put(path('materials.composition.flags', props.material.id), { [flag]: value }, { preserveScroll: true });
+}
+
+async function removeComponent(row) {
+    const confirmed = await confirm({
+        tone: 'danger',
+        title: t('materials.composition.remove_title'),
+        description: t('materials.composition.remove_description', { component: row.cas ?? row.inci }),
+        confirmLabel: t('materials.remove'),
+    });
+
+    if (confirmed) {
+        router.delete(path('materials.composition.destroy', [props.material.id, row.id]), { preserveScroll: true });
+    }
+}
 
 const sourceLabel = (row) => (row.source_kind === 'unverified_entry' ? t('materials.unverified_source') : row.source_title);
 
@@ -198,7 +246,7 @@ async function removePrice(row) {
                 </EmptyState>
 
                 <div v-else class="flex flex-col gap-4">
-                    <Card v-for="group in groups" :key="group.property" :data-property="group.property" :title="propertyLabel(group.property)">
+                    <Card v-for="group in groups" :key="group.key" :data-property="group.property" :title="group.category ? t('materials.property.with_category', { property: propertyLabel(group.property), category: group.category }) : propertyLabel(group.property)">
                         <template #actions>
                             <span v-if="group.resolution?.chosenBy === 'rule'" class="flex flex-wrap items-center gap-2 text-label text-ink-2">
                                 {{ t('materials.resolve.picked') }}
@@ -310,6 +358,79 @@ async function removePrice(row) {
                 </DataTable>
             </TabPanel>
 
+            <TabPanel value="composition">
+                <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+                    <p class="max-w-prose text-label text-ink-3">{{ t('materials.composition.intro') }}</p>
+                    <Button icon="ph:plus" data-testid="add-component" @click="addComponent">{{ t('materials.composition.add') }}</Button>
+                </div>
+
+                <Card class="mb-4" :title="t('materials.composition.flags_title')">
+                    <div class="flex flex-col gap-3">
+                        <Switch
+                            :model-value="material.composition_complete"
+                            :label="t('materials.composition.complete')"
+                            :description="t('materials.composition.complete_hint')"
+                            data-testid="composition-complete"
+                            @update:model-value="(value) => setFlag('composition_complete', value)"
+                        />
+                        <Switch
+                            :model-value="material.is_fragrance"
+                            :label="t('materials.composition.is_fragrance')"
+                            :description="t('materials.composition.is_fragrance_hint')"
+                            data-testid="is-fragrance"
+                            @update:model-value="(value) => setFlag('is_fragrance', value)"
+                        />
+                    </div>
+                </Card>
+
+                <Alert v-if="composition.length === 0" tone="warning" icon="ph:warning" class="mb-4" :title="t('materials.composition.unknown_title')" data-testid="composition-unknown">
+                    {{ t('materials.composition.unknown_description') }}
+                </Alert>
+                <Alert v-else-if="total.over" tone="danger" icon="ph:warning" class="mb-4" :title="t('materials.composition.over_title')" data-testid="composition-over">
+                    {{ t('materials.composition.over_description') }}
+                </Alert>
+                <Alert v-else-if="incompleteTotal" tone="warning" icon="ph:warning" class="mb-4" :title="t('materials.composition.sum_title')">
+                    {{ t('materials.composition.sum_description') }}
+                </Alert>
+
+                <EmptyState
+                    v-if="composition.length === 0"
+                    variant="dashed"
+                    icon="ph:flask"
+                    :title="t('materials.composition.empty_title')"
+                    :description="t('materials.composition.empty_description')"
+                >
+                    <template #actions><Button icon="ph:plus" @click="addComponent">{{ t('materials.composition.add') }}</Button></template>
+                </EmptyState>
+
+                <template v-else>
+                    <DataTable
+                        :columns="compositionColumns"
+                        :rows="composition"
+                        row-key="id"
+                        :mobile-columns="['cas', 'pct_ww', 'confidence']"
+                        :caption="t('materials.tabs.composition')"
+                    >
+                        <template #cell-cas="{ row }"><bdi v-if="row.cas" dir="ltr" class="font-mono text-label">{{ row.cas }}</bdi><span v-else class="text-ink-3">{{ t('common.no_data') }}</span></template>
+                        <template #cell-inci="{ row }"><bdi v-if="row.inci" dir="ltr">{{ row.inci }}</bdi><span v-else class="text-ink-3">{{ t('common.no_data') }}</span></template>
+                        <template #cell-pct_ww="{ row }"><span class="whitespace-nowrap"><Num :value="row.pct_ww" /> <span class="text-label text-ink-3">%</span></span></template>
+                        <template #cell-source="{ row }">{{ row.source_title }}</template>
+                        <template #cell-confidence="{ row }"><ConfidenceBadge :confidence="row.confidence" /></template>
+                        <template #cell-valid_from="{ row }"><bdi dir="ltr" class="tnum">{{ row.valid_from }}</bdi></template>
+                        <template #cell-actions="{ row }">
+                            <span class="flex justify-end gap-1">
+                                <IconButton icon="ph:pencil-simple" size="sm" variant="secondary" :label="t('materials.composition.edit_label', { component: row.cas ?? row.inci })" @click="editComponent(row)" />
+                                <IconButton icon="ph:trash" size="sm" variant="danger-soft" :label="t('materials.composition.remove_label', { component: row.cas ?? row.inci })" @click="removeComponent(row)" />
+                            </span>
+                        </template>
+                    </DataTable>
+                    <p class="mt-3 flex flex-wrap items-baseline gap-2 text-label text-ink-2" data-testid="composition-total">
+                        {{ t('materials.composition.total') }}
+                        <span class="font-semibold text-ink"><Num :value="total.sum" /> %</span>
+                    </p>
+                </template>
+            </TabPanel>
+
             <TabPanel value="audit">
                 <p class="mb-4 max-w-prose text-label text-ink-3">{{ t('materials.audit.intro') }}</p>
 
@@ -342,6 +463,7 @@ async function removePrice(row) {
             :confidence-options="confidenceOptions"
             :source-kind-options="sourceKindOptions"
         />
+        <CompositionModal v-model:open="componentModal" :material-id="material.id" :component="editedComponent" :urls="urls" :confidence-options="confidenceOptions" :source-kind-options="sourceKindOptions" />
         <PriceModal v-model:open="addingPrice" :material-id="material.id" :urls="urls" :currency-options="currencyOptions" :confidence-options="confidenceOptions" :source-kind-options="sourceKindOptions" />
     </div>
 </template>

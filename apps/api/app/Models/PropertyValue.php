@@ -20,7 +20,7 @@ class PropertyValue extends Model
 
     protected $fillable = [
         'tenant_id', 'entity_type', 'entity_id', 'property', 'value', 'min', 'max', 'unit',
-        'source_id', 'confidence', 'valid_from', 'lot_no', 'created_by',
+        'source_id', 'confidence', 'valid_from', 'lot_no', 'category', 'created_by',
     ];
 
     /** @return array<string, string> */

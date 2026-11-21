@@ -3,6 +3,7 @@
 namespace App\Services\Formula;
 
 use App\Actions\Formula\CreateFormulaAction;
+use App\Actions\Formula\UpdateFormulaIfraCategoryAction;
 use App\Actions\Tenancy\EnsureDefaultTenantAction;
 use App\Exceptions\Domain\InvalidFormulaVersionException;
 use App\Models\Formula;
@@ -17,7 +18,14 @@ final class FormulaService
         private CreateFormulaAction $createFormula,
         private EnsureDefaultTenantAction $ensureDefaultTenant,
         private FormulaVersionService $formulaVersionService,
+        private UpdateFormulaIfraCategoryAction $updateIfraCategory,
     ) {}
+
+    /** The IFRA category is a fact about the product, not about one version, so it is saved on the formula itself. */
+    public function setIfraCategory(Formula $formula, ?string $category): Formula
+    {
+        return ($this->updateIfraCategory)($formula, $category);
+    }
 
     /**
      * Creates the formula and its first (draft) version in one transaction.

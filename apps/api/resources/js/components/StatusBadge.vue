@@ -1,6 +1,6 @@
 <script setup>
 /**
- * One badge for the statuses a record can have (formula version, trade material) and for an engine check's outcome, so the same word always
+ * One badge for the statuses a record can have (formula version, trade material, rule set) and for an engine check's outcome, so the same word always
  * wears the same colour. Labels come from the enum lang files: enums.<kind>.<status>.
  *
  *   <StatusBadge kind="formula_status" :status="version.status" />
@@ -18,7 +18,9 @@ const TONES = {
     formula_status: { draft: 'neutral', lab_testing: 'info', approved: 'success', rejected: 'danger' },
     trade_material_status: { draft: 'warning', active: 'success' },
     // The engine's check outcome (an IFRA limit, a compliance rule): UNKNOWN is never shown as a pass.
-    check_status: { PASS: 'success', FAIL: 'danger', UNKNOWN: 'warning' },
+    // NOT_APPLICABLE: the rule's scope does not match this product, so it says nothing either way.
+    check_status: { PASS: 'success', FAIL: 'danger', UNKNOWN: 'warning', NOT_APPLICABLE: 'neutral' },
+    rule_set_status: { draft: 'warning', published: 'success' },
 };
 
 const { t } = useI18n();

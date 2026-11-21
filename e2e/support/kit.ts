@@ -6,6 +6,11 @@ export function seedFormulationDemo(): void {
   execSync('php artisan db:seed --class=FormulationDemoSeeder --force', { cwd: 'apps/api', stdio: 'pipe' });
 }
 
+/** Seeds the compliance demo (a published rule set about the fictional TEST-0001, materials, one formula per outcome) and the methanol draft. Idempotent. */
+export function seedComplianceDemo(): void {
+  execSync('php artisan db:seed --class=ComplianceDemoSeeder --force', { cwd: 'apps/api', stdio: 'pipe' });
+}
+
 /** A short unique suffix, so rows created by a spec never collide with an earlier run. */
 export const stamp = (): string => Date.now().toString(36);
 
