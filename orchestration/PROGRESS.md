@@ -31,3 +31,4 @@
 | 2026-11-21 | F-02 | done | تكلفة الكيلو/اللتر/العبوة + فاقد + هامش (0≤m<100)، كل الخامات الناقصة السعر بتظهر مرة واحدة، تغليف لازم له مصدر | 20 حالة يدوية golden ✓ + فحص يدوي مستقل مني: 16.2 / 16.5306 / 20.3571 / 25.4464 |
 | 2026-11-21 | F-03 | done | الدفعة: floor + باقي ظاهر، لتر↔كيلو بالكثافة المقاسة، اختبار يمنع ceil + calculate() موحد | فحص يدوي: 100 كجم ⇒ 95 عبوة لتر + 238.095 مل باقي ✓ |
 | 2026-11-21 | D-01 | done | data-model.md: ER + ملكية كل جدول (Formula Lab vs Sanad cache) + tenancy | plan/02-specs/data-model.md |
+| 2026-11-21 | D-02 | done | substances منفصلة عن trade_materials + tenants + DecimalString cast (مفيش float) | TradeMaterialTest: مادة واحدة بدرجات متعددة ✓ |
