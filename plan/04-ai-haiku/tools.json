@@ -1,0 +1,439 @@
+[
+ {
+  "name": "get_material",
+  "description": "Fetch a trade material with its sourced properties and latest dated price.",
+  "input_schema": {
+   "type": "object",
+   "properties": {
+    "query": {
+     "type": "string"
+    },
+    "materialId": {
+     "type": "string"
+    }
+   },
+   "additionalProperties": false
+  }
+ },
+ {
+  "name": "calculate_formula",
+  "description": "Deterministic engine: mass balance, cost, batch, active matter, density conversion. Returns results with trace and missing data.",
+  "input_schema": {
+   "type": "object",
+   "properties": {
+    "formulaVersionId": {
+     "type": "string"
+    },
+    "lines": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "materialId": {
+        "type": "string"
+       },
+       "percentWW": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "materialId",
+       "percentWW"
+      ]
+     }
+    },
+    "batch": {
+     "type": "object",
+     "properties": {
+      "size": {
+       "type": "string"
+      },
+      "unit": {
+       "enum": [
+        "kg",
+        "L"
+       ]
+      },
+      "wastagePct": {
+       "type": "string"
+      },
+      "packSize": {
+       "type": "string"
+      },
+      "packUnit": {
+       "enum": [
+        "kg",
+        "L",
+        "mL",
+        "g"
+       ]
+      }
+     }
+    }
+   },
+   "additionalProperties": false
+  }
+ },
+ {
+  "name": "optimize_tier",
+  "description": "Least-cost LP (HiGHS) for a product type and tier under compliance and tier constraints. Deterministic. Returns draft formula or infeasibility explanation.",
+  "input_schema": {
+   "type": "object",
+   "properties": {
+    "productType": {
+     "type": "string"
+    },
+    "tier": {
+     "enum": [
+      "economy",
+      "mid",
+      "premium"
+     ]
+    },
+    "targetRetailPriceEGP": {
+     "type": "string"
+    },
+    "per": {
+     "enum": [
+      "L",
+      "kg",
+      "unit"
+     ]
+    },
+    "availableMaterialIds": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   },
+   "required": [
+    "productType",
+    "tier"
+   ],
+   "additionalProperties": false
+  }
+ },
+ {
+  "name": "check_compliance",
+  "description": "Run ES / CosIng / IFRA rules. Returns PASS/FAIL/UNKNOWN per rule.",
+  "input_schema": {
+   "type": "object",
+   "properties": {
+    "formulaVersionId": {
+     "type": "string"
+    },
+    "market": {
+     "enum": [
+      "EG"
+     ]
+    }
+   },
+   "required": [
+    "formulaVersionId"
+   ],
+   "additionalProperties": false
+  }
+ },
+ {
+  "name": "soap_lye",
+  "description": "Saponification lye and water with purity and SAP range.",
+  "input_schema": {
+   "type": "object",
+   "properties": {
+    "oils": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "materialId": {
+        "type": "string"
+       },
+       "grams": {
+        "type": "string"
+       }
+      }
+     }
+    },
+    "alkali": {
+     "enum": [
+      "NaOH",
+      "KOH"
+     ]
+    },
+    "purityPct": {
+     "type": "string"
+    },
+    "superfatPct": {
+     "type": "string"
+    },
+    "waterMethod": {
+     "enum": [
+      "ratio",
+      "concentration",
+      "pct_of_oils"
+     ]
+    },
+    "waterValue": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "oils",
+    "alkali",
+    "superfatPct"
+   ],
+   "additionalProperties": false
+  }
+ },
+ {
+  "name": "neutralize_labsa",
+  "description": "NaOH needed for LABSA from COA acid value and NaOH purity.",
+  "input_schema": {
+   "type": "object",
+   "properties": {
+    "labsaKg": {
+     "type": "string"
+    },
+    "acidValue": {
+     "type": "string"
+    },
+    "naohPurityPct": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "labsaKg",
+    "acidValue",
+    "naohPurityPct"
+   ],
+   "additionalProperties": false
+  }
+ },
+ {
+  "name": "convert_units",
+  "description": "Mass/volume/currency conversion with explicit density or dated FX.",
+  "input_schema": {
+   "type": "object",
+   "properties": {
+    "value": {
+     "type": "string"
+    },
+    "from": {
+     "type": "string"
+    },
+    "to": {
+     "type": "string"
+    },
+    "densityGml": {
+     "type": "string"
+    },
+    "fxDate": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "value",
+    "from",
+    "to"
+   ],
+   "additionalProperties": false
+  }
+ },
+ {
+  "name": "extract_coa",
+  "description": "Store a DRAFT extraction of a COA/TDS for human confirmation. Never final until confirmed.",
+  "input_schema": {
+   "type": "object",
+   "properties": {
+    "fileId": {
+     "type": "string"
+    },
+    "supplier": {
+     "type": "string"
+    },
+    "lotNo": {
+     "type": "string"
+    },
+    "values": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "property": {
+        "type": "string"
+       },
+       "valueAsPrinted": {
+        "type": "string"
+       },
+       "unit": {
+        "type": "string"
+       },
+       "needsReview": {
+        "type": "boolean"
+       }
+      },
+      "required": [
+       "property",
+       "valueAsPrinted"
+      ]
+     }
+    }
+   },
+   "required": [
+    "fileId",
+    "values"
+   ],
+   "additionalProperties": false
+  }
+ },
+ {
+  "name": "landed_cost",
+  "description": "Allocate freight, insurance, duty, clearance, transport and finance charges over a receipt's lines. Deterministic; returns landed cost per stock unit with trace.",
+  "input_schema": {
+   "type": "object",
+   "properties": {
+    "receiptId": {
+     "type": "string"
+    },
+    "allocationBasis": {
+     "enum": [
+      "value",
+      "weight",
+      "volume",
+      "qty"
+     ]
+    }
+   },
+   "required": [
+    "receiptId"
+   ],
+   "additionalProperties": false
+  }
+ },
+ {
+  "name": "packaging_bom",
+  "description": "Packaging cost per unit for a SKU from its BOM, reject rates, carton/pallet shares and amortized one-time costs.",
+  "input_schema": {
+   "type": "object",
+   "properties": {
+    "skuId": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "skuId"
+   ],
+   "additionalProperties": false
+  }
+ },
+ {
+  "name": "unit_cost",
+  "description": "Full unit cost: landed materials + overfill + packaging + conversion + QA/regulatory, with trace per line.",
+  "input_schema": {
+   "type": "object",
+   "properties": {
+    "skuId": {
+     "type": "string"
+    },
+    "batchSize": {
+     "type": "string"
+    },
+    "batchUnit": {
+     "enum": [
+      "kg",
+      "L"
+     ]
+    }
+   },
+   "required": [
+    "skuId"
+   ],
+   "additionalProperties": false
+  }
+ },
+ {
+  "name": "price_waterfall",
+  "description": "Cost to shelf price (forward) or shelf price to maximum allowable cost (reverse), using dated tax regime.",
+  "input_schema": {
+   "type": "object",
+   "properties": {
+    "skuId": {
+     "type": "string"
+    },
+    "direction": {
+     "enum": [
+      "forward",
+      "reverse"
+     ]
+    },
+    "shelfPriceEGP": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "skuId",
+    "direction"
+   ],
+   "additionalProperties": false
+  }
+ },
+ {
+  "name": "fragrance_blend",
+  "description": "Fine fragrance / air care calc: fragrance oil %, ethanol dilution via OIML R22 tables, water, IFRA limit check for the product category, maceration loss.",
+  "input_schema": {
+   "type": "object",
+   "properties": {
+    "productType": {
+     "type": "string"
+    },
+    "fragranceOilId": {
+     "type": "string"
+    },
+    "oilPctWW": {
+     "type": "string"
+    },
+    "ethanolSourceStrengthVV": {
+     "type": "string"
+    },
+    "targetEthanolVV": {
+     "type": "string"
+    },
+    "batchSize": {
+     "type": "string"
+    },
+    "batchUnit": {
+     "enum": [
+      "kg",
+      "L"
+     ]
+    }
+   },
+   "required": [
+    "productType",
+    "fragranceOilId",
+    "oilPctWW"
+   ],
+   "additionalProperties": false
+  }
+ },
+ {
+  "name": "emulsion_phases",
+  "description": "Emulsion formula by phases with functional classes, required HLB of oil phase, emulsifier blend, frame-formulation and preservative limits.",
+  "input_schema": {
+   "type": "object",
+   "properties": {
+    "formulaVersionId": {
+     "type": "string"
+    },
+    "productType": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "formulaVersionId"
+   ],
+   "additionalProperties": false
+  }
+ }
+]

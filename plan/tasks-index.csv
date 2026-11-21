@@ -1,0 +1,213 @@
+﻿task_id,phase,phase_title,task,output,acceptance,depends_on,status
+A-01,A,اكتشاف وتحقق من السوق,تحديد 25 مصنع/معمل مستهدف (منظفات وتجميل) في القاهرة والإسكندرية والعاشر,قائمة جهات اتصال,25 جهة بالاسم والتليفون ونوع المنتج,,todo
+A-02,A,اكتشاف وتحقق من السوق,كتابة سكريبت مقابلة (طريقة الحساب الحالية، الأخطاء المكلفة، Excel، البيع باللتر، المواصفات),interview-script.md,مراجَع من كيميائي,,todo
+A-03,A,اكتشاف وتحقق من السوق,إجراء 10 مقابلات وتسجيل الأخطاء المكلفة بالأرقام,notes/ لكل مقابلة,10 مقابلات + جدول ألم × تكرار,A-02,todo
+A-04,A,اكتشاف وتحقق من السوق,جمع 30 تركيبة حقيقية (مجهّلة) + نسب الهالك الفعلية,03-data-templates/formulas.csv,30 صف بمصدر وتاريخ,A-03,todo
+A-05,A,اكتشاف وتحقق من السوق,جمع 20 COA و10 TDS من موردين مصريين,coa/ PDFs + coa.csv,20 COA مدخلة بالقالب,A-03,todo
+A-06,A,اكتشاف وتحقق من السوق,جمع أسعار 40 خامة أساسية من 3 موردين على الأقل لكل خامة,prices.csv,كل سعر بتاريخ ومورد وعملة,A-03,todo
+A-07,A,اكتشاف وتحقق من السوق,اختيار أول 5 منتجات MVP (مثلًا: سائل أطباق، صابون يد، شامبو، منظف أرضيات، صابون بار),mvp-products.md,مبرر بداتا المقابلات,A-03,todo
+A-08,A,اكتشاف وتحقق من السوق,التعاقد مع كيميائي استشاري (مراجعة معادلات + golden tests),عقد + نطاق عمل,موقّع,,todo
+A-09,A,اكتشاف وتحقق من السوق,تحديد المواصفات المصرية المطلوبة لمنتجات MVP وشراؤها,standards/,النصوص متاحة للفريق,A-07,todo
+A-10,A,اكتشاف وتحقق من السوق,جمع BOM تغليف حقيقي لـ 20 SKU (فارغ، غطاء، بمب، ليبل، علبة، كرتونة) بأسعاره وMOQ,packaging.csv,20 SKU كاملة,,todo
+A-11,A,اكتشاف وتحقق من السوق,جمع فواتير استيراد/شراء حقيقية لحساب landed cost (شحن، جمارك، تخليص),landed_cost.csv,5 شحنات على الأقل,,todo
+A-12,A,اكتشاف وتحقق من السوق,حصر التخصصات المطلوبة من العملاء (منظفات، تجميل، مرطبات، عطور، معطرات، مطهرات),specialties-demand.md,مرتب بالطلب,A-03,todo
+A-13,A,اكتشاف وتحقق من السوق,مراجعة نظام الضرائب لكل عائلة منتج مع محاسب ضرائب (VAT 14% وأي ضريبة جدول على العطور والتجميل),tax-matrix.md,موقّع من محاسب,,todo
+B-01,B,المعمارية والريبو,قرار الستاك: Laravel 12 + Inertia + Vue 3 + Taif Kit (UI) + packages/engine TypeScript، وSanad مصدر الحقيقة لكل حاجة POS,docs/adr/000-stack.md,معتمد,,todo
+B-02,B,المعمارية والريبو,"إنشاء monorepo (pnpm workspaces): packages/engine, packages/optimizer, apps/api (Laravel), apps/web (Vue+Inertia), apps/desktop (Electron), apps/mobile (Capacitor)",الريبو,pnpm i && pnpm test يعدّي,,todo
+B-03,B,المعمارية والريبو,كتابة ADR-001: المحرك TypeScript مشترك + Decimal,docs/adr/001.md,معتمد,,todo
+B-04,B,المعمارية والريبو,كتابة ADR-002: الـ AI ما يحسبش؛ بيستدعي tools بس,docs/adr/002.md,معتمد,,todo
+B-05,B,المعمارية والريبو,كتابة ADR-003: نسخ الداتا المرجعية immutable ومرقمة,docs/adr/003.md,معتمد,,todo
+B-06,B,المعمارية والريبو,"إعداد CI (GitHub Actions/Gitea): lint, typecheck, vitest, pest, playwright",ci.yml,pipeline أخضر,B-01,todo
+B-07,B,المعمارية والريبو,"إعداد بيئة dev بـ Docker Compose (Postgres, Redis, Laravel, Vite)",docker-compose.yml,تشتغل بأمر واحد,B-01,todo
+B-08,B,المعمارية والريبو,تحديد عقد المحرك: Input/Output types + versioning (engineVersion في كل ناتج),02-specs/engine-contract.md,مراجَع,B-02,todo
+C-01,C,النواة الرقمية والوحدات,"تبني decimal.js (precision 34, ROUND_HALF_EVEN داخليًا)",core/decimal.ts,0.1+0.2 = 0.3 بالظبط,,todo
+C-02,C,النواة الرقمية والوحدات,"نوع Quantity<Unit> (kg, g, mg, L, mL, %w/w, %w/v, mg KOH/g, EGP, USD, mPa·s)",core/quantity.ts,عمليات بين وحدات غير متوافقة ترمي error,,todo
+C-03,C,النواة الرقمية والوحدات,تحويلات الكتلة/الحجم بكثافة صريحة فقط,core/convert.ts,مفيش تحويل L↔kg من غير density,C-02,todo
+C-04,C,النواة الرقمية والوحدات,سياسة التقريب للعرض (وزن 0.1 جم، فلوس 0.01 جنيه، نسب 0.001%),02-specs/rounding-policy.md + core/round.ts,مختبرة,C-01,todo
+C-05,C,النواة الرقمية والوحدات,تحويل العملات بسعر صرف مؤرخ (مصدر: CBE),core/fx.ts,كل تحويل يحمل التاريخ والمصدر,C-02,todo
+C-06,C,النواة الرقمية والوحدات,Property-based tests (fast-check): التحويل ذهابًا وعودة بدون فقد,tests/core.prop.test.ts,"10,000 حالة عشوائية تعدي",C-03,todo
+C-07,C,النواة الرقمية والوحدات,"نوع Result<T, MissingData[]> بدل throw للداتا الناقصة",core/result.ts,الحساب يرجع قائمة النواقص بدل صفر,,todo
+C-08,C,النواة الرقمية والوحدات,جداول OIML R 22 الكحولية (كثافة ↔ %v/v ↔ %w/w عند 20°C) كجدول حتمي + interpolation,core/alcohol.ts,يطابق الجدول الرسمي في 50 نقطة,,todo
+C-09,C,النواة الرقمية والوحدات,وحدات العد: قطعة، كرتونة، بالتة + تحويلات (عبوات/كرتونة، كراتين/بالتة),core/count-units.ts,مختبر,,todo
+D-01,D,نموذج الداتا والمصادر,"تصميم الـ schema (substances, trade_materials, suppliers, coa, coa_values, specs, prices, sources, dataset_versions, formulas, formula_versions, batches, lab_results, tiers, rules)",02-specs/data-model.md,مراجَع,,todo
+D-02,D,نموذج الداتا والمصادر,"فصل substance (مادة كيميائية: CAS, MW) عن trade_material (درجة تجارية: SLES 70% من مورد X)",migrations,مادة واحدة ليها درجات متعددة,D-01,todo
+D-03,D,نموذج الداتا والمصادر,"جدول property_values عام: (entity, property, value, unit, min, max, source_id, confidence L1–L7, valid_from)",migration,أي خاصية بمدى أو قيمة,D-01,todo
+D-04,D,نموذج الداتا والمصادر,قاعدة اختيار القيمة: أعلى ثقة متاحة ثم الأحدث، مع إمكانية override يدوي مسجّل,engine/data/resolve.ts,مختبرة بحالات تعارض,D-03,todo
+D-05,D,نموذج الداتا والمصادر,dataset_versions: snapshot hash لكل نسخة، والحساب يسجل النسخة المستخدمة,migration + service,نفس الحساب يتعاد بعد سنة بنفس الناتج,D-03,todo
+D-06,D,نموذج الداتا والمصادر,formula_versions: كل تعديل نسخة جديدة + hash + سبب التعديل + حالة (draft/lab/approved),migration,مفيش تعديل يمسح نسخة قديمة,D-01,todo
+D-07,D,نموذج الداتا والمصادر,Audit log لكل تعديل في الداتا المرجعية,audit table,مين/إمتى/قبل/بعد,D-01,todo
+D-08,D,نموذج الداتا والمصادر,مرآة SQLite للأوفلاين بنفس الـ schema (subset),apps/desktop/db,مزامنة جدول واحد تشتغل,D-01,todo
+E-01,E,استيراد الداتا المؤقتة,ETL لـ CosIng Annexes II–VI من الـ CSV API (أسبوعيًا),etl/cosing,كل Annex مستورد بتاريخ آخر تحديث,,todo
+E-02,E,استيراد الداتا المؤقتة,"استخراج جداول Codex CXS 210/211 (SAP range, density, iodine, fatty acids) — يدوي + مراجعة",etl/codex + seed,كل الزيوت المذكورة بنطاقاتها L3,,todo
+E-03,E,استيراد الداتا المؤقتة,استيراد frame formulations (فئات المنتج × الفئة الوظيفية × max %),etl/frame,كل الفئات مستوردة كقيود L4,,todo
+E-04,E,استيراد الداتا المؤقتة,"PubChem لـ ~300 مادة أساسية (MW, CAS, formula)",etl/pubchem,300 مادة,E-02,todo
+E-05,E,استيراد الداتا المؤقتة,DID-list 2023 Part A (سمية/تحلل) لمكونات المنظفات,etl/did,مرتبطة بالـ substances,,todo
+E-06,E,استيراد الداتا المؤقتة,CPDat: فلترة فئات المنظفات والتجميل، حساب min/median/max لكل مادة × فئة (reported فقط),etl/cpdat,جدول usage_ranges L5,,todo
+E-07,E,استيراد الداتا المؤقتة,IFRA 51st: حدود حسب الفئة,etl/ifra,"حدود Category 4, 5, 9, 10A, 10B على الأقل",,todo
+E-08,E,استيراد الداتا المؤقتة,soapformulator (ODbL) كـ L6 مع مقارنة آلية بنطاقات Codex وتعليم التعارض,etl/soap,تقرير تعارضات,E-02,todo
+E-09,E,استيراد الداتا المؤقتة,Open Beauty Facts: المنتجات المتاحة في مصر + ترتيب INCI,etl/obf,dataset منفصل لتحليل السوق,,todo
+E-10,E,استيراد الداتا المؤقتة,UN Comtrade: متوسط سعر استيراد مصر لـ HS 3402xx و 1513/1511 (زيوت) بالدولار/كجم,etl/comtrade,سعر أرضية L5 بتاريخ,,todo
+E-11,E,استيراد الداتا المؤقتة,تقرير جودة الداتا بعد كل استيراد (نواقص، تعارضات، تغيّرات),etl/report,يتبعت للأدمن,,todo
+E-12,E,استيراد الداتا المؤقتة,الحفاظ على شروط الرخص (ODbL attribution + share-alike للداتابيز المشتقة),docs/licenses.md,مراجَع قانونيًا,,todo
+E-13,E,استيراد الداتا المؤقتة,تصنيفات IFRA الـ 12 وربط كل عائلة منتج بفئتها (4 عطور، 5A/5B مرطبات، 9 rinse-off، 10A منظفات وريد ديفيوزر، 10B رشاشات، 12 شموع),data/ifra-categories.json,كل product type ليه فئة,,todo
+E-14,E,استيراد الداتا المؤقتة,جدول بنود الجمارك HS للخامات والفوارغ الأساسية (نسبة الجمارك من التعريفة الرسمية),data/hs-duties.csv,بمصدر وتاريخ,,todo
+F-01,F,المحرك الحسابي v1,Mass balance + scaling + validation (Σ=100، نسب سالبة، مكونات مكررة),engine/formula,مختبر,,todo
+F-02,F,المحرك الحسابي v1,التكلفة: خامات + تغليف + فاقد + هامش + تكلفة لتر/كيلو/عبوة,engine/cost,يطابق حساب يدوي لـ 20 حالة,F-01,todo
+F-03,F,المحرك الحسابي v1,الإنتاج: عبوات كاملة floor + باقي + لتر↔كيلو بالكثافة المقاسة,engine/batch,مفيش ceil مخفي,F-01,todo
+F-04,F,المحرك الحسابي v1,Active matter للمنتج + تخفيف للوصول لهدف,engine/active,"مختبر على SLES 70%, LABSA 96%, CAPB 30%",F-01,todo
+F-05,F,المحرك الحسابي v1,معادلة السلفونيك من acid value + نقاوة الصودا,engine/neutralize,مراجَع من الكيميائي,F-01,todo
+F-06,F,المحرك الحسابي v1,التصبين NaOH/KOH بالنقاوة + 3 طرق للماء + نطاق SAP (min/typ/max),engine/soap,يعرض أثر نطاق SAP على القلوي,F-01,todo
+F-07,F,المحرك الحسابي v1,خواص الصابون من fatty acid profile (موسومة مؤشر),engine/soap-props,,,todo
+F-08,F,المحرك الحسابي v1,HLB: required + blend + Griffin + Davies,engine/hlb,مختبر,,todo
+F-09,F,المحرك الحسابي v1,Salt curve: interpolation خطي على قياسات المستخدم فقط، وبرة المدى = خطأ,engine/viscosity,مفيش extrapolation,,todo
+F-10,F,المحرك الحسابي v1,Explain trace: كل رقم ناتج معاه شجرة حسابه ومصادر مدخلاته,engine/trace,الواجهة تقدر تعرض 'الرقم ده جه منين',F-01,todo
+F-11,F,المحرك الحسابي v1,200+ golden test (حالات حقيقية من Phase A محسوبة يدويًا وموقعة من الكيميائي),tests/golden/*.json,كلها تعدي في CI,A-08,todo
+F-12,F,المحرك الحسابي v1,تقرير دفعة PDF موقّع بـ hash (التركيبة + نسخة الداتا + نسخة المحرك),engine/report,نفس الـ hash لنفس المدخلات,F-10,todo
+F-13,F,المحرك الحسابي v1,ربط المحرك بتكلفة landed بدل سعر المورد الخام,integration,,G-07,todo
+G-01,G,الربط مع Sanad POS + التكلفة الواصلة,"قراءة كود Sanad (routes/api.php، docs/05-api-contract.md، Models: Product, ProductUnit, Uom, ProductBatch, Supplier, Purchase, PurchaseItem, StockMovement, WholesaleTier, Sale) وكتابة خريطة: إيه موجود وإيه ناقص",02-specs/sanad-integration.md,مراجعة الأوركستريتور,,todo
+G-02,G,الربط مع Sanad POS + التكلفة الواصلة,تحديد مصدر الحقيقة لكل كيان: Sanad (موردين، مشتريات، مخزون، مبيعات، عملاء، موزعين، أسعار جملة) / Formula Lab (تركيبات، COA، landed cost، تكلفة، فئات، مطابقة، معمل),sanad-integration.md §ownership,,,todo
+G-03,G,الربط مع Sanad POS + التكلفة الواصلة,تصميم الـ endpoints الناقصة في Sanad (مثلًا: upsert منتج، استلام إنتاج تام، صرف خامات لأمر إنتاج، قراءة مشتريات بتفاصيلها، webhook لتغيّر سعر شراء) — كـ PR منفصل في ريبو sanad,sanad PR + docs,Pest tests في sanad خضرا,G-01,todo
+G-04,G,الربط مع Sanad POS + التكلفة الواصلة,SanadClient في Formula Lab (Laravel HTTP client، Bearer token، idempotency key، retries، logging),app/Integrations/Sanad,Contract tests بـ Http::fake,G-03,todo
+G-05,G,الربط مع Sanad POS + التكلفة الواصلة,مزامنة الأصناف: الخامات والفوارغ والكراتين متسجلة كمنتجات في Sanad بفئات؛ Formula Lab يربطها بـ trade_materials/items بـ external_id,sync job,مزامنة idempotent,G-04,todo
+G-06,G,الربط مع Sanad POS + التكلفة الواصلة,مزامنة الموردين والمشتريات (قراءة فقط) لحساب متوسط سعر الشراء الفعلي,sync job,,G-04,todo
+G-07,G,الربط مع Sanad POS + التكلفة الواصلة,Landed cost overlay: بنود الشحن والجمارك والتخليص والتمويل تتسجل في Formula Lab مربوطة بـ purchase_id من Sanad وتتوزع على أصنافه,engine/landed-cost.ts + tables,مطابق لـ 5 شحنات حقيقية,G-06,todo
+G-08,G,الربط مع Sanad POS + التكلفة الواصلة,FX مؤرخ + VAT مدخلات حسب المصفوفة الضريبية,engine/tax.ts,,A-13,todo
+G-09,G,الربط مع Sanad POS + التكلفة الواصلة,نشر المنتج التام لـ Sanad (SKU، باركود، وحدة، تكلفة الوحدة، سعر بيع، أسعار جملة للموزعين) بعد اعتماد التكلفة,push job,يظهر في Sanad POS,I-01,todo
+G-10,G,الربط مع Sanad POS + التكلفة الواصلة,Mock server لـ Sanad API للتطوير والـ e2e (نفس العقد),tests/fakes/sanad,Playwright بيشتغل من غير Sanad حقيقي,G-04,todo
+H-01,H,التغليف والفوارغ (Packaging BOM),مكتبة مكونات التغليف: نوع، خامة (PET/HDPE/زجاج/ألومنيوم/كرتون)، سعة اسمية، سعة الحافة (brimful)، وزن، عنق/تسنين، مورد,packaging_items,,,todo
+H-02,H,التغليف والفوارغ (Packaging BOM),توافق المكونات (عنق العبوة ↔ الغطاء/البمب) كقيد,compat rules,ما ينفعش BOM بغطاء مش متوافق,H-01,todo
+H-03,H,التغليف والفوارغ (Packaging BOM),BOM لكل SKU: عبوة + غطاء/بمب + ليبل/sleeve + علبة + نصيب الكرتونة والفواصل والشريط والstretch والبالتة,packaging_boms,,H-01,todo
+H-04,H,التغليف والفوارغ (Packaging BOM),نسبة المرفوض/الكسر لكل مكون (من مشتريات Sanad والإنتاج الفعلي),integration,,G-06,todo
+H-05,H,التغليف والفوارغ (Packaging BOM),تكاليف لمرة واحدة (أكلشيه، قالب، تصميم) تتوزع على كمية مخططة,amortization,,,todo
+H-06,H,التغليف والفوارغ (Packaging BOM),Overfill: التعبئة الفعلية = الاسمي + زيادة؛ تحويل مل ↔ جم بكثافة المنتج المقاسة,engine/fill.ts,,N-11,todo
+H-07,H,التغليف والفوارغ (Packaging BOM),مراجعة أن الحجم الاسمي ≤ سعة العبوة الفعلية مع headspace,validation,,,todo
+H-08,H,التغليف والفوارغ (Packaging BOM),تقرير: تكلفة التغليف كنسبة من تكلفة الوحدة لكل SKU,report,,,todo
+I-01,I,التكلفة الكاملة وسلّم السعر,محرك التكلفة الكاملة للوحدة بكل البنود ومصادرها,engine/unit-cost.ts,مطابق لحساب يدوي لـ 10 SKU,H-03,todo
+I-02,I,التكلفة الكاملة وسلّم السعر,التحويل: عمالة (دقائق × أجر)، طاقة (kWh)، مياه، تكاليف غير مباشرة بمفتاح توزيع ثابت,cost_centers,,,todo
+I-03,I,التكلفة الكاملة وسلّم السعر,الجودة والتنظيم: اختبارات الدفعة، رسوم EDA، شهادات IFRA موزعة على الكمية,engine/qa-cost.ts,,,todo
+I-04,I,التكلفة الكاملة وسلّم السعر,نظام ضريبي مؤرخ لكل عائلة منتج (VAT 14%، أي ضريبة جدول),tax_regimes,من مصفوفة A-13,A-13,todo
+I-05,I,التكلفة الكاملة وسلّم السعر,Price waterfall: تكلفة ⇒ مصنع ⇒ جملة ⇒ تاجر ⇒ مستهلك + VAT، والعكس من سعر الرف لأقصى تكلفة,engine/waterfall.ts,الاتجاهين بيرجعوا لنفس الرقم,I-01,todo
+I-06,I,التكلفة الكاملة وسلّم السعر,حساسية: نسبة التكلفة المرتبطة بالدولار + أثر تغيير سعر أي صنف,engine/sensitivity.ts,,,todo
+I-07,I,التكلفة الكاملة وسلّم السعر,مقارنة SKU: نفس التركيبة بأحجام عبوات مختلفة (تكلفة اللتر في كل حجم),report,,,todo
+I-08,I,التكلفة الكاملة وسلّم السعر,تقرير تكلفة قابل للتدقيق (كل رقم ⇒ فاتورة أو مدخل),report,,,todo
+J-01,J,الفئات والمُحسِّن (اقتصادي / متوسط / فاخر),تعريف Tier Profile: قيود active min/max، مكونات إلزامية/ممنوعة، حدود frame، حد عطر، حد تكلفة، سعر مستهدف,02-specs/tier-profiles.md,schema معتمد,,todo
+J-02,J,الفئات والمُحسِّن (اقتصادي / متوسط / فاخر),ملء profiles لـ 5 منتجات × 3 فئات من: المواصفة المصرية (حد أدنى) + CPDat/HERA (نطاقات) + الكيميائي (قرار),data/tiers/*.json,كل رقم ليه مصدر,A-09,todo
+J-03,J,الفئات والمُحسِّن (اقتصادي / متوسط / فاخر),ربط HiGHS (WASM) في packages/optimizer مع تثبيت الإصدار والإعدادات,optimizer/highs.ts,نفس الحل في 1000 تشغيل,,todo
+J-04,J,الفئات والمُحسِّن (اقتصادي / متوسط / فاخر),بناء الـ LP من (profile + مواد متاحة + أسعار مؤرخة),optimizer/build.ts,مختبر,,todo
+J-05,J,الفئات والمُحسِّن (اقتصادي / متوسط / فاخر),Tie-breaking حتمي (لو حلين بنفس التكلفة: ترتيب ثابت بالـ id),optimizer/tiebreak.ts,حل وحيد دايمًا,J-03,todo
+J-06,J,الفئات والمُحسِّن (اقتصادي / متوسط / فاخر),Infeasibility: إرجاع القيود المتعارضة بالعربي (مثلًا: السعر المستهدف أقل من أقل تكلفة ممكنة بـ X جنيه),optimizer/iis.ts,رسالة مفهومة,,todo
+J-07,J,الفئات والمُحسِّن (اقتصادي / متوسط / فاخر),Sensitivity: لو سعر خامة زاد 10% التركيبة/التكلفة تتغير إزاي (shadow prices),optimizer/sensitivity.ts,يتعرض في الواجهة,,todo
+J-08,J,الفئات والمُحسِّن (اقتصادي / متوسط / فاخر),Reverse pricing: من سعر بيع للمستهلك ⇒ هامش الموزع ⇒ أقصى تكلفة ⇒ أعلى فئة ممكنة,engine/pricing.ts,مختبر,,todo
+J-09,J,الفئات والمُحسِّن (اقتصادي / متوسط / فاخر),كل حل مُحسَّن يتحفظ كـ formula_version حالتها draft (مش approved إلا بعد معمل),integration,مفيش اعتماد تلقائي,D-06,todo
+K-01,K,كتالوج التخصصات (منظفات، مطهرات، عناية شخصية),Product family registry: اسم، جهة رقابية (EOS/EDA)، فئة IFRA، حسابات مطلوبة، خواص مقاسة، نظام ضريبي,data/product-families.json,حسب 00-research/05,,todo
+K-02,K,كتالوج التخصصات (منظفات، مطهرات، عناية شخصية),منظفات: أطباق، مسحوق، سائل غسيل، أرضيات، زجاج، حمامات، مزيل دهون,templates,,,todo
+K-03,K,كتالوج التخصصات (منظفات، مطهرات، عناية شخصية),الكلور/المبيض: الكلور الفعال من COA + معادلة تخفيف + فقد التخزين المقاس,engine/chlorine.ts,مختبر,,todo
+K-04,K,كتالوج التخصصات (منظفات، مطهرات، عناية شخصية),منعم أقمشة (active كاتيوني) ومعطر غسيل,templates,,,todo
+K-05,K,كتالوج التخصصات (منظفات، مطهرات، عناية شخصية),مطهرات: تركيز المادة الفعالة (كحول %v/v من OIML، كواترنري) + علامة مسار EDA,templates,,C-08,todo
+K-06,K,كتالوج التخصصات (منظفات، مطهرات، عناية شخصية),عناية شخصية: شامبو، بلسم، صابون يد، شاور جل، صابون بار، غسول وجه,templates,,,todo
+K-07,K,كتالوج التخصصات (منظفات، مطهرات، عناية شخصية),ضبط pH: كمية الحمض/القلوي من منحنى معايرة مقاس للتركيبة (interpolation)، مش تقدير,engine/ph-titration.ts,مفيش extrapolation,,todo
+K-08,K,كتالوج التخصصات (منظفات، مطهرات، عناية شخصية),ما فيش موديول مبيعات/فواتير/عملاء/موزعين هنا: كله في Sanad، والتقارير بتقرا منه,adr,,,todo
+L-01,L,العطور والمعطرات,موديل زيت العطر كخامة: مورد، شهادة IFRA (حد لكل فئة)، كثافة، flash point، سعر,fragrance oils,,,todo
+L-02,L,العطور والمعطرات,حاسبة عطر جميل: زيت % w/w + كحول بتركيز مستهدف (OIML) + ماء + مثبت ⇒ أوزان وحجوم,engine/fine-fragrance.ts,مراجعة كيميائي,C-08,todo
+L-03,L,العطور والمعطرات,تخفيف كحول 96% لتركيز مطلوب بمعادلة الكتلة من جدول OIML (مش حجوم),engine/alcohol-dilution.ts,يطابق الجدول,,todo
+L-04,L,العطور والمعطرات,فاقد التعتيق والتبريد والفلترة % من تجارب المستخدم ⇒ يدخل التكلفة,integration,,,todo
+L-05,L,العطور والمعطرات,معطر رشاش مائي: نسبة solubilizer:fragrance من TDS أو تجربة موثقة + وضوح مقاس,templates,,,todo
+L-06,L,العطور والمعطرات,إيروسول: نسبة concentrate:propellant + كتلة الغاز + تحذير شروط الأمان وخط التعبئة,templates,,,todo
+L-07,L,العطور والمعطرات,ريد ديفيوزر وزيوت فواحة (IFRA 10A) وشموع/واكس (IFRA 12: fragrance load من حد الشمع في TDS),templates,,,todo
+L-08,L,العطور والمعطرات,معطر جل وسيارة ومفارش,templates,,,todo
+L-09,L,العطور والمعطرات,فحص IFRA: نسبة العطر في المنتج ≤ حد شهادة العطر لفئة المنتج,integration,,N-10,todo
+L-10,L,العطور والمعطرات,تكلفة عطر كاملة: زيت + كحول (landed) + فاقد + فارغ زجاج + بخاخ + علبة,integration,,I-01,todo
+M-01,M,المرطبات والكريمات (Emulsions),محرر بالأطوار: مائي، زيتي، تبريد (cool-down) + درجات حرارة الإضافة,formula phases,,,todo
+M-02,M,المرطبات والكريمات (Emulsions),تصنيف وظيفي: humectant، emollient، occlusive، emulsifier، thickener، preservative، active، fragrance,functions,,,todo
+M-03,M,المرطبات والكريمات (Emulsions),Required HLB لطور الزيت + مزج المستحلبات (للأنظمة غير الأيونية بس),integration,,F-08,todo
+M-04,M,المرطبات والكريمات (Emulsions),قيود frame formulation حسب نوع المنتج (كريم، لوشن، جل، زبدة),integration,,E-03,todo
+M-05,M,المرطبات والكريمات (Emulsions),حدود الحوافظ (CosIng Annex V) وأي active مقيد (Annex III),integration,,N-03,todo
+M-06,M,المرطبات والكريمات (Emulsions),Templates: كريم وش، لوشن جسم، بودي بتر، جل مرطب، كريم يد، مرطب شعر,templates,,,todo
+M-07,M,المرطبات والكريمات (Emulsions),بروتوكول ثبات (طرد مركزي، دورات حرارة، 4 أسابيع 40°C) يتسجل في حلقة المعمل,lab,,O-01,todo
+N-01,N,محرك المطابقة واللوائح,"Rules DSL (JSON): field, operator, limit, unit, scope (product type), source",02-specs/rules-dsl.md,,,todo
+N-02,N,محرك المطابقة واللوائح,ترجمة ES 1562 و ES 4900 لقواعد (بعد شراء النصوص),data/rules/es-*.json,مراجَعة من الكيميائي,A-09,todo
+N-03,N,محرك المطابقة واللوائح,قواعد CosIng Annex II/III/V/VI + قاعدة مجموع النسب ≤ 1,data/rules/cosing.json,,E-01,todo
+N-04,N,محرك المطابقة واللوائح,قواعد IFRA: نسبة العطر × حد شهادة IFRA للعطر حسب الفئة,rules/ifra,,E-07,todo
+N-05,N,محرك المطابقة واللوائح,UNKNOWN لما الداتا ناقصة (مش PASS),engine/compliance,مختبر,,todo
+N-06,N,محرك المطابقة واللوائح,مولّد قائمة INCI مرتبة تنازليًا (و<1% بأي ترتيب) + تحذيرات Annex III الإلزامية,engine/label,,,todo
+N-07,N,محرك المطابقة واللوائح,مولّد بطاقة منظفات حسب ES 6910 (عربي),engine/label-es6910,مراجَع,N-02,todo
+N-08,N,محرك المطابقة واللوائح,مساعد ملف إخطار EDA (checklist + المستندات),docs/eda-checklist,,,todo
+N-09,N,محرك المطابقة واللوائح,قاعدة الميثانول ممنوع في العطور والمعطرات الكحولية (FAIL تلقائي),rules/methanol,,,todo
+N-10,N,محرك المطابقة واللوائح,قواعد IFRA لكل فئة منتج جديدة (4، 5A، 5B، 10A، 10B، 12),rules/ifra-cats,,E-13,todo
+N-11,N,محرك المطابقة واللوائح,قاعدة ES 2295 (كمية المنتج في العبوات): الحد الأدنى للتعبئة بعد شراء النص,rules/es2295,,,todo
+N-12,N,محرك المطابقة واللوائح,تنبيه المطهرات: منتج بادعاء تطهير ⇒ مسار EDA منفصل (دليل تراخيص المستحضرات المطهرة 2026),rules/disinfectant-flag,,,todo
+O-01,O,حلقة المعمل والمعايرة,"Lab trial: التركيبة + الدفعة + القياسات (pH, density, viscosity, cloud point, foam, stability 4 أسابيع)",lab module,,,todo
+O-02,O,حلقة المعمل والمعايرة,Workflow اعتماد: draft → lab_testing → approved/rejected مع توقيع,workflow,مفيش approved بدون lab result,,todo
+O-03,O,حلقة المعمل والمعايرة,تسجيل منحنى الملح لكل تركيبة أساس واستخدامه في F-09,integration,,F-09,todo
+O-04,O,حلقة المعمل والمعايرة,الكثافة المقاسة تتربط بنسخة التركيبة وتستخدم في التحويل لتر/كيلو,integration,,F-03,todo
+O-05,O,حلقة المعمل والمعايرة,مقارنة المتوقع (حسابي) بالمقاس وعرض الفرق (مثلًا active محسوب vs MBAS مقاس),reports,,,todo
+O-06,O,حلقة المعمل والمعايرة,قالب بروتوكولات اختبار بسيطة (pH، كثافة بالبيكنومتر، لزوجة Brookfield),docs/lab-protocols,مراجَع,,todo
+P-01,P,طبقة Claude Haiku,AI proxy في Laravel (المفتاح على السيرفر، rate limit، logging، cost tracking),apps/api/ai,,,todo
+P-02,P,طبقة Claude Haiku,"تعريف tools: get_material, calculate_formula, optimize_tier, check_compliance, convert_units, explain_result, extract_coa",04-ai-haiku/tools.json,schemas strict,,todo
+P-03,P,طبقة Claude Haiku,System prompt بالعربي المصري: ممنوع حساب أو تقدير رقم، كل رقم من tool,04-ai-haiku/system-prompt.md,,,todo
+P-04,P,طبقة Claude Haiku,Number guard: كل رقم في رد Haiku لازم يطابق رقم في tool results وإلا الرد يترفض ويتعاد,ai/guard.ts,مختبر على ردود فيها أرقام مختلقة,P-02,todo
+P-05,P,طبقة Claude Haiku,COA extraction: Haiku يقرا PDF/صورة ⇒ JSON بمستوى ثقة ⇒ إنسان يأكد قبل الحفظ (L1 بعد التأكيد بس),ai/coa,مفيش حفظ تلقائي,,todo
+P-06,P,طبقة Claude Haiku,Data cleaning assistant: يكتشف تعارضات (SAP برة نطاق Codex، active غير منطقي) ويقترح، والقرار للإنسان,ai/data-qa,,,todo
+P-07,P,طبقة Claude Haiku,Formulation assistant: يحول طلب المستخدم ('عايز شامبو اقتصادي بـ 35 جنيه') لـ tier profile + optimize_tier,ai/assistant,,,todo
+P-08,P,طبقة Claude Haiku,temperature 0 + structured outputs + prompt caching للـ system prompt والـ tools,config,,,todo
+P-09,P,طبقة Claude Haiku,Eval set: 150 سؤال (حساب، مطابقة، فخاخ لاختلاق أرقام) وتشغيله في CI أسبوعيًا,04-ai-haiku/evals.md,≥ 98%,,todo
+P-10,P,طبقة Claude Haiku,سياسة خصوصية: التركيبات ما تتبعتش للـ AI إلا بموافقة المستخدم لكل جلسة,policy,,,todo
+P-11,P,طبقة Claude Haiku,"Tools جديدة: landed_cost, packaging_bom, price_waterfall, fragrance_blend, emulsion_phases",04-ai-haiku/tools.json,schemas strict,,todo
+P-12,P,طبقة Claude Haiku,Haiku يقرا فواتير الموردين وبوالص الشحن ⇒ مسودة landed cost ⇒ تأكيد إنسان,ai/invoices,مفيش حفظ تلقائي,,todo
+Q-01,Q,الإنتاج والمخزن وتتبع الدفعات,أمر إنتاج من formula_version معتمدة + حجم دفعة,production module,,,todo
+Q-02,Q,الإنتاج والمخزن وتتبع الدفعات,ورقة وزن للعامل (ترتيب الإضافة، أوزان مقربة حسب دقة الميزان),print view,,,todo
+Q-03,Q,الإنتاج والمخزن وتتبع الدفعات,ربط COA الدفعة الفعلية للخامة ⇒ إعادة حساب القلوي/الصودا بقيم اللوط,integration,,F-05,todo
+Q-04,Q,الإنتاج والمخزن وتتبع الدفعات,خصم المخزن + الهالك الفعلي vs المخطط,inventory,,,todo
+Q-05,Q,الإنتاج والمخزن وتتبع الدفعات,تتبع lot كامل (recall report),traceability,,,todo
+Q-06,Q,الإنتاج والمخزن وتتبع الدفعات,تكلفة فعلية للدفعة بأسعار الشراء الفعلية (FIFO أو متوسط مرجح — اختيار ثابت),costing,,,todo
+Q-07,Q,الإنتاج والمخزن وتتبع الدفعات,ربط POS (Servex) لنقل المنتج وتكلفته,integration,,,todo
+Q-08,Q,الإنتاج والمخزن وتتبع الدفعات,صرف الخامات والتغليف حسب BOM وإضافة المنتج التام = حركات مخزون في Sanad عن طريق الـ API (مش مخزن موازي),integration,الرصيد في Sanad صح بعد أمر الإنتاج,G-03,todo
+Q-09,Q,الإنتاج والمخزن وتتبع الدفعات,تكلفة دفعة فعلية = خامات landed فعلية + تغليف فعلي + تحويل فعلي,integration,,I-01,todo
+R-01,R,شبكة الموردين وبوابة COA,حساب مورد + كتالوج درجات تجارية,supplier portal,,,todo
+R-02,R,شبكة الموردين وبوابة COA,رفع TDS/COA ⇒ استخراج بـ Haiku ⇒ تأكيد المورد,flow,,P-05,todo
+R-03,R,شبكة الموردين وبوابة COA,شارة توثيق (مراجعة سجل تجاري + عينة COA),verification,,,todo
+R-04,R,شبكة الموردين وبوابة COA,أسعار مؤرخة من الموردين + طلب عرض سعر من داخل البرنامج,rfq,,,todo
+R-05,R,شبكة الموردين وبوابة COA,مؤشر أسعار خامات مجهّل (متوسط/وسيط بحد أدنى 3 مصادر),price index,مفيش سعر مورد واحد بيتكشف,,todo
+R-06,R,شبكة الموردين وبوابة COA,نموذج دخل: اشتراك مورد مميز / إعلان (بدون التأثير على الحسابات),business,,,todo
+S-01,S,الواجهات (ويب / ديسكتوب / موبايل),تركيب taif-kit كـ npm package من الريبو + createKit() بهوية المنتج + RTL عربي افتراضي,resources/js/app,صفحة dashboard من templates الكيت شغالة,,todo
+S-02,S,الواجهات (ويب / ديسكتوب / موبايل),Design system عربي (خط واضح، أرقام بالـ tabular figures),ui kit,,,todo
+S-03,S,الواجهات (ويب / ديسكتوب / موبايل),محرر تركيبة: جدول نسب/أوزان، مجموع لحظي، تحذيرات نواقص,formula editor,,,todo
+S-04,S,الواجهات (ويب / ديسكتوب / موبايل),Explain panel: ضغطة على أي رقم ⇒ شجرة الحساب والمصادر ودرجة الثقة,explain ui,,F-10,todo
+S-05,S,الواجهات (ويب / ديسكتوب / موبايل),شاشة الفئات: منتج + فئة + سعر مستهدف ⇒ حل المُحسِّن + الحساسية,tiers ui,,J-04,todo
+S-06,S,الواجهات (ويب / ديسكتوب / موبايل),شاشة المطابقة + البطاقة,compliance ui,,N-05,todo
+S-07,S,الواجهات (ويب / ديسكتوب / موبايل),حاسبات مستقلة: تصبين، سلفونيك، تخفيف، HLB، لتر/كيلو,calculators,,,todo
+S-08,S,الواجهات (ويب / ديسكتوب / موبايل),شات Haiku جانبي بيعرض الـ tool calls والأرقام كـ chips من المحرك,ai ui,,P-07,todo
+S-09,S,الواجهات (ويب / ديسكتوب / موبايل),Electron + SQLite أوفلاين + مزامنة,desktop,,,todo
+S-10,S,الواجهات (ويب / ديسكتوب / موبايل),Capacitor أندرويد (عرض وأوامر إنتاج وورقة وزن),mobile,,,todo
+S-11,S,الواجهات (ويب / ديسكتوب / موبايل),شاشة landed cost فوق مشتريات Sanad + شاشة COA للاستلام (المشتريات نفسها بتتعمل في Sanad),procurement ui,,G-07,todo
+S-12,S,الواجهات (ويب / ديسكتوب / موبايل),محرر BOM التغليف لكل SKU مع صورة العبوة,packaging ui,,H-03,todo
+S-13,S,الواجهات (ويب / ديسكتوب / موبايل),شاشة سلّم السعر (من التكلفة للرف والعكس) + حساسية الدولار,pricing ui,,I-05,todo
+S-14,S,الواجهات (ويب / ديسكتوب / موبايل),حاسبة عطور ومعطرات (تركيز، كحول OIML، حد IFRA),fragrance ui,,L-02,todo
+T-01,T,الاختبارات والجودة,Golden tests (من F-11) + توسيعها مع كل منتج جديد,tests/golden,,,todo
+T-02,T,الاختبارات والجودة,Property-based tests للمحرك (scaling لا يغير النسب، Σ=100 دايمًا…),tests/prop,,,todo
+T-03,T,الاختبارات والجودة,Cross-check: نفس الحسابات في Excel مستقل يحضّره الكيميائي ومقارنة آلية,tests/excel-crosscheck,فرق = 0 بعد التقريب,,todo
+T-04,T,الاختبارات والجودة,Determinism test: نفس المدخلات على ويب/Electron/Node ⇒ نفس الـ hash,tests/determinism,,,todo
+T-05,T,الاختبارات والجودة,Playwright e2e للرحلات الأساسية (تركيبة ⇒ فئة ⇒ مطابقة ⇒ دفعة ⇒ PDF),tests/e2e,,,todo
+T-06,T,الاختبارات والجودة,AI evals (J-09) في CI,ci,,,todo
+U-01,U,الأمان وحماية سرية التركيبات,RBAC: مالك، كيميائي، إنتاج (يشوف أوزان بس من غير نسب)، محاسب (تكلفة بس),auth,,,todo
+U-02,U,الأمان وحماية سرية التركيبات,تشفير التركيبات at-rest (per-tenant key),crypto,,,todo
+U-03,U,الأمان وحماية سرية التركيبات,Watermark على تقارير PDF + سجل تصدير,reports,,,todo
+U-04,U,الأمان وحماية سرية التركيبات,Multi-tenancy (نمط shared DB + dedicated DB لعملاء كبار),tenancy,,,todo
+U-05,U,الأمان وحماية سرية التركيبات,نسخ احتياطي مشفر يومي + اختبار استرجاع شهري,backup,,,todo
+U-06,U,الأمان وحماية سرية التركيبات,مراجعة أمان قبل الإطلاق (OWASP top 10),audit,,,todo
+V-01,V,النشر على السيرفر,"Dockerfiles (api, web, worker, etl-cron)",docker/,,,todo
+V-02,V,النشر على السيرفر,docker-compose.prod.yml + Postgres + Redis + Caddy/Nginx (HTTPS),deploy/,,,todo
+V-03,V,النشر على السيرفر,Cron للـ ETL (CosIng أسبوعي، أسعار يومي),scheduler,,E-01,todo
+V-04,V,النشر على السيرفر,Monitoring (Uptime + logs + أخطاء) ,ops,,,todo
+V-05,V,النشر على السيرفر,CI/CD للنشر مع migrations آمنة,pipeline,,,todo
+V-06,V,النشر على السيرفر,قناة تحديث Electron (auto-update),desktop release,,,todo
+W-01,W,التسعير والإطلاق التجريبي,باقات: مجاني (حاسبات)، احترافي (تركيبات + فئات + مطابقة)، مصنع (إنتاج + lot + تعدد مستخدمين),pricing.md,,,todo
+W-02,W,التسعير والإطلاق التجريبي,Beta مع 10 مصانع من Phase A + onboarding بداتاهم,beta,,,todo
+W-03,W,التسعير والإطلاق التجريبي,قياس: تكلفة الكيلو قبل/بعد المُحسِّن، الهالك، وقت حساب الدفعة,metrics,,,todo
+W-04,W,التسعير والإطلاق التجريبي,محتوى تعليمي عربي (فيديوهات قصيرة لكل حاسبة),content,,,todo
+W-05,W,التسعير والإطلاق التجريبي,صفحة هبوط + مقارنة صريحة بالمنافس (بدون ذكر اسمه),landing,,,todo
+X-01,X,ما بعد الإطلاق وجودة الداتا,Dashboard جودة الداتا: نسبة كل مستوى ثقة في الحسابات الفعلية,dq dashboard,,,todo
+X-02,X,ما بعد الإطلاق وجودة الداتا,متابعة تحديثات المواصفات المصرية وWTO TBT notifications لمصر,watch,,,todo
+X-03,X,ما بعد الإطلاق وجودة الداتا,متابعة تعديلات CosIng وIFRA (52nd amendment),watch,,,todo
+X-04,X,ما بعد الإطلاق وجودة الداتا,توسيع المنتجات (كلور، منعم أقمشة، معطر جو، كريمات),roadmap,,,todo
+X-05,X,ما بعد الإطلاق وجودة الداتا,مراجعة golden tests ربع سنوية مع الكيميائي,review,,,todo
