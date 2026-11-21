@@ -34,7 +34,7 @@
 - مرحلة Q مقصورة على: ورقة الوزن، وأمر الإنتاج المعتمد اللي بيتبعت لـ Sanad، وتتبع الدفعة المرتبط بالتركيبة، ومقارنة التكلفة الفعلية بالمحسوبة. أي مخزن أو حركات مخزون = Sanad.
 
 ## الستاك
-Laravel 12 + PostgreSQL + Inertia + Vue 3 + Taif Kit + Tailwind 4 · `packages/engine` و`packages/optimizer` (HiGHS WASM) · Electron (أوفلاين) · Claude Haiku عبر API من السيرفر.
+Laravel 13 + PostgreSQL + Inertia 3 + Vue 3 + Taif Kit + Tailwind 4 + Vite 8 · `packages/engine` و`packages/optimizer` (HiGHS WASM) · Electron (أوفلاين) · Claude Haiku عبر API من السيرفر.
 
 ## أوامر
 `pnpm test` · `pnpm typecheck` · `pnpm lint` · `pnpm test:php` (أو `cd apps/api && php artisan test`) · `pnpm e2e`

@@ -4,12 +4,12 @@ import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { ZiggyVue } from 'ziggy-js';
 
-const pages = import.meta.glob('./Pages/**/*.vue');
+const pages = import.meta.glob('./pages/**/*.vue');
 
 createInertiaApp({
     title: (title) => (title ? `${title} - Formula Lab` : 'Formula Lab'),
     resolve: async (name) => {
-        const page = pages[`./Pages/${name}.vue`];
+        const page = pages[`./pages/${name}.vue`];
         if (!page) {
             throw new Error(`Inertia page not found: ${name}`);
         }

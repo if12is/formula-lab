@@ -3,7 +3,7 @@
 Deterministic formulation platform (see `CLAUDE.md` and `plan/README.md`).
 
 ## Prerequisites
-Node 22 (`.nvmrc`), pnpm 10, PHP 8.3 + Composer 2, PostgreSQL 16 (databases `formula_lab` and `formula_lab_test`), Redis.
+Node 22 (`.nvmrc`), pnpm 10, PHP 8.3+ + Composer 2 (Laravel 13, Inertia 3, Vite 8), PostgreSQL 16 (databases `formula_lab` and `formula_lab_test`), Redis.
 
 ## Setup
 ```bash

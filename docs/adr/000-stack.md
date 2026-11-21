@@ -11,8 +11,8 @@ Formula Lab serves detergent, cosmetics, perfume, air-freshener and moisturizer 
 ### Stack
 | Layer | Choice |
 | --- | --- |
-| Backend | Laravel 12, PostgreSQL |
-| Web UI | Inertia v2 + Vue 3 + Tailwind, components and templates from Taif Kit (`github:if12is/taif-kit`, pinned to a tag, never a branch) |
+| Backend | Laravel 13 (PHP 8.3+), PostgreSQL |
+| Web UI | Inertia v3 + Vue 3 + Tailwind 4 + Vite 8, components and templates from Taif Kit (`github:if12is/taif-kit`, pinned to a tag, never a branch) |
 | Calculation | `packages/engine` (TypeScript, decimal.js), see ADR 001 |
 | Optimizer | `packages/optimizer` (HiGHS compiled to WASM), tier LP |
 | Desktop (offline) | Electron with SQLite, `apps/desktop` |
@@ -42,6 +42,9 @@ Nothing counts as working without tests.
 
 ### Language
 UI is Arabic RTL by default. Code, comments, commits and docs are English.
+
+## Revision 2026-11-21
+Owner asked for the latest versions: Laravel 12 → 13, Inertia 2 → 3, Vite 7 → 8 (also Pest 3 → 4, PHPUnit 11 → 12). No change to the architecture decision.
 
 ## Consequences
 - One calculation implementation (TypeScript) serves browser, Electron, Node and Capacitor.
