@@ -1,0 +1,64 @@
+{
+  "id": "release-batch",
+  "version": "0.1.0",
+  "status": "draft",
+  "rules": [
+    {
+      "id": "RB-01",
+      "operator": "all",
+      "conditions": [
+        { "id": "RB-01a", "operator": "exists", "field": "formulaVersion.id" },
+        { "id": "RB-01b", "operator": "eq", "field": "formulaVersion.status", "value": "approved" }
+      ],
+      "params": { "formulaVersionId": "formulaVersion.id", "status": "formulaVersion.status" },
+      "severity": "block",
+      "messageKey": "decision.rb.formula_version_not_approved",
+      "remedyKey": "decision.remedy.approve_formula_version",
+      "basis": "plan/01-phases/Y-decision-engine/tasks.md Y-03: approved formula version"
+    },
+    {
+      "id": "RB-02",
+      "operator": "eq",
+      "field": "lots.coaMissingCount",
+      "value": "0",
+      "params": { "lotIds": "lots.coaMissingLotIds" },
+      "severity": "block",
+      "messageKey": "decision.rb.coa_missing",
+      "remedyKey": "decision.remedy.attach_coa",
+      "basis": "plan/01-phases/Y-decision-engine/tasks.md Y-03: COA present for every material lot"
+    },
+    {
+      "id": "RB-03",
+      "operator": "eq",
+      "field": "deviations.unapprovedCount",
+      "value": "0",
+      "params": { "deviationIds": "deviations.unapprovedIds" },
+      "severity": "block",
+      "messageKey": "decision.rb.deviations_not_approved",
+      "remedyKey": "decision.remedy.approve_deviations",
+      "basis": "plan/01-phases/Y-decision-engine/tasks.md Y-03: deviations approved"
+    },
+    {
+      "id": "RB-04",
+      "operator": "eq",
+      "field": "labResults.outOfSpecCount",
+      "value": "0",
+      "params": { "properties": "labResults.outOfSpecProperties" },
+      "severity": "block",
+      "messageKey": "decision.rb.lab_out_of_spec",
+      "remedyKey": "decision.remedy.review_out_of_spec",
+      "basis": "plan/01-phases/Y-decision-engine/tasks.md Y-03: inspection results within limits (limits come from context)"
+    },
+    {
+      "id": "RB-05",
+      "operator": "eq",
+      "field": "labResults.notEvaluatedCount",
+      "value": "0",
+      "params": { "properties": "labResults.notEvaluatedProperties" },
+      "severity": "block",
+      "messageKey": "decision.rb.lab_not_evaluated",
+      "remedyKey": "decision.remedy.record_results_or_specs",
+      "basis": "plan/01-phases/Y-decision-engine/tasks.md Y-03: a result or limit that is missing is never a pass"
+    }
+  ]
+}

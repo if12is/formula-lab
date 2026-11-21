@@ -1,0 +1,54 @@
+{
+  "id": "publish-to-sanad",
+  "version": "0.1.0",
+  "status": "draft",
+  "rules": [
+    {
+      "id": "PS-01",
+      "operator": "all",
+      "conditions": [
+        { "id": "PS-01a", "operator": "eq", "field": "cost.approved", "value": true },
+        { "id": "PS-01b", "operator": "exists", "field": "cost.approvedUnitCost" }
+      ],
+      "severity": "block",
+      "messageKey": "decision.ps.cost_not_approved",
+      "remedyKey": "decision.remedy.approve_cost",
+      "basis": "plan/01-phases/Y-decision-engine/tasks.md Y-05: approved cost"
+    },
+    {
+      "id": "PS-02",
+      "operator": "eq",
+      "field": "priceWaterfall.missingCount",
+      "value": "0",
+      "params": { "missingProperties": "priceWaterfall.missingProperties" },
+      "severity": "block",
+      "messageKey": "decision.ps.price_waterfall_incomplete",
+      "remedyKey": "decision.remedy.complete_price_waterfall",
+      "basis": "plan/01-phases/Y-decision-engine/tasks.md Y-05: complete price waterfall"
+    },
+    {
+      "id": "PS-03",
+      "operator": "exists",
+      "field": "repricing.thresholdPct",
+      "severity": "block",
+      "messageKey": "decision.ps.threshold_not_configured",
+      "remedyKey": "decision.remedy.configure_price_change_threshold",
+      "basis": "plan/01-phases/Y-decision-engine/tasks.md Y-05: threshold is a configuration input, no default"
+    },
+    {
+      "id": "PS-04",
+      "operator": "lte",
+      "field": "repricing.maxMaterialPriceChangePct",
+      "valueFrom": "repricing.thresholdPct",
+      "params": {
+        "maxChangePct": "repricing.maxMaterialPriceChangePct",
+        "thresholdPct": "repricing.thresholdPct",
+        "materialIds": "repricing.changedMaterialIds"
+      },
+      "severity": "block",
+      "messageKey": "decision.ps.price_change_needs_reapproval",
+      "remedyKey": "decision.remedy.reapprove_cost",
+      "basis": "plan/01-phases/Y-decision-engine/tasks.md Y-05: material price change above threshold requires re-approval"
+    }
+  ]
+}

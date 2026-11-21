@@ -1,0 +1,83 @@
+{
+  "id": "approve-formula-version",
+  "version": "0.1.0",
+  "status": "draft",
+  "rules": [
+    {
+      "id": "AFV-01",
+      "operator": "eq",
+      "field": "formula.validateOk",
+      "value": true,
+      "severity": "block",
+      "messageKey": "decision.afv.engine_validation_failed",
+      "remedyKey": "decision.remedy.fix_formula_validation",
+      "basis": "plan/01-phases/Y-decision-engine/tasks.md Y-02: engine validate result ok"
+    },
+    {
+      "id": "AFV-02",
+      "operator": "eq",
+      "field": "formula.totalPct",
+      "value": "100",
+      "params": { "totalPct": "formula.totalPct" },
+      "severity": "block",
+      "messageKey": "decision.afv.sum_not_100",
+      "remedyKey": "decision.remedy.adjust_formula_to_100",
+      "basis": "plan/01-phases/Y-decision-engine/tasks.md Y-02: sum = 100"
+    },
+    {
+      "id": "AFV-03",
+      "operator": "eq",
+      "field": "engine.missingCount",
+      "value": "0",
+      "params": { "missingProperties": "engine.missingProperties" },
+      "severity": "block",
+      "messageKey": "decision.afv.engine_missing_data",
+      "remedyKey": "decision.remedy.complete_missing_data",
+      "basis": "plan/01-phases/Y-decision-engine/tasks.md Y-02: no missing data"
+    },
+    {
+      "id": "AFV-04",
+      "operator": "eq",
+      "field": "compliance.overall",
+      "value": "PASS",
+      "params": { "overall": "compliance.overall" },
+      "severity": "block",
+      "messageKey": "decision.afv.compliance_not_pass",
+      "remedyKey": "decision.remedy.resolve_compliance",
+      "basis": "plan/01-phases/Y-decision-engine/tasks.md Y-02: compliance PASS (UNKNOWN blocks)"
+    },
+    {
+      "id": "AFV-05",
+      "operator": "in",
+      "field": "criticalMaterials.confidences",
+      "value": ["L1_coa_batch", "L2_supplier_tds"],
+      "params": { "materialIds": "criticalMaterials.ids" },
+      "severity": "block",
+      "messageKey": "decision.afv.critical_confidence_below_l2",
+      "remedyKey": "decision.remedy.upgrade_material_confidence",
+      "basis": "plan/01-phases/Y-decision-engine/tasks.md Y-02: critical materials confidence at least L2 (L1 or L2)"
+    },
+    {
+      "id": "AFV-06",
+      "operator": "eq",
+      "field": "lab.missingCount",
+      "value": "0",
+      "params": { "missingProperties": "lab.missingProperties" },
+      "severity": "block",
+      "messageKey": "decision.afv.lab_results_missing",
+      "remedyKey": "decision.remedy.record_lab_results",
+      "basis": "plan/01-phases/Y-decision-engine/tasks.md Y-02: lab result when required for the product family"
+    },
+    {
+      "id": "AFV-07",
+      "operator": "eq",
+      "field": "deviations.openCount",
+      "value": "0",
+      "params": { "deviationIds": "deviations.openIds" },
+      "severity": "block",
+      "messageKey": "decision.afv.open_deviations",
+      "remedyKey": "decision.remedy.close_deviations",
+      "basis": "plan/01-phases/Y-decision-engine/tasks.md Y-02 (owner request: no open deviations)"
+    }
+  ]
+}
