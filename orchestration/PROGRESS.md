@@ -14,3 +14,4 @@
 | 2026-11-21 | C-01 | done | core/decimal.ts | vitest ✓ + coverage 100% للملف + فحص يدوي مستقل (evidence/C) |
 | 2026-11-21 | C-07 | done | core/result.ts | vitest ✓ + coverage 100% للملف + فحص يدوي مستقل (evidence/C) |
 | 2026-11-21 | C-02 | done | core/quantity.ts | vitest ✓ + coverage 100% للملف + فحص يدوي مستقل (evidence/C) |
+| 2026-11-21 | C-03 | done | core/convert.ts | vitest ✓ + coverage 100% للملف + فحص يدوي مستقل (evidence/C) |
