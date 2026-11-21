@@ -29,7 +29,7 @@
 28,F-01,F,agent,,done,Mass balance + scaling + validation (Σ=100، نسب سالبة، مكونات مكررة)
 29,F-02,F,agent,F-01,done,التكلفة: خامات + تغليف + فاقد + هامش + تكلفة لتر/كيلو/عبوة
 30,F-03,F,agent,F-01,done,الإنتاج: عبوات كاملة floor + باقي + لتر↔كيلو بالكثافة المقاسة
-31,F-04,F,agent,F-01,todo,Active matter للمنتج + تخفيف للوصول لهدف
+31,F-04,F,agent,F-01,done,Active matter للمنتج + تخفيف للوصول لهدف
 32,F-05,F,agent,F-01,todo,معادلة السلفونيك من acid value + نقاوة الصودا
 33,F-06,F,agent,F-01,todo,التصبين NaOH/KOH بالنقاوة + 3 طرق للماء + نطاق SAP (min/typ/max)
 34,F-07,F,agent,,partial,خواص الصابون من fatty acid profile (موسومة مؤشر)
