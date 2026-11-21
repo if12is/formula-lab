@@ -62,3 +62,4 @@
 | 2026-11-21 | G-03 | done | صاحب المشروع عمل merge لـ wasef201/sanad#1 | — |
 | 2026-11-21 | N-01 | done | Rules DSL بمصدر إلزامي + hash لكل rule set + evaluator (PASS/FAIL/UNKNOWN، مجموع نسب Annex III) | dsl.test.ts، evaluate.test.ts |
 | 2026-11-21 | N-05 | done | داتا ناقصة ⇒ UNKNOWN، عمرها ما تبقى PASS (property-based) | compliance.prop.test.ts |
+| 2026-11-21 | N-06 | done | قائمة INCI تنازلي + حد 1% + دمج المكرر + تحذيرات البطاقة | inci.test.ts |
