@@ -45,3 +45,4 @@
 | 2026-11-21 | J-03 | done | HiGHS 1.8.0 WASM مثبت + إعدادات حتمية (seed 0، thread واحد، simplex) | نفس الحل في 1000 تشغيلة |
 | 2026-11-21 | J-01 | done | Tier Profile type + validator؛ القيم null = ناقصة وبتوقف الحل (مفيش profiles متعبية — J-02 بشري) | profile.test.ts |
 | 2026-11-21 | J-04 | done | بناء الـ LP من profile + خامات بأسعار مؤرخة، والحل بيتحقق بـ Decimal بالظبط بعد التقريب | فحص يدوي مني: 50%/100% active ≥60 ⇒ 14 جنيه/كجم ✓ |
+| 2026-11-21 | J-05 | done | tie-breaking lexicographic بالـ materialId ⇒ حل وحيد | 12 ترتيب مختلف ⇒ نفس الـ hash |

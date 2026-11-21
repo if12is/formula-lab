@@ -140,7 +140,7 @@
 139,J-02,J,agent,A-09,todo,ملء profiles لـ 5 منتجات × 3 فئات من: المواصفة المصرية (حد أدنى) + CPDat/HERA (نطاقات) + الكيميائي (قرار)
 140,J-03,J,agent,,done,ربط HiGHS (WASM) في packages/optimizer مع تثبيت الإصدار والإعدادات
 141,J-04,J,agent,,done,بناء الـ LP من (profile + مواد متاحة + أسعار مؤرخة)
-142,J-05,J,agent,J-03,todo,Tie-breaking حتمي (لو حلين بنفس التكلفة: ترتيب ثابت بالـ id)
+142,J-05,J,agent,J-03,done,Tie-breaking حتمي (لو حلين بنفس التكلفة: ترتيب ثابت بالـ id)
 143,J-06,J,agent,,todo,Infeasibility: إرجاع القيود المتعارضة بالعربي (مثلًا: السعر المستهدف أقل من أقل تكلفة ممكنة بـ X جنيه)
 144,J-07,J,agent,,todo,Sensitivity: لو سعر خامة زاد 10% التركيبة/التكلفة تتغير إزاي (shadow prices)
 145,J-08,J,agent,,todo,Reverse pricing: من سعر بيع للمستهلك ⇒ هامش الموزع ⇒ أقصى تكلفة ⇒ أعلى فئة ممكنة
