@@ -57,6 +57,18 @@ class FormulaVersion extends Model
         return $this->hasMany(FormulaLine::class)->orderBy('line_no');
     }
 
+    /** @return HasMany<LabTrial, $this> */
+    public function trials(): HasMany
+    {
+        return $this->hasMany(LabTrial::class)->orderBy('created_at')->orderBy('code');
+    }
+
+    /** @return HasMany<FormulaVersionTransition, $this> */
+    public function transitions(): HasMany
+    {
+        return $this->hasMany(FormulaVersionTransition::class)->orderBy('signed_at');
+    }
+
     public function isApproved(): bool
     {
         return $this->status === FormulaStatus::Approved;

@@ -141,7 +141,7 @@ test('an approved or older version is read-only until a new version is started f
 });
 
 test('the formulas list keeps its filters in the address across a reload', async ({ page }) => {
-  await page.goto('/formulas?search=DEMO');
+  await page.goto('/formulas?search=DEMO-SHAMPOO');
   await expect(page.getByRole('heading', { level: 1, name: 'التركيبات' })).toBeVisible();
   await expect(page.locator('tbody tr')).toHaveCount(1);
 
@@ -153,7 +153,7 @@ test('the formulas list keeps its filters in the address across a reload', async
   // A reload keeps the search and the filter: the address is the state.
   await page.reload();
   await expect(page).toHaveURL(/latest_status=draft/);
-  await expect(page.getByRole('searchbox')).toHaveValue('DEMO');
+  await expect(page.getByRole('searchbox')).toHaveValue('DEMO-SHAMPOO');
   await expect(page.locator('[data-filter-count]')).toHaveText('1'); // the kit counts filters; the search text is not one
   await expect(page.locator('tbody tr')).toHaveCount(1);
 

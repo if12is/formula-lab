@@ -10,7 +10,7 @@ const bar = (page: Page) => page.locator('nav.kit-topnav');
 // What config/navigation.js promises: [group label, its items], in Arabic.
 const GROUPS: Array<[string, string[]]> = [
   ['التركيبات', ['التركيبات', 'الخامات', 'الحاسبات']],
-  ['الجودة', ['المطابقة', 'المعمل']],
+  ['الجودة', ['المطابقة', 'المعمل', 'بروتوكولات الاختبار']],
   ['التشغيل', ['الإنتاج']],
   ['النظام', ['الإعدادات', 'أسعار الصرف']],
 ];

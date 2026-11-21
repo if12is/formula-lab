@@ -11,8 +11,8 @@ test.describe('app shell', () => {
     await expect(sidebar.getByText('Formula Lab').first()).toBeVisible();
     const nav = sidebar.getByRole('navigation');
     await expect(nav).toBeVisible();
-    // dashboard, formulas, materials, calculators, compliance, lab, production, settings, exchange rates
-    await expect(nav.getByRole('link')).toHaveCount(9);
+    // dashboard, formulas, materials, calculators, compliance, lab, lab protocols, production, settings, exchange rates
+    await expect(nav.getByRole('link')).toHaveCount(10);
     await expect(nav.getByRole('link', { name: 'لوحة التحكم' })).toHaveAttribute('aria-current', 'page');
     await expect(page.getByRole('heading', { level: 1, name: 'لوحة التحكم' })).toBeVisible();
     await expect(page).toHaveTitle('لوحة التحكم - Formula Lab');
@@ -30,9 +30,9 @@ test.describe('app shell', () => {
   });
 
   test('a section that is not built yet shows the coming-soon page', async ({ page }) => {
-    await page.goto('/lab');
+    await page.goto('/production');
     await expect(page.getByRole('heading', { level: 1, name: 'هذه الشاشة قيد التنفيذ' })).toBeVisible();
-    await expect(page.locator('#kit-sidebar').getByRole('link', { name: 'المعمل' }).first()).toHaveAttribute('aria-current', 'page');
+    await expect(page.locator('#kit-sidebar').getByRole('link', { name: 'الإنتاج' }).first()).toHaveAttribute('aria-current', 'page');
   });
 
   test('switching the theme to dark sets data-mode=dark and survives a reload', async ({ page }) => {

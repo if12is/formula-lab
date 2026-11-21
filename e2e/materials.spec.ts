@@ -54,7 +54,7 @@ test('create a material, add a property with a new source, add a price and see t
   await price.getByLabel(/^السعر/).fill('48.75');
   await fillDate(price, /تاريخ العرض/, '2026-03-02');
   const sourceBox = price.getByRole('combobox', { name: /المصدر/ });
-  await sourceBox.fill('Spec data sheet');
+  await sourceBox.fill(`Spec data sheet ${suffix}`);
   await page.getByRole('option', { name: new RegExp(`Spec data sheet ${suffix}`) }).click();
   await pickOption(page, price.getByRole('combobox', { name: /درجة الثقة/ }), 'نشرة بيانات المورد (TDS)');
   await price.getByRole('button', { name: 'إضافة السعر' }).click();

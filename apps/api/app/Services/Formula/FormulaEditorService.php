@@ -27,6 +27,7 @@ final class FormulaEditorService
         private RecordFormulaBalanceAction $recordFormulaBalance,
         private ComplianceEditorService $complianceEditorService,
         private TaxRegimeService $taxRegimeService,
+        private FormulaWorkflowService $formulaWorkflowService,
     ) {}
 
     /**
@@ -59,6 +60,7 @@ final class FormulaEditorService
                 'ifra_category' => $formula->ifra_category,
             ],
             'version' => [
+                'id' => $version->getKey(),
                 'number' => $version->version,
                 'status' => $version->status->value,
                 'reason' => $version->reason,
@@ -74,6 +76,8 @@ final class FormulaEditorService
             'compliance' => ['ruleSets' => $this->complianceEditorService->ruleSets()],
             // The product's tax setting and the dated regimes the engine checks it against (pricing panel).
             'tax' => $this->taxRegimeService->editorProps($formula),
+            // The approval workflow: status, signatures, the lab results it needs and the trials of this version.
+            'workflow' => $this->formulaWorkflowService->panel($version),
         ];
     }
 

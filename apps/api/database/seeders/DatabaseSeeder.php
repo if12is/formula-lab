@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call(ComplianceRuleSetSeeder::class);
         $this->call(TaxRegimeSeeder::class);
+        $this->call(LabProtocolSeeder::class);
 
         User::factory()->create([
             'name' => 'Test User',

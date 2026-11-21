@@ -121,12 +121,12 @@
 120,N-10,N,agent,E-13,todo,قواعد IFRA لكل فئة منتج جديدة (4، 5A، 5B، 10A، 10B، 12)
 121,N-11,N,human,,todo,قاعدة ES 2295 (كمية المنتج في العبوات): الحد الأدنى للتعبئة بعد شراء النص
 122,N-12,N,agent,,todo,تنبيه المطهرات: منتج بادعاء تطهير ⇒ مسار EDA منفصل (دليل تراخيص المستحضرات المطهرة 2026)
-123,O-01,O,agent,,todo,"Lab trial: التركيبة + الدفعة + القياسات (pH, density, viscosity, cloud point, foam, stability 4 أسابيع)"
-124,O-02,O,agent,,todo,Workflow اعتماد: draft → lab_testing → approved/rejected مع توقيع
+123,O-01,O,agent,,done,"Lab trial: التركيبة + الدفعة + القياسات (pH, density, viscosity, cloud point, foam, stability 4 أسابيع)"
+124,O-02,O,agent,,done,Workflow اعتماد: draft → lab_testing → approved/rejected مع توقيع
 125,O-03,O,agent,F-09,todo,تسجيل منحنى الملح لكل تركيبة أساس واستخدامه في F-09
 126,O-04,O,agent,F-03,todo,الكثافة المقاسة تتربط بنسخة التركيبة وتستخدم في التحويل لتر/كيلو
 127,O-05,O,agent,,todo,مقارنة المتوقع (حسابي) بالمقاس وعرض الفرق (مثلًا active محسوب vs MBAS مقاس)
-128,O-06,O,agent,,todo,قالب بروتوكولات اختبار بسيطة (pH، كثافة بالبيكنومتر، لزوجة Brookfield)
+128,O-06,O,agent,,done,قالب بروتوكولات اختبار بسيطة (pH، كثافة بالبيكنومتر، لزوجة Brookfield)
 129,O-07,O,agent,O-01,todo,نتيجة ثبات مقاسة ناجحة تعلّم قيم rHLB/الجرعة المستخدمة 'مجرّبة على تركيبة X' (L1 محلي)
 130,Y-01,Y,agent,,done,Decision DSL: شروط + نتيجة + رسالة عربي لكل شرط فاشل، ونسخة للقواعد
 131,Y-02,Y,agent,Y-01,done,قرار اعتماد نسخة تركيبة: Σ=100، مفيش missing، ثقة ≥ L2 للمواد الحرجة، مطابقة PASS (مش UNKNOWN)، نتيجة معمل لو مطلوبة

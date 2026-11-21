@@ -6,6 +6,8 @@ use App\Enums\AuditAction;
 use App\Enums\Confidence;
 use App\Enums\FilterType;
 use App\Enums\FormulaStatus;
+use App\Enums\LabProperty;
+use App\Enums\LabTrialStatus;
 use App\Enums\ProductTier;
 use App\Enums\RuleOperator;
 use App\Enums\RuleSetStatus;
@@ -27,6 +29,8 @@ class EnumLabelsTest extends TestCase
             'Confidence' => [Confidence::class],
             'FilterType' => [FilterType::class],
             'FormulaStatus' => [FormulaStatus::class],
+            'LabProperty' => [LabProperty::class],
+            'LabTrialStatus' => [LabTrialStatus::class],
             'ProductTier' => [ProductTier::class],
             'RuleOperator' => [RuleOperator::class],
             'RuleSetStatus' => [RuleSetStatus::class],

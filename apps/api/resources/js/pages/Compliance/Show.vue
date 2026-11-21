@@ -15,6 +15,7 @@ import RuleFormModal from '../../components/compliance/RuleFormModal.vue';
 import RuleSetFormModal from '../../components/compliance/RuleSetFormModal.vue';
 import Num from '../../components/Num.vue';
 import StatusBadge from '../../components/StatusBadge.vue';
+import { useDateTime } from '../../composables/useDateTime';
 import { useI18n } from '../../composables/useI18n';
 import { useListQuery } from '../../composables/useListQuery';
 import { publishPreview } from '../../lib/compliance';
@@ -29,7 +30,7 @@ const props = defineProps({
     ruleDefaults: { type: Object, required: true },
 });
 
-const { t, has, locale } = useI18n();
+const { t, has } = useI18n();
 const { confirm } = useConfirm();
 const query = useListQuery(props.list.schema);
 
@@ -57,7 +58,7 @@ const columns = computed(() => [
 
 const filtered = computed(() => query.activeCount.value > 0);
 const messageOf = (row) => row.message ?? (row.message_key && has(`engine.${row.message_key}`) ? t(`engine.${row.message_key}`) : t('common.no_data'));
-const when = (iso) => new Intl.DateTimeFormat(locale.value, { dateStyle: 'medium', timeStyle: 'short', numberingSystem: 'latn' }).format(new Date(iso));
+const { when } = useDateTime();
 
 const facts = computed(() => [
     { term: t('compliance.facts.code'), value: props.ruleSet.code, mono: true },

@@ -18,6 +18,7 @@ import EntitySelect from '../../components/form/EntitySelect.vue';
 import DisplayCurrencyLine from '../../components/currency/DisplayCurrencyLine.vue';
 import CompliancePanel from '../../components/compliance/CompliancePanel.vue';
 import TaxPanel from '../../components/pricing/TaxPanel.vue';
+import WorkflowPanel from '../../components/formulas/WorkflowPanel.vue';
 import ConfidenceBadge from '../../components/materials/ConfidenceBadge.vue';
 import MaterialFormModal from '../../components/materials/MaterialFormModal.vue';
 import Num from '../../components/Num.vue';
@@ -37,6 +38,8 @@ const props = defineProps({
     compliance: { type: Object, default: null },
     /** The product's tax setting with its allowed options and the dated regimes (pricing panel); an existing formula only. */
     tax: { type: Object, default: null },
+    /** The approval workflow of this version (status, signatures, lab coverage, trials); an existing formula only. */
+    workflow: { type: Object, default: null },
     datasetVersion: { type: String, required: true },
     tierOptions: { type: Array, required: true },
     urls: { type: Object, required: true },
@@ -236,6 +239,8 @@ const percentValid = (line) => line.percent === '' || isDecimalString(line.perce
         <Alert v-else-if="!creating && startedNewVersion" tone="info" icon="ph:git-branch" class="mb-4" :title="t('formulas.editor.new_version_title', { version: version.number })">
             {{ t('formulas.editor.new_version_description') }}
         </Alert>
+
+        <WorkflowPanel v-if="workflow" :workflow="workflow" class="mb-4" />
 
         <form class="flex flex-col gap-4" novalidate @submit.prevent="submit">
             <Card v-if="creating" :title="t('formulas.editor.identity')">

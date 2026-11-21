@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Formula\FormulaController;
 use App\Http\Controllers\Formula\FormulaVersionController;
+use App\Http\Controllers\Formula\FormulaWorkflowController;
 use App\Http\Controllers\Material\MaterialCompositionController;
 use App\Http\Controllers\Material\MaterialController;
 use App\Http\Controllers\Material\MaterialPriceController;
@@ -54,6 +55,9 @@ Route::prefix('formulas')->name('formulas.')->group(function (): void {
         Route::put('ifra-category', [FormulaController::class, 'updateIfraCategory'])->name('ifra-category.update');
         Route::get('versions/{version:version}/edit', [FormulaVersionController::class, 'edit'])->whereNumber('version')->name('versions.edit');
         Route::post('versions/{version:version}', [FormulaVersionController::class, 'store'])->whereNumber('version')->name('versions.store');
+        Route::post('versions/{version:version}/send-to-lab', [FormulaWorkflowController::class, 'sendToLab'])->whereNumber('version')->name('versions.send-to-lab');
+        Route::post('versions/{version:version}/approve', [FormulaWorkflowController::class, 'approve'])->whereNumber('version')->name('versions.approve');
+        Route::post('versions/{version:version}/reject', [FormulaWorkflowController::class, 'reject'])->whereNumber('version')->name('versions.reject');
         Route::get('versions/{version:version}/label', [FormulaVersionController::class, 'label'])->whereNumber('version')->name('versions.label');
     });
 });

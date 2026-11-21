@@ -26,6 +26,7 @@ export const navigation = [
         items: [
             { id: 'compliance', href: '/compliance', icon: 'ph:seal-check', labelKey: 'nav.compliance' },
             { id: 'lab', href: '/lab', icon: 'ph:test-tube', labelKey: 'nav.lab' },
+            { id: 'lab-protocols', href: '/lab/protocols', icon: 'ph:list-checks', labelKey: 'nav.lab_protocols', parentId: 'lab' },
         ],
     },
     {

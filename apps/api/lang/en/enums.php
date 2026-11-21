@@ -51,6 +51,18 @@ return [
         'approved' => 'Approved',
         'rejected' => 'Rejected',
     ],
+    'lab_trial_status' => [
+        'in_progress' => 'In progress',
+        'completed' => 'Completed',
+    ],
+    'lab_property' => [
+        'ph' => 'pH',
+        'density' => 'Density',
+        'viscosity' => 'Viscosity',
+        'cloud_point' => 'Cloud point',
+        'foam' => 'Foam',
+        'stability_4w' => 'Stability at 4 weeks',
+    ],
     'product_tier' => [
         'economy' => 'Economy',
         'mid' => 'Mid-range',

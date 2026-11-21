@@ -51,6 +51,18 @@ return [
         'approved' => 'معتمدة',
         'rejected' => 'مرفوضة',
     ],
+    'lab_trial_status' => [
+        'in_progress' => 'قيد التنفيذ',
+        'completed' => 'مكتملة',
+    ],
+    'lab_property' => [
+        'ph' => 'الأس الهيدروجيني (pH)',
+        'density' => 'الكثافة',
+        'viscosity' => 'اللزوجة',
+        'cloud_point' => 'نقطة التعكر',
+        'foam' => 'الرغوة',
+        'stability_4w' => 'الثبات بعد 4 أسابيع',
+    ],
     'product_tier' => [
         'economy' => 'اقتصادي',
         'mid' => 'متوسط',

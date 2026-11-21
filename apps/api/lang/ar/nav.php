@@ -16,6 +16,7 @@ return [
     'production' => 'الإنتاج',
     'settings' => 'الإعدادات',
     'exchange_rates' => 'أسعار الصرف',
+    'lab_protocols' => 'بروتوكولات الاختبار',
     'user' => [
         'name' => 'مستخدم تجريبي',
         'role' => 'الحساب غير مربوط بعد',

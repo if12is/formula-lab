@@ -20,6 +20,7 @@ import PropertyModal from '../../components/materials/PropertyModal.vue';
 import PropertyValueText from '../../components/materials/PropertyValueText.vue';
 import Num from '../../components/Num.vue';
 import StatusBadge from '../../components/StatusBadge.vue';
+import { useDateTime } from '../../composables/useDateTime';
 import { useI18n } from '../../composables/useI18n';
 import { useProperties } from '../../composables/useProperties';
 import { compositionSummary } from '../../lib/compliance';
@@ -39,7 +40,7 @@ const props = defineProps({
     urls: { type: Object, required: true },
 });
 
-const { t, has, locale } = useI18n();
+const { t, has } = useI18n();
 const { confirm } = useConfirm();
 const { label: propertyLabel } = useProperties();
 
@@ -155,7 +156,7 @@ const auditColumns = computed(() => [
 
 const auditRows = computed(() => props.audit.map((entry) => ({ ...entry, id: String(entry.id) })));
 const AUDIT_TONES = { create: 'success', update: 'info', delete: 'danger' };
-const when = (iso) => new Intl.DateTimeFormat(locale.value, { dateStyle: 'medium', timeStyle: 'short', numberingSystem: 'latn' }).format(new Date(iso));
+const { when } = useDateTime();
 const fieldLabel = (field) => (has(`materials.audit.fields.${field}`) ? t(`materials.audit.fields.${field}`) : field);
 const auditValue = (field, value) => {
     if (value === null) {

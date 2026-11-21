@@ -2,6 +2,15 @@
 
 return [
     'approved_formula_version_immutable' => 'الإصدار :version من التركيبة معتمد ولا يمكن تعديله. أنشئ إصداراً جديداً بدلاً من ذلك.',
+    'lab_trial_closed' => 'التجربة :trial مكتملة: لم يعد ممكناً تغيير قياساتها.',
+    'lab_trial_no_measurements' => 'التجربة :trial لا تحمل أي قياس بعد. سجّل قياساً واحداً على الأقل قبل إكمالها.',
+    'lab_unit_not_allowed' => 'الوحدة :unit غير مسموحة لـ :property.',
+    'lab_value_not_decimal' => 'قيمة :property يجب أن تكون رقماً عادياً، مثل 7.2.',
+    'workflow_transition_not_allowed' => 'نسخة حالتها :from لا يمكن نقلها إلى :to.',
+    'workflow_rejection_reason_required' => 'لا بد من سبب لرفض النسخة.',
+    'workflow_no_completed_trial' => 'لا يمكن اعتماد نسخة دون تجربة معملية مكتملة.',
+    'workflow_measurements_missing' => 'الاعتماد يحتاج هذه القياسات من تجربة مكتملة واحدة: :measurements.',
+    'workflow_hash_mismatch' => 'سطور هذه النسخة لم تعد تطابق البصمة المسجلة لها، فلا يمكن توقيعها.',
     'append_only' => 'الجدول :table للإضافة فقط: التعديل والحذف غير مسموحين.',
     'formula_version_lines_required' => 'إصدار التركيبة يحتاج سطراً واحداً على الأقل.',
     'formula_version_reason_required' => 'سبب التعديل مطلوب لكل إصدار بعد الإصدار الأول.',
