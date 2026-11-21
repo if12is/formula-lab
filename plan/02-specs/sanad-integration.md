@@ -41,6 +41,27 @@ Sanad = نظام التجارة (POS، مشتريات، مخزون، مبيعا�
 - كل write بـ `Idempotency-Key` header، وtoken بصلاحيات (abilities) خاصة بالتصنيع.
 - **قبل أي تعديل في sanad:** اقرا `AGENTS.md` بتاعه والـ docs، واتبع أسلوبه وتستاته.
 
-## أسئلة مفتوحة لصاحب المشروع
-- مين الـ instance اللي هنكلمه: Sanad POS (local-first على جهاز المصنع) ولا Sanad Central؟ وهل الـ store API متاح على النشر cloud؟
-- هل الخامات تتسجل كمنتجات عادية في Sanad بفئة "خامات"، ولا محتاجين نوع صنف جديد؟
+## قرارات صاحب المشروع (2026-11-21)
+
+### 1) بنكلم Sanad POS اللي على جهاز المصنع (مش Central)
+- Sanad POS تطبيق local-first (Electron + SQLite) على جهاز المصنع، وغالبًا ورا NAT، فالسيرفر ما يقدرش يوصله مباشرة.
+- **التصميم:** Sanad POS هو اللي بيبدأ الاتصال (outbound)، بنفس نمط مزامنته الحالية مع Central:
+  - Sanad يبعت (push) المشتريات والأصناف والأرصدة لـ Formula Lab عن طريق outbox + cursor.
+  - Sanad يسحب (pull) من Formula Lab: أوامر الإنتاج المعتمدة (صرف خامات + استلام منتج تام)، والمنتجات التامة بتكلفتها وأسعارها، وأسعار الموزعين.
+  - كل رسالة ليها `Idempotency-Key`، وأي تعارض يتسجل ويتحل بنفس آلية SyncConflict الموجودة في Sanad.
+- لو Formula Lab شغال على نفس الشبكة المحلية (نسخة Electron)، ينفع اتصال مباشر LAN كبديل، بنفس العقد.
+- G-01 لازم يقرا كود المزامنة الحالي في Sanad (`docs/sync/`، SyncApiController، SyncLog، SyncConflict) ويبني عليه، مش جنبه.
+
+### 2) الخامات والفوارغ: نوع صنف متوافق مع اللي موجود (additive)
+**الشرط:** ما يحصلش أي لخبطة في Sanad الحالي، ويدعم الجديد.
+- Migration إضافية بس في `products` (مفيش تعديل أو حذف لأعمدة موجودة):
+  - `item_kind` (string، default `merchandise`): `merchandise` | `raw_material` | `packaging` | `finished_good`
+  - `is_sellable` (boolean، default `true`)
+- كل المنتجات الحالية بتاخد `merchandise` + `is_sellable = true` ⇒ سلوك Sanad الحالي ما يتغيرش خالص.
+- الخامات والفوارغ (`raw_material` و`packaging`) بتبقى `is_sellable = false`: ما تظهرش في شاشة البيع ولا الـ store API، بس بتظهر في المشتريات والمخزون والجرد عادي.
+- المنتج التام اللي جاي من Formula Lab بيبقى `finished_good` وقابل للبيع.
+- التقارير الحالية: فلتر افتراضي يحافظ على نفس الأرقام القديمة، وفلتر جديد حسب النوع.
+- **اختبارات إلزامية في PR الخاص بـ sanad:** كل اختبارات Sanad الحالية خضرا من غير تعديل + اختبارات جديدة: صنف بـ `is_sellable = false` ما يتباعش، وما يظهرش في `/api/v1/store/products`، وبيتشري ويتجرد عادي.
+
+## أسئلة مفتوحة
+- (اتحلت — شوف القرارات فوق)

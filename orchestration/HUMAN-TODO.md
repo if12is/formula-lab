@@ -2,5 +2,5 @@
 - [ ] شراء نصوص ES 1562، ES 4900، ES 6910، ES 2295 من EOS
 - [ ] مراجعة مصفوفة الضرايب مع محاسب (VAT 14% للمنظفات من قوانين 2026؛ وضع العطور والتجميل) — A-13
 - [ ] التعاقد مع كيميائي استشاري (golden tests + tier profiles)
-- [ ] تحديد instance بتاع Sanad اللي هنكلمه (POS ولا Central) وإزاي الخامات تتسجل فيه
+- [x] Sanad: POS اللي على جهاز المصنع + نوع صنف additive (item_kind + is_sellable) — شوف plan/02-specs/sanad-integration.md
 - [ ] جمع 30 تركيبة + 20 COA + أسعار 40 خامة + BOM تغليف 20 SKU + 5 شحنات استيراد (قوالب في plan/03-data-templates)
