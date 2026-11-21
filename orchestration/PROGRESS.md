@@ -27,3 +27,4 @@
 | 2026-11-21 | F-10 | done | trace tree لكل رقم ناتج بمصادر ودرجة ثقة الأوراق + بوابة الثقة (L7 ⇒ missing إلا بـ override موقّع) | trace.test.ts، sourced.test.ts |
 | 2026-11-21 | F-14 | done | مكوّن موازنة q.s. واحد معلن + balanceEvent للتاريخ | اختبار: باقي السطور ما بتتغيرش |
 | 2026-11-21 | F-15 | done | نسبة المادة من وزنها وحجم التشغيلة بوحدات صريحة (حجم ⇒ كثافة بمصدر) | percent-from-weight.test.ts |
+| 2026-11-21 | F-01 | done | Σ=100.000 صارم (±0.001)، سالب/صفر/مكرر ⇒ أخطاء بـ message keys، draftSummary للمسودة، scaleFormula | formula.test.ts |
