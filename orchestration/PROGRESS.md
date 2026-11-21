@@ -32,3 +32,4 @@
 | 2026-11-21 | F-03 | done | الدفعة: floor + باقي ظاهر، لتر↔كيلو بالكثافة المقاسة، اختبار يمنع ceil + calculate() موحد | فحص يدوي: 100 كجم ⇒ 95 عبوة لتر + 238.095 مل باقي ✓ |
 | 2026-11-21 | D-01 | done | data-model.md: ER + ملكية كل جدول (Formula Lab vs Sanad cache) + tenancy | plan/02-specs/data-model.md |
 | 2026-11-21 | D-02 | done | substances منفصلة عن trade_materials + tenants + DecimalString cast (مفيش float) | TradeMaterialTest: مادة واحدة بدرجات متعددة ✓ |
+| 2026-11-21 | D-07 | done | audit_log append-only (trigger يمنع UPDATE/DELETE/TRUNCATE) + Auditable trait: مين/إمتى/قبل/بعد/ليه | AuditLogTest ✓ |
