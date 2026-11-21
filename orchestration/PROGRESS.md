@@ -39,3 +39,4 @@
 | 2026-11-21 | D-10 | done | النسخة المعتمدة immutable (trigger + model guard) + diff بين أي نسختين | ApprovedFormulaImmutabilityTest ✓ — 74 اختبار Laravel كلهم ✓ |
 | 2026-11-21 | F-04 | done | المادة الفعالة للخلطة + كمية الخام للهدف + ماء التخفيف | اختبارات SLES 70/LABSA 96/CAPB 30 (fixtures) + فحص يدوي |
 | 2026-11-21 | F-05 | partial | معادلة السلفونيك من AV + نقاوة NaOH/KOH صلب أو محلول | فحص يدوي مني: 1000 جم AV 180 NaOH 99% ⇒ 129.615 جم ✓ — مستني مراجعة الكيميائي |
+| 2026-11-21 | F-06 | done | التصبين NaOH/KOH بالنقاوة + نطاق SAP min/typ/max وأثره + 3 طرق للماء | soap.test.ts، water.test.ts |

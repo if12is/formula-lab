@@ -31,7 +31,7 @@
 30,F-03,F,agent,F-01,done,الإنتاج: عبوات كاملة floor + باقي + لتر↔كيلو بالكثافة المقاسة
 31,F-04,F,agent,F-01,done,Active matter للمنتج + تخفيف للوصول لهدف
 32,F-05,F,agent,F-01,partial,معادلة السلفونيك من acid value + نقاوة الصودا
-33,F-06,F,agent,F-01,todo,التصبين NaOH/KOH بالنقاوة + 3 طرق للماء + نطاق SAP (min/typ/max)
+33,F-06,F,agent,F-01,done,التصبين NaOH/KOH بالنقاوة + 3 طرق للماء + نطاق SAP (min/typ/max)
 34,F-07,F,agent,,partial,خواص الصابون من fatty acid profile (موسومة مؤشر)
 35,F-08,F,agent,,done,HLB: required + blend + Griffin + Davies
 36,F-09,F,agent,,done,Salt curve: interpolation خطي على قياسات المستخدم فقط، وبرة المدى = خطأ
