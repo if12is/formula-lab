@@ -16,3 +16,8 @@ export * from './core/fx';
 export * from './core/count-units';
 export * from './core/alcohol';
 export { canonicalJson, inputHash, outputHash, sha256Hex } from './hash';
+export * from './core/parse';
+export * from './hlb';
+export * from './viscosity';
+export * from './soap-props';
+export * from './data';
