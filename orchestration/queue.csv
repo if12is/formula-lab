@@ -8,7 +8,7 @@
 7,B-07,B,agent,B-01,done,"إعداد بيئة dev بـ Docker Compose (Postgres, Redis, Laravel, Vite)"
 8,B-08,B,agent,B-02,done,تحديد عقد المحرك: Input/Output types + versioning (engineVersion في كل ناتج)
 9,C-01,C,agent,,done,"تبني decimal.js (precision 34, ROUND_HALF_EVEN داخليًا)"
-10,C-02,C,agent,,todo,"نوع Quantity<Unit> (kg, g, mg, L, mL, %w/w, %w/v, mg KOH/g, EGP, USD, mPa·s)"
+10,C-02,C,agent,,done,"نوع Quantity<Unit> (kg, g, mg, L, mL, %w/w, %w/v, mg KOH/g, EGP, USD, mPa·s)"
 11,C-03,C,agent,C-02,todo,تحويلات الكتلة/الحجم بكثافة صريحة فقط
 12,C-04,C,agent,C-01,todo,سياسة التقريب للعرض (وزن 0.1 جم، فلوس 0.01 جنيه، نسب 0.001%)
 13,C-05,C,agent,C-02,todo,تحويل العملات بسعر صرف مؤرخ (مصدر: CBE)
