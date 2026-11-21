@@ -48,3 +48,4 @@
 | 2026-11-21 | J-05 | done | tie-breaking lexicographic بالـ materialId ⇒ حل وحيد | 12 ترتيب مختلف ⇒ نفس الـ hash |
 | 2026-11-21 | J-06 | done | Infeasibility: أقل مجموعة قيود متعارضة (deletion filter) كـ message keys + نصوص عربي في lang/optimizer.php | فحص يدوي: maxCost 12 ⇒ أقل تكلفة ممكنة 14، الفرق 2 ✓ |
 | 2026-11-21 | J-07 | done | Sensitivity: duals + reduced costs + سيناريو تغيير سعر خامة بإعادة حل | S1 +10% ⇒ +1.8، +30% ⇒ تبديل لـ S2 |
+| 2026-11-21 | J-08 | done | Reverse pricing من سعر الرف لأقصى تكلفة كيلو (Decimal، مفيش defaults) | 3 حالات يدوية |
