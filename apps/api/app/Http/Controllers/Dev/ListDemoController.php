@@ -24,7 +24,7 @@ class ListDemoController extends Controller
     {
         return Inertia::render('Dev/ListDemo', [
             'list' => $this->listDemoService->list($request, route('dev.list-demo.functions')),
-            'materialOptions' => $this->listDemoService->materialOptions(),
+            'materialOptions' => $this->listDemoService->materialOptions(trim((string) $request->query('search', ''))),
             'searchUrl' => route('dev.list-demo.materials'),
         ]);
     }

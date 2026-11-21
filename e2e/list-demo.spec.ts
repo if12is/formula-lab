@@ -77,7 +77,8 @@ test('filtered-empty state offers a way out', async ({ page }) => {
 });
 
 test('entity selects: local combobox and server-searched typeahead', async ({ page }) => {
-  await page.goto('/__dev/list-demo');
+  // ?search=E2E scopes the preloaded options to the fixture rows, whatever else the database holds.
+  await page.goto('/__dev/list-demo?search=E2E');
 
   const selected = page.getByTestId('selected-values');
   await expect(selected).toContainText('—');

@@ -76,7 +76,7 @@ const bracketOf = (result) => (result.bracket ? t('lab.salt_curve.bracket', { fr
         <div class="flex flex-col gap-4" data-testid="salt-curve" :data-points="points.length">
             <EmptyState v-if="points.length === 0" variant="dashed" icon="ph:chart-line" :title="t('lab.salt_curve.empty_title')" :description="t('lab.salt_curve.empty_description')" data-testid="salt-empty" />
 
-            <div v-else class="grid gap-4 lg:grid-cols-2 lg:items-start">
+            <div v-else class="flex flex-col gap-4">
                 <Card :title="t('lab.salt_curve.chart_title')" :description="t('lab.salt_curve.chart_description')">
                     <ApexChart type="line" :series="series" :options="chartOptions" :aria-label="t('lab.salt_curve.chart_label')" data-testid="salt-chart" />
                 </Card>

@@ -40,10 +40,18 @@ final class ListDemoService
             ]);
     }
 
-    /** @return list<array{value: string, label: string}> */
-    public function materialOptions(): array
+    /**
+     * The preloaded options. A `search` term narrows them like it narrows the list, so a page opened with
+     * ?search=E2E offers only the fixture rows no matter what else the database holds.
+     *
+     * @return list<array{value: string, label: string}>
+     */
+    public function materialOptions(string $term = ''): array
     {
-        return TradeMaterial::query()->orderBy('trade_name')->limit(self::OPTION_PREVIEW_LIMIT)->get(['id', 'trade_name'])
+        return TradeMaterial::query()
+            ->when($term !== '', fn ($query) => $query->where('trade_name', 'ilike', '%'.addcslashes($term, '\\%_').'%'))
+            ->orderBy('trade_name')->limit(self::OPTION_PREVIEW_LIMIT)
+            ->get(['id', 'trade_name'])
             ->map(fn (TradeMaterial $material): array => ['value' => $material->id, 'label' => $material->trade_name])
             ->all();
     }
