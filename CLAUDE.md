@@ -37,4 +37,4 @@
 Laravel 12 + PostgreSQL + Inertia + Vue 3 + Taif Kit + Tailwind 4 · `packages/engine` و`packages/optimizer` (HiGHS WASM) · Electron (أوفلاين) · Claude Haiku عبر API من السيرفر.
 
 ## أوامر
-(تتحدث بعد B-01) `pnpm test` · `php artisan test` · `pnpm playwright test`
+`pnpm test` · `pnpm typecheck` · `pnpm lint` · `pnpm test:php` (أو `cd apps/api && php artisan test`) · `pnpm e2e`

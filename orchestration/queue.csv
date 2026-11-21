@@ -1,6 +1,6 @@
 ﻿order,task_id,phase,owner,depends_on,status,task
 1,B-01,B,agent,,done,قرار الستاك: Laravel 12 + Inertia + Vue 3 + Taif Kit (UI) + packages/engine TypeScript، وSanad مصدر الحقيقة لكل حاجة POS
-2,B-02,B,agent,,todo,"إنشاء monorepo (pnpm workspaces): packages/engine, packages/optimizer, apps/api (Laravel), apps/web (Vue+Inertia), apps/desktop (Electron), apps/mobile (Capacitor)"
+2,B-02,B,agent,,done,"إنشاء monorepo (pnpm workspaces): packages/engine, packages/optimizer, apps/api (Laravel), apps/web (Vue+Inertia), apps/desktop (Electron), apps/mobile (Capacitor)"
 3,B-03,B,agent,,done,كتابة ADR-001: المحرك TypeScript مشترك + Decimal
 4,B-04,B,agent,,done,كتابة ADR-002: الـ AI ما يحسبش؛ بيستدعي tools بس
 5,B-05,B,agent,,done,كتابة ADR-003: نسخ الداتا المرجعية immutable ومرقمة
