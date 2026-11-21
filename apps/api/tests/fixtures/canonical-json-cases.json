@@ -1,0 +1,7 @@
+{
+  "scalars": ["plain", "quote \" backslash \\ slash / tab \t newline \n", "عربي ✓   \u007f \u001f", "emoji 😀"],
+  "nested": {"b": {"z": "1", "a": [{"y": null, "x": true}, []]}, "a": {}, "B": "upper", "10": "ten", "9": "nine"},
+  "empty": {"list": [], "object": {}},
+  "astral_key_order": {"😀": "astral", "￿": "bmp-high", "a": "ascii"},
+  "decimals": {"amount": "10.25", "min": "0", "max": "-1.5"}
+}
