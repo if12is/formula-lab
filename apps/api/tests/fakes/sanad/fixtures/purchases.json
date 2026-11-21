@@ -1,0 +1,35 @@
+[
+  {
+    "uuid": "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+    "invoice_number": "PUR-0001",
+    "reference_number": null,
+    "supplier_uuid": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+    "purchase_date": "2026-11-20",
+    "status": "received",
+    "subtotal": "2575.00",
+    "tax_amount": "360.50",
+    "discount_amount": "0.00",
+    "total": "2935.50",
+    "branch_uuid": null,
+    "branch_code": "MAIN",
+    "updated_at": "2026-11-20T14:00:00Z",
+    "items": [
+      {
+        "uuid": "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
+        "product_uuid": "11111111-1111-4111-8111-111111111111",
+        "uom_name": "جركن 25 كجم",
+        "quantity": "2.00",
+        "base_quantity": "50.00",
+        "unit_cost": "1287.50",
+        "discount_amount": "0.00",
+        "tax_rate": "14.00",
+        "tax_amount": "360.50",
+        "subtotal": "2575.00",
+        "received_quantity": "2.00",
+        "batch_number": "L-7731",
+        "production_date": null,
+        "expiry_date": "2028-06-30"
+      }
+    ]
+  }
+]

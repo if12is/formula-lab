@@ -1,0 +1,27 @@
+[
+  {
+    "uuid": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+    "code": "SUP-001",
+    "name": "مورد الكيماويات",
+    "name_en": "Chem Co",
+    "tax_number": "123-456",
+    "payment_terms": 30,
+    "is_active": true,
+    "updated_at": "2026-11-19T08:00:00Z"
+  },
+  {
+    "uuid": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+    "code": "SUP-002",
+    "name": "مصنع العبوات",
+    "name_en": null,
+    "tax_number": null,
+    "payment_terms": 0,
+    "is_active": true,
+    "updated_at": "2026-11-19T09:00:00Z"
+  },
+  {
+    "uuid": "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+    "deleted": true,
+    "deleted_at": "2026-11-19T10:00:00Z"
+  }
+]
