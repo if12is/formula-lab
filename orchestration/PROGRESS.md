@@ -49,3 +49,4 @@
 | 2026-11-21 | J-06 | done | Infeasibility: أقل مجموعة قيود متعارضة (deletion filter) كـ message keys + نصوص عربي في lang/optimizer.php | فحص يدوي: maxCost 12 ⇒ أقل تكلفة ممكنة 14، الفرق 2 ✓ |
 | 2026-11-21 | J-07 | done | Sensitivity: duals + reduced costs + سيناريو تغيير سعر خامة بإعادة حل | S1 +10% ⇒ +1.8، +30% ⇒ تبديل لـ S2 |
 | 2026-11-21 | J-08 | done | Reverse pricing من سعر الرف لأقصى تكلفة كيلو (Decimal، مفيش defaults) | 3 حالات يدوية |
+| 2026-11-21 | F-12 | partial | مستند تقرير الدفعة الحتمي + reportHash (من غير timestamps جوه الـ hash) + verify؛ رسم الـ PDF في S-17 | 24 اختبار: نفس المدخلات ⇒ نفس الـ hash، أي تعديل ⇒ hash مختلف |
