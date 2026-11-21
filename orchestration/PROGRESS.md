@@ -35,3 +35,4 @@
 | 2026-11-21 | D-07 | done | audit_log append-only (trigger يمنع UPDATE/DELETE/TRUNCATE) + Auditable trait: مين/إمتى/قبل/بعد/ليه | AuditLogTest ✓ |
 | 2026-11-21 | D-03 | done | sources + property_values (قيمة أو مدى، ثقة L1–L7، مصدر إلزامي) + prices بمصدر وثقة | PropertyValueTest ✓ |
 | 2026-11-21 | D-05 | done | dataset_versions بـ SHA-256 لـ canonical JSON (نفس hash المحرك TS بالظبط) + calc_runs | DatasetVersionTest: hash PHP = hash TS ✓ |
+| 2026-11-21 | D-06 | done | formulas + formula_versions + formula_lines، كل تعديل نسخة جديدة بـ hash وسبب | FormulaVersionTest ✓ |

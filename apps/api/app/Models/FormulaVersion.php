@@ -1,0 +1,86 @@
+<?php
+
+namespace App\Models;
+
+use App\Enums\FormulaStatus;
+use App\Exceptions\ImmutableRecordException;
+use App\Support\CanonicalJson;
+use Database\Factories\FormulaVersionFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+/** One immutable-by-convention version of a formula; approved versions are immutable by guard. */
+class FormulaVersion extends Model
+{
+    /** @use HasFactory<FormulaVersionFactory> */
+    use HasFactory, HasUuids;
+
+    public const UPDATED_AT = null;
+
+    protected $fillable = ['formula_id', 'version', 'hash', 'status', 'reason', 'parent_version_id', 'created_by'];
+
+    protected static function booted(): void
+    {
+        $guard = function (self $version): void {
+            if ($version->getRawOriginal('status') === FormulaStatus::Approved->value) {
+                throw ImmutableRecordException::approvedFormulaVersion((string) $version->getKey());
+            }
+        };
+        static::updating($guard);
+        static::deleting($guard);
+    }
+
+    /** @return array<string, string> */
+    protected function casts(): array
+    {
+        return ['status' => FormulaStatus::class, 'version' => 'integer', 'created_at' => 'datetime'];
+    }
+
+    /** @return BelongsTo<Formula, $this> */
+    public function formula(): BelongsTo
+    {
+        return $this->belongsTo(Formula::class);
+    }
+
+    /** @return BelongsTo<self, $this> */
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'parent_version_id');
+    }
+
+    /** @return HasMany<FormulaLine, $this> */
+    public function lines(): HasMany
+    {
+        return $this->hasMany(FormulaLine::class)->orderBy('line_no');
+    }
+
+    public function isApproved(): bool
+    {
+        return $this->status === FormulaStatus::Approved;
+    }
+
+    /**
+     * Canonical lines (the hashed content) rebuilt from the formula_lines rows.
+     * Single source of truth: nothing is duplicated into the version row except the hash.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function canonicalLines(): array
+    {
+        return $this->lines->map(fn (FormulaLine $line): array => $line->canonical())->all();
+    }
+
+    public static function hashLines(array $canonicalLines): string
+    {
+        return CanonicalJson::hash($canonicalLines);
+    }
+
+    /** True when the stored lines still hash to the recorded hash. */
+    public function verifyHash(): bool
+    {
+        return hash_equals($this->hash, self::hashLines($this->canonicalLines()));
+    }
+}

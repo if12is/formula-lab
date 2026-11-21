@@ -21,7 +21,7 @@
 20,D-03,D,agent,D-01,done,"جدول property_values عام: (entity, property, value, unit, min, max, source_id, confidence L1–L7, valid_from)"
 21,D-04,D,agent,D-03,done,قاعدة اختيار القيمة: أعلى ثقة متاحة ثم الأحدث، مع إمكانية override يدوي مسجّل
 22,D-05,D,agent,D-03,done,dataset_versions: snapshot hash لكل نسخة، والحساب يسجل النسخة المستخدمة
-23,D-06,D,agent,D-01,todo,formula_versions: كل تعديل نسخة جديدة + hash + سبب التعديل + حالة (draft/lab/approved)
+23,D-06,D,agent,D-01,done,formula_versions: كل تعديل نسخة جديدة + hash + سبب التعديل + حالة (draft/lab/approved)
 24,D-07,D,agent,D-01,done,Audit log لكل تعديل في الداتا المرجعية
 25,D-08,D,agent,D-01,todo,مرآة SQLite للأوفلاين بنفس الـ schema (subset)
 26,D-09,D,agent,D-04,todo,مادة جديدة من المحرر تتسجل draft بثقة L7 وسعر غير مؤرخ ⇒ التكلفة تتعلّم غير موثوقة
