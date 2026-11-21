@@ -4,3 +4,4 @@
 - [ ] التعاقد مع كيميائي استشاري (golden tests + tier profiles)
 - [x] Sanad: POS اللي على جهاز المصنع + نوع صنف additive (item_kind + is_sellable) — شوف plan/02-specs/sanad-integration.md
 - [ ] جمع 30 تركيبة + 20 COA + أسعار 40 خامة + BOM تغليف 20 SKU + 5 شحنات استيراد (قوالب في plan/03-data-templates)
+- [ ] قرار: أسعار وكميات Sanad بـ decimal(12,2) (خانتين). نكتفي بيها لتكلفة الخامات، ولا نوسّعها في PR بتاع Sanad؟ (G-01)
