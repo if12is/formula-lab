@@ -10,7 +10,7 @@
 9,C-01,C,agent,,done,"تبني decimal.js (precision 34, ROUND_HALF_EVEN داخليًا)"
 10,C-02,C,agent,,done,"نوع Quantity<Unit> (kg, g, mg, L, mL, %w/w, %w/v, mg KOH/g, EGP, USD, mPa·s)"
 11,C-03,C,agent,C-02,done,تحويلات الكتلة/الحجم بكثافة صريحة فقط
-12,C-04,C,agent,C-01,todo,سياسة التقريب للعرض (وزن 0.1 جم، فلوس 0.01 جنيه، نسب 0.001%)
+12,C-04,C,agent,C-01,done,سياسة التقريب للعرض (وزن 0.1 جم، فلوس 0.01 جنيه، نسب 0.001%)
 13,C-05,C,agent,C-02,todo,تحويل العملات بسعر صرف مؤرخ (مصدر: CBE)
 14,C-06,C,agent,C-03,todo,Property-based tests (fast-check): التحويل ذهابًا وعودة بدون فقد
 15,C-07,C,agent,,done,"نوع Result<T, MissingData[]> بدل throw للداتا الناقصة"

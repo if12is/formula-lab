@@ -9,3 +9,4 @@
 
 - التقريب ROUND_HALF_EVEN، ومرة واحدة عند العرض/الطباعة فقط.
 - المجاميع بتتحسب من القيم غير المقربة، والفرق الناتج عن التقريب يتعرض لو > 0.
+- التنفيذ: [`packages/engine/src/core/round.ts`](../../packages/engine/src/core/round.ts) (`roundMass`, `roundVolume`, `roundPercent`, `roundMoney`, `roundPhHlb`, `roundingResidual`). الوزن بيتعرض بالجرام، والحجم بالمل، والفلوس بعملتها. `roundingResidual` بيرجّع الفرق (إجمالي مقرّب − مجموع الأجزاء المقرّبة) من غير ما يوزّعه.
