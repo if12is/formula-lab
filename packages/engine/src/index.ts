@@ -43,3 +43,6 @@ export * from './compliance';
 export * from './pricing';
 export * from './packaging';
 export * from './costing';
+export * from './core/validate';
+export * from './core/canonical-hash';
+export * from './decision';
