@@ -1,0 +1,70 @@
+<?php
+
+// Generated from packages/optimizer/messages.keys.json: one entry per key the optimizer can emit.
+
+return [
+    'infeasible' => [
+        'target_price_too_low' => 'السعر المستهدف أقل من أقل تكلفة ممكنة: أقصى تكلفة مسموحة :limitEGPperKg جنيه/كجم، وأقل تكلفة ممكنة بالقيود الحالية :minAchievableEGPperKg جنيه/كجم (الفرق :gapEGPperKg جنيه/كجم).',
+        'max_cost_too_low' => 'حد التكلفة الأقصى للفئة أقل من أقل تكلفة ممكنة: الحد :limitEGPperKg جنيه/كجم، وأقل تكلفة ممكنة :minAchievableEGPperKg جنيه/كجم (الفرق :gapEGPperKg جنيه/كجم).',
+        'cost_limit_conflicts' => 'حد التكلفة :limitEGPperKg جنيه/كجم متعارض مع قيود أخرى، حتى لو رفعناه ما فيش تركيبة ممكنة.',
+        'active_min_too_high' => 'الحد الأدنى للمادة الفعالة (:limitPct٪) أعلى من اللي تقدر تحققه الخامات المتاحة بالقيود التانية.',
+        'active_max_too_low' => 'الحد الأقصى للمادة الفعالة (:limitPct٪) أقل من اللي لازم تحتويه الخامات الإلزامية والقيود التانية.',
+        'function_min_too_high' => 'الحد الأدنى للوظيفة «:function» (:limitPct٪) مش ممكن تحقيقه بالخامات المتاحة والقيود التانية.',
+        'function_max_too_low' => 'الحد الأقصى للوظيفة «:function» (:limitPct٪) أقل من اللي لازم يدخل من القيود التانية.',
+        'material_min_too_high' => 'الحد الأدنى للخامة :materialId (:limitPct٪) متعارض مع باقي القيود.',
+        'material_max_too_low' => 'الحد الأقصى للخامة :materialId (:limitPct٪) متعارض مع باقي القيود.',
+        'structural' => 'مفيش تركيبة مجموعها ١٠٠٪ ممكنة بالخامات المتاحة حتى من غير قيود الفئة.',
+    ],
+    'error' => [
+        'verification_failed' => 'الحل بعد التقريب لأقرب ٠٫٠٠١٪ ما حققش القيد :id في التحقق الدقيق، فاتم رفضه.',
+        'solver_status' => 'المحلل رجّع حالة غير متوقعة: :status.',
+    ],
+    'input' => [
+        'duplicate_material' => 'الخامة :materialId متكررة في قايمة الخامات.',
+        'invalid_function_tags' => 'وسوم الوظائف للخامة غير صالحة (محتاجة مصدر وتاريخ ونص غير فاضي).',
+    ],
+    'warning' => [
+        'rounding_margin_applied' => 'اتطبق هامش أمان على القيود عشان الحل بعد التقريب يفضل مطابق للقيود.',
+        'solver_precision_fallback' => 'الحل اتحسب بدقة المحلل (٦ أرقام معنوية) بدل الحساب الدقيق، لكن التحقق النهائي الدقيق اتعمل.',
+        'measured_requirements_not_enforced' => 'متطلبات القياس (:detail) بتتأكد في المعمل ومش جزء من الحل الحسابي.',
+        'function_bound_unset' => 'حدود الوظيفة «:detail» فاضية (مفيش قيد).',
+        'scenario_invalid' => 'سيناريو السعر للخامة :detail غير صالح (خامة مش موجودة أو نسبة تغيير غير صالحة).',
+    ],
+    'no_usable_materials' => 'مفيش خامات صالحة للحساب.',
+    'required_material_not_offered' => 'الخامة الإلزامية مش موجودة في الخامات المتاحة.',
+    'required_material_needs_min' => 'الخامة الإلزامية محتاجة حد أدنى أكبر من صفر في قيود الفئة.',
+    'bounded_material_not_offered' => 'الخامة ليها حد أدنى في قيود الفئة لكنها مش موجودة في الخامات المتاحة.',
+    'qs_material_not_usable' => 'خامة الإكمال (q.s.) غير موجودة أو غير صالحة.',
+    'reverse' => [
+        'non_positive_price' => 'السعر وصل لصفر أو أقل في سلّم التسعير العكسي، راجع الهوامش وتكلفة التوزيع.',
+        'invalid_margin_basis' => 'أساس الهامش لازم يكون markup_on_cost أو margin_on_price.',
+        'step' => [
+            'shelf_price_incl_vat' => 'سعر الرف شامل الضريبة: :value',
+            'price_ex_vat' => 'السعر بدون ضريبة: :value',
+            'retailer_purchase_price' => 'سعر شراء التاجر: :value',
+            'wholesaler_purchase_price' => 'سعر شراء تاجر الجملة: :value',
+            'factory_price' => 'سعر بيع المصنع: :value',
+            'max_unit_cost' => 'أقصى تكلفة للوحدة: :value',
+            'max_cost_per_kg' => 'أقصى تكلفة للكيلو: :value',
+            'max_formula_cost_per_kg' => 'أقصى تكلفة تركيبة للكيلو: :value',
+        ],
+    ],
+    'profile' => [
+        'unknown_field' => 'حقل غير معروف في ملف الفئة: :path.',
+        'field_required' => 'الحقل :path ناقص في ملف الفئة (القيمة الفاضية تتكتب null صراحة).',
+        'not_decimal_string' => 'القيمة في :path لازم تكون رقم عشري كنص.',
+        'out_of_range' => 'القيمة في :path خارج النطاق المسموح.',
+        'not_array' => 'الحقل :path لازم يكون قايمة.',
+        'not_object' => 'الحقل :path لازم يكون كائن.',
+        'not_id' => 'الحقل :path لازم يكون نص غير فاضي.',
+        'duplicate' => 'قيمة مكررة في :path (:detail).',
+        'min_exceeds_max' => 'الحد الأدنى أكبر من الحد الأقصى في :path.',
+        'required_and_forbidden' => 'الخامة :detail موجودة كإلزامية وممنوعة في نفس الوقت.',
+        'source_required' => 'القيمة في :path محتاجة مصدر.',
+        'invalid_tier' => 'الفئة لازم تكون economy أو mid أو premium.',
+        'invalid_price_unit' => 'وحدة السعر لازم تكون L أو kg أو pack.',
+        'field_null_required' => 'الحقل ده مطلوب لهذا المنتج وقيمته لسه فاضية في ملف الفئة.',
+        'function_not_declared' => 'الوظيفة المطلوبة مش معرّفة في حدود الوظائف بملف الفئة.',
+        'unknown_required_field' => 'اسم حقل مطلوب غير معروف.',
+    ],
+];

@@ -46,3 +46,4 @@
 | 2026-11-21 | J-01 | done | Tier Profile type + validator؛ القيم null = ناقصة وبتوقف الحل (مفيش profiles متعبية — J-02 بشري) | profile.test.ts |
 | 2026-11-21 | J-04 | done | بناء الـ LP من profile + خامات بأسعار مؤرخة، والحل بيتحقق بـ Decimal بالظبط بعد التقريب | فحص يدوي مني: 50%/100% active ≥60 ⇒ 14 جنيه/كجم ✓ |
 | 2026-11-21 | J-05 | done | tie-breaking lexicographic بالـ materialId ⇒ حل وحيد | 12 ترتيب مختلف ⇒ نفس الـ hash |
+| 2026-11-21 | J-06 | done | Infeasibility: أقل مجموعة قيود متعارضة (deletion filter) كـ message keys + نصوص عربي في lang/optimizer.php | فحص يدوي: maxCost 12 ⇒ أقل تكلفة ممكنة 14، الفرق 2 ✓ |

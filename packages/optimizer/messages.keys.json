@@ -1,0 +1,209 @@
+{
+  "keys": [
+    "optimizer.infeasible.target_price_too_low",
+    "optimizer.infeasible.max_cost_too_low",
+    "optimizer.infeasible.cost_limit_conflicts",
+    "optimizer.infeasible.active_min_too_high",
+    "optimizer.infeasible.active_max_too_low",
+    "optimizer.infeasible.function_min_too_high",
+    "optimizer.infeasible.function_max_too_low",
+    "optimizer.infeasible.material_min_too_high",
+    "optimizer.infeasible.material_max_too_low",
+    "optimizer.infeasible.structural",
+    "optimizer.error.verification_failed",
+    "optimizer.error.solver_status",
+    "optimizer.input.duplicate_material",
+    "optimizer.warning.rounding_margin_applied",
+    "optimizer.warning.solver_precision_fallback",
+    "optimizer.warning.measured_requirements_not_enforced",
+    "optimizer.warning.function_bound_unset",
+    "optimizer.warning.scenario_invalid",
+    "optimizer.no_usable_materials",
+    "optimizer.required_material_not_offered",
+    "optimizer.required_material_needs_min",
+    "optimizer.bounded_material_not_offered",
+    "optimizer.qs_material_not_usable",
+    "optimizer.input.invalid_function_tags",
+    "optimizer.reverse.non_positive_price",
+    "optimizer.reverse.invalid_margin_basis",
+    "optimizer.profile.unknown_field",
+    "optimizer.profile.field_required",
+    "optimizer.profile.not_decimal_string",
+    "optimizer.profile.out_of_range",
+    "optimizer.profile.not_array",
+    "optimizer.profile.not_object",
+    "optimizer.profile.not_id",
+    "optimizer.profile.duplicate",
+    "optimizer.profile.min_exceeds_max",
+    "optimizer.profile.required_and_forbidden",
+    "optimizer.profile.source_required",
+    "optimizer.profile.invalid_tier",
+    "optimizer.profile.invalid_price_unit",
+    "optimizer.profile.field_null_required",
+    "optimizer.profile.function_not_declared",
+    "optimizer.profile.unknown_required_field",
+    "optimizer.reverse.step.shelf_price_incl_vat",
+    "optimizer.reverse.step.price_ex_vat",
+    "optimizer.reverse.step.retailer_purchase_price",
+    "optimizer.reverse.step.wholesaler_purchase_price",
+    "optimizer.reverse.step.factory_price",
+    "optimizer.reverse.step.max_unit_cost",
+    "optimizer.reverse.step.max_cost_per_kg",
+    "optimizer.reverse.step.max_formula_cost_per_kg"
+  ],
+  "params": {
+    "optimizer.infeasible.target_price_too_low": [
+      "limitEGPperKg",
+      "minAchievableEGPperKg",
+      "gapEGPperKg"
+    ],
+    "optimizer.infeasible.max_cost_too_low": [
+      "limitEGPperKg",
+      "minAchievableEGPperKg",
+      "gapEGPperKg"
+    ],
+    "optimizer.infeasible.cost_limit_conflicts": [
+      "limitEGPperKg"
+    ],
+    "optimizer.infeasible.active_min_too_high": [
+      "limitPct"
+    ],
+    "optimizer.infeasible.active_max_too_low": [
+      "limitPct"
+    ],
+    "optimizer.infeasible.function_min_too_high": [
+      "function",
+      "limitPct"
+    ],
+    "optimizer.infeasible.function_max_too_low": [
+      "function",
+      "limitPct"
+    ],
+    "optimizer.infeasible.material_min_too_high": [
+      "materialId",
+      "limitPct"
+    ],
+    "optimizer.infeasible.material_max_too_low": [
+      "materialId",
+      "limitPct"
+    ],
+    "optimizer.infeasible.structural": [],
+    "optimizer.error.verification_failed": [
+      "id",
+      "slack"
+    ],
+    "optimizer.error.solver_status": [
+      "status"
+    ],
+    "optimizer.input.duplicate_material": [
+      "materialId"
+    ],
+    "optimizer.warning.rounding_margin_applied": [],
+    "optimizer.warning.solver_precision_fallback": [],
+    "optimizer.warning.measured_requirements_not_enforced": [
+      "detail"
+    ],
+    "optimizer.warning.function_bound_unset": [
+      "detail"
+    ],
+    "optimizer.warning.scenario_invalid": [
+      "detail"
+    ],
+    "optimizer.no_usable_materials": [],
+    "optimizer.required_material_not_offered": [],
+    "optimizer.required_material_needs_min": [],
+    "optimizer.bounded_material_not_offered": [],
+    "optimizer.qs_material_not_usable": [],
+    "optimizer.input.invalid_function_tags": [],
+    "optimizer.reverse.non_positive_price": [],
+    "optimizer.reverse.invalid_margin_basis": [],
+    "optimizer.profile.unknown_field": [
+      "path",
+      "detail"
+    ],
+    "optimizer.profile.field_required": [
+      "path",
+      "detail"
+    ],
+    "optimizer.profile.not_decimal_string": [
+      "path",
+      "detail"
+    ],
+    "optimizer.profile.out_of_range": [
+      "path",
+      "detail"
+    ],
+    "optimizer.profile.not_array": [
+      "path",
+      "detail"
+    ],
+    "optimizer.profile.not_object": [
+      "path",
+      "detail"
+    ],
+    "optimizer.profile.not_id": [
+      "path",
+      "detail"
+    ],
+    "optimizer.profile.duplicate": [
+      "path",
+      "detail"
+    ],
+    "optimizer.profile.min_exceeds_max": [
+      "path",
+      "detail"
+    ],
+    "optimizer.profile.required_and_forbidden": [
+      "path",
+      "detail"
+    ],
+    "optimizer.profile.source_required": [
+      "path",
+      "detail"
+    ],
+    "optimizer.profile.invalid_tier": [
+      "path",
+      "detail"
+    ],
+    "optimizer.profile.invalid_price_unit": [
+      "path",
+      "detail"
+    ],
+    "optimizer.profile.field_null_required": [
+      "path",
+      "detail"
+    ],
+    "optimizer.profile.function_not_declared": [
+      "path",
+      "detail"
+    ],
+    "optimizer.profile.unknown_required_field": [
+      "path",
+      "detail"
+    ],
+    "optimizer.reverse.step.shelf_price_incl_vat": [
+      "value"
+    ],
+    "optimizer.reverse.step.price_ex_vat": [
+      "value"
+    ],
+    "optimizer.reverse.step.retailer_purchase_price": [
+      "value"
+    ],
+    "optimizer.reverse.step.wholesaler_purchase_price": [
+      "value"
+    ],
+    "optimizer.reverse.step.factory_price": [
+      "value"
+    ],
+    "optimizer.reverse.step.max_unit_cost": [
+      "value"
+    ],
+    "optimizer.reverse.step.max_cost_per_kg": [
+      "value"
+    ],
+    "optimizer.reverse.step.max_formula_cost_per_kg": [
+      "value"
+    ]
+  }
+}

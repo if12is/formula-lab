@@ -1,0 +1,70 @@
+<?php
+
+// Generated from packages/optimizer/messages.keys.json: one entry per key the optimizer can emit.
+
+return [
+    'infeasible' => [
+        'target_price_too_low' => 'The target price is below the cheapest possible cost: maximum allowed :limitEGPperKg EGP/kg, cheapest feasible with the current constraints :minAchievableEGPperKg EGP/kg (gap :gapEGPperKg EGP/kg).',
+        'max_cost_too_low' => 'The tier cost limit is below the cheapest possible cost: limit :limitEGPperKg EGP/kg, cheapest feasible :minAchievableEGPperKg EGP/kg (gap :gapEGPperKg EGP/kg).',
+        'cost_limit_conflicts' => 'The cost limit of :limitEGPperKg EGP/kg conflicts with other constraints; no formula is feasible even if it is raised.',
+        'active_min_too_high' => 'The minimum active matter (:limitPct%) is higher than the available materials can reach under the other constraints.',
+        'active_max_too_low' => 'The maximum active matter (:limitPct%) is lower than what the required materials and other constraints force in.',
+        'function_min_too_high' => 'The minimum for function ":function" (:limitPct%) cannot be met with the available materials and other constraints.',
+        'function_max_too_low' => 'The maximum for function ":function" (:limitPct%) is lower than what the other constraints force in.',
+        'material_min_too_high' => 'The minimum for material :materialId (:limitPct%) conflicts with the other constraints.',
+        'material_max_too_low' => 'The maximum for material :materialId (:limitPct%) conflicts with the other constraints.',
+        'structural' => 'No formula summing to 100% is possible with the available materials, even without tier constraints.',
+    ],
+    'error' => [
+        'verification_failed' => 'The solution rounded to 0.001% failed exact verification on constraint :id and was rejected.',
+        'solver_status' => 'The solver returned an unexpected status: :status.',
+    ],
+    'input' => [
+        'duplicate_material' => 'Material :materialId appears more than once in the material list.',
+        'invalid_function_tags' => 'The material function tags are invalid (they need a source, a date and non-empty text).',
+    ],
+    'warning' => [
+        'rounding_margin_applied' => 'A safety margin was applied to the constraints so the rounded solution stays compliant.',
+        'solver_precision_fallback' => 'The solution used the solver precision (6 significant digits) instead of exact recovery; the final exact verification was still performed.',
+        'measured_requirements_not_enforced' => 'Measured requirements (:detail) are confirmed in the lab and are not part of the calculation.',
+        'function_bound_unset' => 'Function bounds for ":detail" are empty (no constraint).',
+        'scenario_invalid' => 'The price scenario for material :detail is invalid (unknown material or invalid change).',
+    ],
+    'no_usable_materials' => 'There are no usable materials to calculate with.',
+    'required_material_not_offered' => 'The required material is not among the available materials.',
+    'required_material_needs_min' => 'The required material needs a minimum above zero in the tier constraints.',
+    'bounded_material_not_offered' => 'The material has a minimum in the tier constraints but is not among the available materials.',
+    'qs_material_not_usable' => 'The q.s. (balancing) material is missing or not usable.',
+    'reverse' => [
+        'non_positive_price' => 'The price reached zero or below in the reverse price waterfall; check the margins and distribution cost.',
+        'invalid_margin_basis' => 'The margin basis must be markup_on_cost or margin_on_price.',
+        'step' => [
+            'shelf_price_incl_vat' => 'Shelf price including VAT: :value',
+            'price_ex_vat' => 'Price excluding VAT: :value',
+            'retailer_purchase_price' => 'Retailer purchase price: :value',
+            'wholesaler_purchase_price' => 'Wholesaler purchase price: :value',
+            'factory_price' => 'Factory selling price: :value',
+            'max_unit_cost' => 'Maximum unit cost: :value',
+            'max_cost_per_kg' => 'Maximum cost per kg: :value',
+            'max_formula_cost_per_kg' => 'Maximum formula cost per kg: :value',
+        ],
+    ],
+    'profile' => [
+        'unknown_field' => 'Unknown field in the tier profile: :path.',
+        'field_required' => 'Field :path is missing from the tier profile (an empty value must be written as null).',
+        'not_decimal_string' => 'The value at :path must be a decimal number written as a string.',
+        'out_of_range' => 'The value at :path is outside the allowed range.',
+        'not_array' => 'The field :path must be a list.',
+        'not_object' => 'The field :path must be an object.',
+        'not_id' => 'The field :path must be a non-empty string.',
+        'duplicate' => 'Duplicate value at :path (:detail).',
+        'min_exceeds_max' => 'The minimum is greater than the maximum at :path.',
+        'required_and_forbidden' => 'Material :detail is both required and forbidden.',
+        'source_required' => 'The value at :path needs a source.',
+        'invalid_tier' => 'The tier must be economy, mid or premium.',
+        'invalid_price_unit' => 'The price unit must be L, kg or pack.',
+        'field_null_required' => 'This field is required for this product and is still empty in the tier profile.',
+        'function_not_declared' => 'The required function is not declared in the profile function bounds.',
+        'unknown_required_field' => 'Unknown required field name.',
+    ],
+];
