@@ -1,0 +1,54 @@
+# Dev stack: `docker compose up`
+# Run `pnpm i` and `composer install` on the host first (sources are bind-mounted).
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: formula_lab
+      POSTGRES_PASSWORD: formula_lab
+      POSTGRES_DB: formula_lab
+    ports: ["5432:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U formula_lab"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7
+    ports: ["6379:6379"]
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/dev/php.Dockerfile
+    working_dir: /app/apps/api
+    command: >
+      sh -c "[ -f .env ] || cp .env.example .env;
+             grep -q '^APP_KEY=.\+' .env || php artisan key:generate;
+             php artisan migrate --force &&
+             php artisan serve --host 0.0.0.0 --port 8000"
+    environment:
+      DB_HOST: postgres
+      REDIS_HOST: redis
+    volumes:
+      - .:/app
+    ports: ["8000:8000"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  vite:
+    image: node:22
+    working_dir: /app
+    command: sh -c "corepack enable && pnpm --filter @fl/api dev --host"
+    volumes:
+      - .:/app
+    ports: ["5173:5173"]
+
+volumes:
+  pgdata:
