@@ -4,11 +4,11 @@
  * source (or, in a draft rule set only, an explicit `pendingSource` flag). Limits are decimal strings.
  * Message keys (not Arabic text) are mapped to wording by the apps.
  */
-import { canonicalJson, sha256Hex } from '../hash';
+import { canonicalHash } from '../core/canonical-hash';
+import { checkKeys as checkKeysWith, containsJsNumber, isRecord, nonEmptyString, type Issues } from '../core/validate';
 import { isDecimalString } from '../core/decimal';
 import { missing, ok, type Result } from '../core/result';
 import { isUnit, type Unit } from '../core/quantity';
-import type { MissingData } from '../contract';
 
 export const OPERATORS = ['<=', '<', '>=', '>', '==', 'forbidden', 'required'] as const;
 export type Operator = (typeof OPERATORS)[number];
@@ -88,32 +88,8 @@ const SCOPE_KEYS = ['productTypes', 'rinseOff', 'ifraCategory'];
 const TARGET_KEYS = ['substanceCas', 'inci', 'function', 'materialId', 'field'];
 const SOURCE_KEYS = ['sourceId', 'title', 'ref'];
 
-type Issues = MissingData[];
-
-function isRecord(x: unknown): x is Record<string, unknown> {
-  return typeof x === 'object' && x !== null && !Array.isArray(x);
-}
-
-function nonEmptyString(x: unknown): x is string {
-  return typeof x === 'string' && x.trim() !== '';
-}
-
-function containsJsNumber(x: unknown): boolean {
-  if (typeof x === 'number') {
-    return true;
-  }
-  if (Array.isArray(x)) {
-    return x.some(containsJsNumber);
-  }
-  return isRecord(x) && Object.values(x).some(containsJsNumber);
-}
-
 function checkKeys(obj: Record<string, unknown>, allowed: readonly string[], path: string, issues: Issues): void {
-  for (const key of Object.keys(obj)) {
-    if (!allowed.includes(key)) {
-      issues.push({ property: `${path}.${key}`, reason: DSL_REASONS.UNKNOWN_KEY });
-    }
-  }
+  checkKeysWith(obj, allowed, path, issues, DSL_REASONS.UNKNOWN_KEY);
 }
 
 function requireString(obj: Record<string, unknown>, key: string, path: string, issues: Issues): void {
@@ -276,5 +252,5 @@ export function validateRuleSet(input: unknown): Result<RuleSet> {
 
 /** Version hash of a rule set: sha256 over the canonical JSON (key order and whitespace do not matter). */
 export function hashRuleSet(ruleSet: RuleSet): string {
-  return sha256Hex(canonicalJson(ruleSet));
+  return canonicalHash(ruleSet);
 }
