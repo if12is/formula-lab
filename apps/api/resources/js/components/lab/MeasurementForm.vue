@@ -3,7 +3,7 @@
  * Records one measurement on an open trial. The value is typed as text and sent as text, and an empty value is refused:
  * a reading nobody took is simply not recorded, it is never stored as zero. The unit follows the property, a protocol
  * template can stand in for the method (its instrument shows as a reminder), and a measurement is always a local lab
- * result (L1), stated on the form.
+ * result (L1), stated on the form. A viscosity reading may state the salt % added: it is then a point of the formula's salt curve.
  */
 import { computed, watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';
@@ -24,6 +24,7 @@ const blank = () => ({
     property: props.choices.propertyOptions[0].value,
     value: '',
     unit: props.choices.units[props.choices.propertyOptions[0].value][0].value,
+    salt_pct: '',
     protocol: NO_PROTOCOL,
     method: '',
     instrument: '',
@@ -38,12 +39,15 @@ const protocolOptions = computed(() => [
     { value: NO_PROTOCOL, label: t('lab.measurement.protocol_none') },
     ...props.choices.protocols.filter((protocol) => protocol.property === form.property).map(({ value, label }) => ({ value, label })),
 ]);
+const isViscosity = computed(() => form.property === props.choices.saltProperty);
 const protocol = computed(() => props.choices.protocols.find((entry) => entry.value === form.protocol) ?? null);
 
 // A new property brings its own units and protocols: keep nothing that no longer fits.
 watch(() => form.property, () => {
     form.unit = unitOptions.value[0]?.value ?? '';
     form.protocol = NO_PROTOCOL;
+    form.salt_pct = '';
+    form.clearErrors('salt_pct');
 });
 // A protocol names its unit: follow it so the reading and its template agree.
 watch(protocol, (selected) => {
@@ -57,7 +61,7 @@ function submit() {
         .transform((data) => ({ ...data, lab_protocol_id: data.protocol === NO_PROTOCOL ? null : data.protocol }))
         .post(props.url, {
             preserveScroll: true,
-            onSuccess: () => form.reset('value', 'note', 'method'),
+            onSuccess: () => form.reset('value', 'note', 'method', 'salt_pct'),
         });
 }
 </script>
@@ -74,6 +78,7 @@ function submit() {
                     <Select v-model="form.unit" :options="unitOptions" data-testid="measurement-unit" />
                 </FormField>
             </div>
+            <DecimalField v-if="isViscosity" v-model="form.salt_pct" label-key="lab.measurement.salt_pct" hint-key="lab.measurement.salt_pct_hint" :error="form.errors.salt_pct" suffix="%" data-testid="measurement-salt" />
             <FormField :label="t('lab.measurement.protocol')" :hint="t('lab.measurement.protocol_hint')" :error="form.errors.lab_protocol_id">
                 <Select v-model="form.protocol" :options="protocolOptions" data-testid="measurement-protocol" />
             </FormField>

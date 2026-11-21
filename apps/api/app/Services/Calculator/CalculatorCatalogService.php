@@ -56,6 +56,7 @@ final class CalculatorCatalogService
             'materials' => route('calculators.materials.search', [], false),
             'sources' => route('sources.search', [], false),
             'sourceStore' => route('sources.store', [], false),
+            'formulaVersions' => route('lab.formula-versions.search', [], false),
         ];
     }
 }

@@ -7,6 +7,7 @@ use App\Models\FormulaVersion;
 use App\Models\LabMeasurement;
 use App\Models\LabProtocol;
 use App\Models\LabTrial;
+use App\Support\DecimalNormalizer;
 use Illuminate\Support\Collection;
 
 /** Props of the trial pages: the entry form's choices and the trial with its measurements grouped by property. */
@@ -15,6 +16,9 @@ final class LabTrialDetailService
     public function __construct(
         private LabCoverageService $coverage,
         private LabLookupService $lookup,
+        private LabMeasuredDensityService $density,
+        private LabComparisonService $comparison,
+        private TestedValueService $testedValues,
     ) {}
 
     /**
@@ -37,7 +41,8 @@ final class LabTrialDetailService
         $trial->load(['formulaVersion.formula', 'measurements.protocol']);
         $version = $trial->formulaVersion;
         $required = $this->coverage->requiredFor($version->formula);
-        $byProperty = $trial->measurements->groupBy(fn (LabMeasurement $measurement): string => $measurement->property->value);
+        // A viscosity reading at an added salt % is a point of the formula's salt curve, listed apart (O-03).
+        $byProperty = $trial->measurements->whereNull('salt_pct')->groupBy(fn (LabMeasurement $measurement): string => $measurement->property->value);
 
         return [
             'trial' => [
@@ -61,6 +66,10 @@ final class LabTrialDetailService
                 'editorHref' => route('formulas.versions.edit', [$version->formula, $version->version], false),
             ],
             'properties' => collect(LabProperty::cases())->map(fn (LabProperty $property): array => $this->propertyRow($property, $required, $byProperty->get($property->value, collect())))->all(),
+            'saltReadings' => $trial->measurements->whereNotNull('salt_pct')->map(fn (LabMeasurement $measurement): array => [...$this->measurement($measurement), 'salt_pct' => DecimalNormalizer::normalize($measurement->salt_pct)])->values()->all(),
+            'density' => $this->density->payload($version),
+            'comparison' => $this->comparison->forTrial($trial),
+            'testedValues' => $this->testedValues->forVersion($version),
             'coverage' => $this->coverage->forVersion($version)->toArray(),
             'form' => [
                 'propertyOptions' => LabProperty::options(),
@@ -73,11 +82,14 @@ final class LabTrialDetailService
                     'label' => __("lab.protocols.{$protocol->code}.name"),
                     'instrument' => __("lab.instruments.{$protocol->instrument}"),
                 ])->all(),
+                'saltProperty' => LabProperty::Viscosity->value,
                 'now' => now()->format('Y-m-d\TH:i'),
             ],
             'urls' => [
                 'measurements' => route('lab.trials.measurements.store', $trial, false),
                 'complete' => route('lab.trials.complete', $trial, false),
+                'saltCurve' => route('formulas.salt-curve', $version->formula, false),
+                'litreKilo' => route('calculators.show', 'litre-kilo', false),
                 'index' => route('lab.trials.index', [], false),
             ],
         ];

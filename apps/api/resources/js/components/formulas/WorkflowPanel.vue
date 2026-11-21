@@ -78,7 +78,8 @@ const items = computed(() => props.workflow.signatures.map((row) => ({
             <div class="flex flex-col gap-2 border-t border-line pt-4" data-testid="workflow-trials">
                 <div class="flex flex-wrap items-center gap-2">
                     <h3 class="type-h6 text-ink">{{ t('lab.coverage.trials') }}</h3>
-                    <Button size="sm" variant="secondary" icon="ph:plus" :href="workflow.urls.newTrial" class="ms-auto" data-testid="workflow-new-trial">{{ t('formulas.workflow.record_trial') }}</Button>
+                    <Button size="sm" variant="ghost" icon="ph:chart-line" :href="workflow.urls.saltCurve" class="ms-auto" data-testid="workflow-salt-curve">{{ t('lab.salt_curve.open') }}</Button>
+                    <Button size="sm" variant="secondary" icon="ph:plus" :href="workflow.urls.newTrial" data-testid="workflow-new-trial">{{ t('formulas.workflow.record_trial') }}</Button>
                 </div>
                 <p v-if="workflow.trials.length === 0" class="text-label text-ink-3">{{ t('lab.coverage.no_trials') }}</p>
                 <ul v-else class="flex flex-col gap-2">

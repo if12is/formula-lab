@@ -6,19 +6,25 @@
  */
 import { computed } from 'vue';
 import { Head, router } from '@inertiajs/vue3';
-import { Alert, Badge, Button, Card, DataTable, DescriptionList, PageHeader, useConfirm } from '@kit';
+import { Alert, Badge, Button, Card, DataTable, DescriptionList, EmptyState, PageHeader, useConfirm } from '@kit';
 import ConfidenceBadge from '../../../components/materials/ConfidenceBadge.vue';
 import CoveragePanel from '../../../components/lab/CoveragePanel.vue';
+import ExpectedMeasuredPanel from '../../../components/lab/ExpectedMeasuredPanel.vue';
 import LimitText from '../../../components/lab/LimitText.vue';
 import MeasurementForm from '../../../components/lab/MeasurementForm.vue';
 import StatusBadge from '../../../components/StatusBadge.vue';
 import { useDateTime } from '../../../composables/useDateTime';
 import { useI18n } from '../../../composables/useI18n';
+import { path } from '../../../lib/routes';
 
 const props = defineProps({
     trial: { type: Object, required: true },
     formula: { type: Object, required: true },
     properties: { type: Array, required: true },
+    saltReadings: { type: Array, required: true },
+    density: { type: Object, default: null },
+    comparison: { type: Object, required: true },
+    testedValues: { type: Array, required: true },
     coverage: { type: Object, required: true },
     form: { type: Object, required: true },
     urls: { type: Object, required: true },
@@ -55,6 +61,18 @@ const earlierColumns = computed(() => [
     { key: 'instrument', label: t('lab.columns.instrument'), hideBelow: 'md' },
     { key: 'measured_at', label: t('lab.columns.measured_at'), hideBelow: 'sm' },
 ]);
+const saltColumns = computed(() => [
+    { key: 'salt_pct', label: t('lab.salt_curve.columns.salt') },
+    { key: 'value', label: t('lab.columns.value') },
+    { key: 'method', label: t('lab.columns.method'), hideBelow: 'md' },
+    { key: 'measured_at', label: t('lab.columns.measured_at'), hideBelow: 'sm' },
+]);
+const testedColumns = computed(() => [
+    { key: 'kind', label: t('lab.tested.columns.kind') },
+    { key: 'material', label: t('lab.tested.columns.material') },
+    { key: 'value', label: t('lab.tested.columns.value') },
+    { key: 'tested_on', label: t('lab.tested.columns.tested_on'), hideBelow: 'md' },
+]);
 const measuredCount = computed(() => props.properties.filter((row) => row.latest).length);
 
 async function complete() {
@@ -77,6 +95,7 @@ async function complete() {
             <template #actions>
                 <StatusBadge kind="lab_trial_status" :status="trial.status" />
                 <Button variant="ghost" :href="urls.index" icon="ph:arrow-right">{{ t('lab.show.back') }}</Button>
+                <Button variant="ghost" icon="ph:chart-line" :href="urls.saltCurve" data-testid="salt-curve-link">{{ t('lab.salt_curve.open') }}</Button>
                 <Button v-if="trial.open" icon="ph:check-circle" :disabled="measuredCount === 0" data-testid="complete-trial" @click="complete">{{ t('lab.show.complete') }}</Button>
             </template>
         </PageHeader>
@@ -130,6 +149,37 @@ async function complete() {
                     <template #cell-method="{ row }">{{ row.protocol ?? row.method ?? t('common.no_data') }}</template>
                     <template #cell-measured_at="{ row }"><span class="whitespace-nowrap tnum">{{ when(row.measured_at) }}</span></template>
                 </DataTable>
+            </Card>
+
+            <Card v-if="saltReadings.length" :title="t('lab.show.salt_readings_title')" :description="t('lab.show.salt_readings_description')" data-testid="salt-readings">
+                <DataTable :columns="saltColumns" :rows="saltReadings" row-key="id" flush :mobile-columns="['salt_pct', 'value']" :title="t('lab.show.salt_readings_title')">
+                    <template #cell-salt_pct="{ row }"><span class="tnum"><bdi dir="ltr">{{ row.salt_pct }} {{ t('calculators.units.%w/w') }}</bdi></span></template>
+                    <template #cell-value="{ row }"><span class="tnum"><bdi dir="ltr">{{ row.value }} {{ row.unit }}</bdi></span></template>
+                    <template #cell-method="{ row }">{{ row.protocol ?? row.method ?? t('common.no_data') }}</template>
+                    <template #cell-measured_at="{ row }"><span class="whitespace-nowrap tnum">{{ when(row.measured_at) }}</span></template>
+                </DataTable>
+            </Card>
+
+            <Card :title="t('lab.density.title')" :description="t('lab.density.description')" data-testid="measured-density">
+                <div v-if="density" class="flex flex-wrap items-center gap-x-6 gap-y-2">
+                    <span class="type-metric text-ink" data-testid="measured-density-value"><bdi dir="ltr" class="tnum">{{ density.value }} {{ density.unit }}</bdi></span>
+                    <span class="text-label text-ink-3">{{ t('lab.density.measured_in') }} <a :href="density.href" class="text-primary-ink underline underline-offset-2"><bdi dir="ltr">{{ density.trial }}</bdi></a></span>
+                    <ConfidenceBadge :confidence="density.confidence" />
+                    <Button variant="ghost" size="sm" icon="ph:scales" :href="urls.litreKilo">{{ t('lab.density.use') }}</Button>
+                </div>
+                <p v-else class="text-label text-ink-3" data-testid="measured-density-none">{{ t('lab.density.none') }}</p>
+            </Card>
+
+            <ExpectedMeasuredPanel :comparison="comparison" />
+
+            <Card :title="t('lab.tested.title')" :description="t('lab.tested.description')" data-testid="tested-values">
+                <DataTable v-if="testedValues.length" :columns="testedColumns" :rows="testedValues" row-key="id" flush :mobile-columns="['kind', 'value']" :title="t('lab.tested.title')">
+                    <template #cell-kind="{ row }"><Badge tone="success" icon="ph:seal-check" size="sm">{{ t(`enums.tested_value_kind.${row.kind}`) }}</Badge></template>
+                    <template #cell-material="{ row }"><a :href="path('materials.show', { material: row.material_id })" class="text-primary-ink underline underline-offset-2">{{ row.material }}</a></template>
+                    <template #cell-value="{ row }"><span class="tnum" :data-tested="`${row.kind}:${row.value}`"><bdi dir="ltr">{{ row.value }} {{ row.kind === 'dose' ? t('calculators.units.%w/w') : t('calculators.units.HLB') }}</bdi></span></template>
+                    <template #cell-tested_on="{ row }"><span class="whitespace-nowrap tnum">{{ row.tested_on }}</span> <a :href="row.trial_href" class="text-primary-ink underline underline-offset-2"><bdi dir="ltr">{{ row.trial }}</bdi></a></template>
+                </DataTable>
+                <EmptyState v-else variant="dashed" icon="ph:seal-check" :title="t('lab.tested.none')" />
             </Card>
 
             <Card :title="t('lab.coverage.title')" :description="t('lab.coverage.description')">

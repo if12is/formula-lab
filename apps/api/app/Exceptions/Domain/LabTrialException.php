@@ -24,4 +24,19 @@ class LabTrialException extends BusinessRuleViolationException
     {
         return new self(__('exceptions.lab_value_not_decimal', ['property' => $property]));
     }
+
+    public static function saltOnlyForViscosity(): self
+    {
+        return new self(__('exceptions.lab_salt_only_for_viscosity'));
+    }
+
+    public static function saltNotDecimal(): self
+    {
+        return new self(__('exceptions.lab_salt_not_decimal'));
+    }
+
+    public static function testedValuesNotComputed(string $code): self
+    {
+        return new self(__('exceptions.lab_tested_values_not_computed', ['trial' => $code]));
+    }
 }

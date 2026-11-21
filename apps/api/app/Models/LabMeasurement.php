@@ -21,7 +21,7 @@ class LabMeasurement extends Model
     public const UPDATED_AT = null;
 
     protected $fillable = [
-        'lab_trial_id', 'property', 'value', 'unit', 'lab_protocol_id', 'method', 'instrument', 'measured_at', 'confidence', 'note', 'recorded_by',
+        'lab_trial_id', 'property', 'value', 'unit', 'salt_pct', 'lab_protocol_id', 'method', 'instrument', 'measured_at', 'confidence', 'note', 'recorded_by',
     ];
 
     protected static function booted(): void
@@ -36,6 +36,7 @@ class LabMeasurement extends Model
         return [
             'property' => LabProperty::class,
             'value' => DecimalString::class,
+            'salt_pct' => DecimalString::class,
             'confidence' => Confidence::class,
             'measured_at' => 'datetime',
             'created_at' => 'datetime',

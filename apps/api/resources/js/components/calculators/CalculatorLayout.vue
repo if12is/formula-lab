@@ -16,11 +16,13 @@
  */
 import { computed } from 'vue';
 import { Head } from '@inertiajs/vue3';
-import { Alert, Badge, Card, EmptyState, PageHeader } from '@kit';
+import { Badge, Card, EmptyState, PageHeader } from '@kit';
 import { path } from '../../lib/routes';
+import { useEngineText } from '../../composables/useEngineText';
 import { useI18n } from '../../composables/useI18n';
 import { provideCalculatorLookups } from '../../composables/useCalculatorLookups';
-import { useProperties } from '../../composables/useProperties';
+import EngineMissing from '../explain/EngineMissing.vue';
+import EngineWarnings from '../explain/EngineWarnings.vue';
 import ExplainableNum from '../explain/ExplainableNum.vue';
 import StatusBadge from '../StatusBadge.vue';
 
@@ -39,7 +41,7 @@ const props = defineProps({
 provideCalculatorLookups({ urls: props.urls, confidenceOptions: props.confidenceOptions, sourceKindOptions: props.sourceKindOptions });
 
 const { t, has } = useI18n();
-const { label: propertyLabel } = useProperties();
+const { subjectOf, reasonOf } = useEngineText();
 const scope = computed(() => props.calculator);
 
 const resultLabel = (result) => t(`calculators.${scope.value}.results.${result.key}`, result.params);
@@ -56,37 +58,6 @@ const rows = computed(() => {
         return { ...result, heading };
     });
 });
-
-const subjectOf = (gap) => {
-    const [head, ...detail] = gap.property.split(':');
-    const known = has(`calculators.subjects.${head}`) ? t(`calculators.subjects.${head}`) : has(`properties.${head}`) ? propertyLabel(head) : head;
-
-    return [gap.materialId, detail.length ? `${known} (${detail.join(':')})` : known].filter(Boolean).join(' · ');
-};
-
-/** The reason in words: the engine's key (engine.<key>), or a scoped bare one (engine.<scope>.<head>), or the engine's own text. */
-function reasonOf(gap) {
-    const head = gap.reason.split(':')[0].trim();
-    const candidates = [`engine.${head}`, gap.scope ? `engine.${gap.scope}.${head}` : null].filter(Boolean);
-    const found = candidates.find((key) => has(key));
-
-    return found ? t(found) : t('engine.unknown_reason', { reason: gap.reason });
-}
-
-function warningOf(warning) {
-    if (!has(`engine.${warning.key}`)) {
-        return warning.raw;
-    }
-
-    const [material, property, confidence] = warning.details;
-
-    return t(`engine.${warning.key}`, {
-        material: material ?? '',
-        property: property ?? '',
-        confidence: confidence && has(`enums.confidence.${confidence}`) ? t(`enums.confidence.${confidence}`) : (confidence ?? ''),
-        detail: warning.details.join(', '),
-    });
-}
 </script>
 
 <template>
@@ -112,14 +83,7 @@ function warningOf(warning) {
                 <Card :title="t('calculators.results')" data-testid="results-card" :data-state="outcome.state">
                     <EmptyState v-if="outcome.state === 'empty'" variant="dashed" icon="ph:calculator" :title="t('calculators.empty.title')" :description="t('calculators.empty.description')" />
 
-                    <Alert v-else-if="outcome.state === 'missing'" tone="warning" icon="ph:warning" :title="t('calculators.missing.title')" data-testid="missing">
-                        <p class="mb-2">{{ t('calculators.missing.description') }}</p>
-                        <ul class="flex flex-col gap-1">
-                            <li v-for="(gap, index) in outcome.missing" :key="index" data-testid="missing-item">
-                                <span class="font-semibold">{{ subjectOf(gap) }}</span>: {{ reasonOf(gap) }}
-                            </li>
-                        </ul>
-                    </Alert>
+                    <EngineMissing v-else-if="outcome.state === 'missing'" :missing="outcome.missing" />
 
                     <ul v-else class="flex flex-col" data-testid="results">
                         <template v-for="result in rows" :key="result.key">
@@ -141,9 +105,7 @@ function warningOf(warning) {
                         </template>
                     </ul>
 
-                    <ul v-if="outcome.warnings.length" class="mt-3 flex list-disc flex-col gap-1 ps-5 text-label text-ink-3" data-testid="warnings">
-                        <li v-for="(warning, index) in outcome.warnings" :key="index">{{ warningOf(warning) }}</li>
-                    </ul>
+                    <EngineWarnings :warnings="outcome.warnings" class="mt-3" />
                 </Card>
 
                 <slot name="after-results" />

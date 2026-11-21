@@ -55,6 +55,10 @@ return [
         'in_progress' => 'In progress',
         'completed' => 'Completed',
     ],
+    'tested_value_kind' => [
+        'dose' => 'Dose',
+        'required_hlb' => 'Required HLB',
+    ],
     'lab_property' => [
         'ph' => 'pH',
         'density' => 'Density',
@@ -62,6 +66,7 @@ return [
         'cloud_point' => 'Cloud point',
         'foam' => 'Foam',
         'stability_4w' => 'Stability at 4 weeks',
+        'active_matter' => 'Active matter (MBAS or titration)',
     ],
     'product_tier' => [
         'economy' => 'Economy',

@@ -55,6 +55,10 @@ return [
         'in_progress' => 'قيد التنفيذ',
         'completed' => 'مكتملة',
     ],
+    'tested_value_kind' => [
+        'dose' => 'جرعة',
+        'required_hlb' => 'مطلوب HLB',
+    ],
     'lab_property' => [
         'ph' => 'الأس الهيدروجيني (pH)',
         'density' => 'الكثافة',
@@ -62,6 +66,7 @@ return [
         'cloud_point' => 'نقطة التعكر',
         'foam' => 'الرغوة',
         'stability_4w' => 'الثبات بعد 4 أسابيع',
+        'active_matter' => 'المادة الفعالة (MBAS أو معايرة)',
     ],
     'product_tier' => [
         'economy' => 'اقتصادي',

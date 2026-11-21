@@ -14,11 +14,12 @@ use Illuminate\Support\Facades\DB;
 /**
  * Appends one measured value to an open trial, as a local lab result (L1). The value is a plain decimal string and is
  * required: a measurement nobody took is no row, never a zero. A correction is simply a newer row of the same property.
+ * A viscosity reading may also state the salt % added when it was taken: it is then a point of the formula's own salt curve (O-03).
  */
 final class RecordLabMeasurementAction
 {
     /**
-     * @param  array{property: string, value: string, unit: string, lab_protocol_id?: string|null, method?: string|null, instrument: string, measured_at: string, note?: string|null}  $data
+     * @param  array{property: string, value: string, unit: string, salt_pct?: string|null, lab_protocol_id?: string|null, method?: string|null, instrument: string, measured_at: string, note?: string|null}  $data
      *
      * @throws LabTrialException When the trial is completed, the value is not a decimal, or the unit does not belong to the property.
      */
@@ -34,7 +35,17 @@ final class RecordLabMeasurementAction
             throw LabTrialException::unitNotAllowed($data['unit'], $property->label());
         }
 
-        return DB::transaction(function () use ($trial, $data, $property, $user): LabMeasurement {
+        $salt = $data['salt_pct'] ?? null;
+
+        if ($salt !== null && $property !== LabProperty::Viscosity) {
+            throw LabTrialException::saltOnlyForViscosity();
+        }
+
+        if ($salt !== null && (! DecimalNormalizer::isValid($salt) || str_starts_with($salt, '-'))) {
+            throw LabTrialException::saltNotDecimal();
+        }
+
+        return DB::transaction(function () use ($trial, $data, $property, $salt, $user): LabMeasurement {
             $locked = LabTrial::query()->whereKey($trial->getKey())->lockForUpdate()->firstOrFail();
 
             if ($locked->isCompleted()) {
@@ -46,6 +57,7 @@ final class RecordLabMeasurementAction
                 'property' => $property,
                 'value' => $data['value'],
                 'unit' => $data['unit'],
+                'salt_pct' => $salt,
                 'lab_protocol_id' => $data['lab_protocol_id'] ?? null,
                 'method' => $data['method'] ?? null,
                 'instrument' => $data['instrument'],

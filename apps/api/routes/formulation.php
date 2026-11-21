@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Formula\FormulaController;
+use App\Http\Controllers\Formula\FormulaSaltCurveController;
 use App\Http\Controllers\Formula\FormulaVersionController;
 use App\Http\Controllers\Formula\FormulaWorkflowController;
 use App\Http\Controllers\Material\MaterialCompositionController;
@@ -51,6 +52,7 @@ Route::prefix('formulas')->name('formulas.')->group(function (): void {
     Route::prefix('{formula}')->whereUuid('formula')->scopeBindings()->group(function (): void {
         Route::get('/', [FormulaController::class, 'show'])->name('show');
         Route::get('compare', [FormulaVersionController::class, 'compare'])->name('compare');
+        Route::get('salt-curve', [FormulaSaltCurveController::class, 'show'])->name('salt-curve');
         Route::put('tax', [FormulaController::class, 'updateTax'])->name('tax.update');
         Route::put('ifra-category', [FormulaController::class, 'updateIfraCategory'])->name('ifra-category.update');
         Route::get('versions/{version:version}/edit', [FormulaVersionController::class, 'edit'])->whereNumber('version')->name('versions.edit');

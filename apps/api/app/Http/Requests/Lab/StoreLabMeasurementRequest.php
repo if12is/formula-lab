@@ -28,6 +28,7 @@ class StoreLabMeasurementRequest extends FormRequest
             'property' => ['required', 'string', Rule::enum(LabProperty::class)],
             'value' => ['required', 'string', 'regex:/^-?\d{1,18}(\.\d{1,12})?$/'],
             'unit' => ['required', 'string', 'max:20'],
+            'salt_pct' => ['nullable', 'string', 'regex:/^\d{1,18}(\.\d{1,12})?$/'],
             'lab_protocol_id' => ['nullable', 'uuid', 'exists:lab_protocols,id'],
             'method' => ['nullable', 'string', 'max:'.config('lab.max_text_length')],
             'instrument' => ['required', 'string', 'max:'.config('lab.max_text_length')],
@@ -38,14 +39,14 @@ class StoreLabMeasurementRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        foreach (['value', 'method', 'instrument', 'note'] as $key) {
+        foreach (['value', 'salt_pct', 'method', 'instrument', 'note'] as $key) {
             if (is_string($this->input($key))) {
                 $this->merge([$key => trim($this->input($key))]);
             }
         }
 
         // An empty field stays empty: it is validated as missing, never turned into a number.
-        foreach (['method', 'lab_protocol_id', 'note'] as $key) {
+        foreach (['salt_pct', 'method', 'lab_protocol_id', 'note'] as $key) {
             if ($this->input($key) === '') {
                 $this->merge([$key => null]);
             }
@@ -61,19 +62,24 @@ class StoreLabMeasurementRequest extends FormRequest
                 $validator->errors()->add('unit', __('lab.errors.unit_not_allowed', ['property' => $property->label()]));
             }
 
+            if ($this->input('salt_pct') !== null && $this->input('property') !== LabProperty::Viscosity->value) {
+                $validator->errors()->add('salt_pct', __('exceptions.lab_salt_only_for_viscosity'));
+            }
+
             if ($this->input('lab_protocol_id') === null && $this->input('method') === null) {
                 $validator->errors()->add('method', __('lab.errors.method_or_protocol'));
             }
         });
     }
 
-    /** @return array{property: string, value: string, unit: string, lab_protocol_id: string|null, method: string|null, instrument: string, measured_at: string, note: string|null} */
+    /** @return array{property: string, value: string, unit: string, salt_pct: string|null, lab_protocol_id: string|null, method: string|null, instrument: string, measured_at: string, note: string|null} */
     public function measurementData(): array
     {
         return [
             'property' => $this->validated('property'),
             'value' => $this->validated('value'),
             'unit' => $this->validated('unit'),
+            'salt_pct' => $this->validated('salt_pct'),
             'lab_protocol_id' => $this->validated('lab_protocol_id'),
             'method' => $this->validated('method'),
             'instrument' => $this->validated('instrument'),

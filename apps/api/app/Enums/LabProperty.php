@@ -15,6 +15,7 @@ enum LabProperty: string
     case CloudPoint = 'cloud_point';
     case Foam = 'foam';
     case Stability4w = 'stability_4w';
+    case ActiveMatter = 'active_matter';
 
     /** @return list<string> The units a value of this property may be stored in. */
     public function units(): array

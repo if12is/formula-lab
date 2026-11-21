@@ -11,6 +11,7 @@ use App\Models\FormulaVersionTransition;
 use App\Models\LabTrial;
 use App\Models\User;
 use App\Services\Lab\LabCoverageService;
+use App\Services\Lab\TestedValueService;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -25,6 +26,7 @@ final class FormulaWorkflowService
     public function __construct(
         private TransitionFormulaVersionAction $transition,
         private LabCoverageService $coverage,
+        private TestedValueService $testedValues,
     ) {}
 
     /** @throws FormulaWorkflowException */
@@ -50,10 +52,15 @@ final class FormulaWorkflowService
                 );
             }
 
-            return ($this->transition)($version, FormulaStatus::Approved, $user, $comment, [
+            $signature = ($this->transition)($version, FormulaStatus::Approved, $user, $comment, [
                 'decision_rule' => self::DECISION_RULE,
                 'lab' => $coverage->toArray(),
             ]);
+
+            // Stability results of its completed trials now stand on an approved version: record what they tested (O-07).
+            $this->testedValues->markVersion($version->fresh());
+
+            return $signature;
         });
     }
 
@@ -100,6 +107,7 @@ final class FormulaWorkflowService
                 'sendToLab' => route('formulas.versions.send-to-lab', [$version->formula_id, $version->version], false),
                 'approve' => route('formulas.versions.approve', [$version->formula_id, $version->version], false),
                 'reject' => route('formulas.versions.reject', [$version->formula_id, $version->version], false),
+                'saltCurve' => route('formulas.salt-curve', $version->formula_id, false),
                 'newTrial' => route('lab.trials.create', ['formula_version' => $version->getKey()], false),
             ],
         ];

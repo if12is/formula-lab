@@ -18,6 +18,7 @@ final class LabTrialService
         private CreateLabTrialAction $createTrial,
         private RecordLabMeasurementAction $recordMeasurement,
         private CompleteLabTrialAction $completeTrial,
+        private TestedValueService $testedValues,
     ) {}
 
     /**
@@ -31,7 +32,7 @@ final class LabTrialService
     }
 
     /**
-     * @param  array{property: string, value: string, unit: string, lab_protocol_id?: string|null, method?: string|null, instrument: string, measured_at: string, note?: string|null}  $data
+     * @param  array{property: string, value: string, unit: string, salt_pct?: string|null, lab_protocol_id?: string|null, method?: string|null, instrument: string, measured_at: string, note?: string|null}  $data
      *
      * @throws LabTrialException
      */
@@ -43,6 +44,11 @@ final class LabTrialService
     /** @throws LabTrialException */
     public function complete(LabTrial $trial, ?User $user = null): LabTrial
     {
-        return ($this->completeTrial)($trial, $user);
+        $completed = ($this->completeTrial)($trial, $user);
+
+        // A stability result on a version that is already approved makes its doses and required HLBs "tested on" (O-07).
+        $this->testedValues->markTrial($completed);
+
+        return $completed;
     }
 }

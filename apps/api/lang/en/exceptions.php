@@ -56,4 +56,7 @@ return [
     'tax_rate_required' => 'Choose a tax rate or disable the tax.',
     'tax_setting_missing' => 'Product :formula has no tax setting (disabled or a rate), and none is guessed.',
     'tax_regime_missing' => 'No tax regime of :rate% is in force on :date.',
+    'lab_salt_only_for_viscosity' => 'Added salt can only be recorded with a viscosity reading.',
+    'lab_salt_not_decimal' => 'The salt percentage is not a valid decimal number.',
+    'lab_tested_values_not_computed' => 'The tested doses and HLB values of trial :trial could not be worked out.',
 ];

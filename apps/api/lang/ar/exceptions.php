@@ -56,4 +56,7 @@ return [
     'tax_rate_required' => 'اختر نسبة الضريبة أو عطّل الضريبة.',
     'tax_setting_missing' => 'المنتج :formula لم يُحدَّد له إعداد الضريبة (معطّلة أو نسبة)، ولا يتم تخمينه.',
     'tax_regime_missing' => 'لا يوجد نظام ضريبي ساري بنسبة :rate٪ بتاريخ :date.',
+    'lab_salt_only_for_viscosity' => 'المادة المضافة (الملح) تُسجَّل مع قراءة اللزوجة فقط.',
+    'lab_salt_not_decimal' => 'نسبة الملح ليست رقماً عشرياً صالحاً.',
+    'lab_tested_values_not_computed' => 'تعذّر حساب الجرعات وقيم HLB المجرَّبة للتجربة :trial.',
 ];

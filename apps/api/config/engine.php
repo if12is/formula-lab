@@ -24,5 +24,6 @@ return [
     /* The scripts that may be run, by name, relative to package_path. */
     'scripts' => [
         'validate-rule-set' => 'scripts/validate-rule-set.ts',
+        'tested-values' => 'scripts/tested-values.ts',
     ],
 ];

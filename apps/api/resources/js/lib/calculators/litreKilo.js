@@ -1,5 +1,5 @@
 /** Litre <-> kilo: mass and volume of a material through an explicit, sourced, measured density. No density, no answer. */
-import { massToVolume, resolveDensity, volumeToMass } from '@fl/engine';
+import { massToVolume, preferMeasuredDensity, resolveDensity, volumeToMass } from '@fl/engine';
 import { EMPTY, isBlank, outcomeOf, row, toQty } from './common';
 import { leaf, node } from './trace';
 import { blankSourced, toSourced } from './sourced';
@@ -13,15 +13,35 @@ export const blankLitreKilo = () => ({
     resultUnit: 'L',
     density: blankSourced('g/mL'),
     material: null,
+    /** Optional formula version and the density the lab measured for it (O-04): { value, unit, sourceId, confidence, validFrom, ... }. */
+    version: null,
+    measured: null,
 });
 
+/** The lab's density as the SourcedValue the engine takes. */
+const measuredOf = (measured) => (measured ? { value: measured.value, unit: measured.unit, sourceId: measured.sourceId, confidence: measured.confidence, validFrom: measured.validFrom } : undefined);
+
+/**
+ * The density to convert with. With a formula version chosen, the engine prefers the lab-measured density of that version to the
+ * typed (estimated) one and keeps its source and confidence in the trace; without a version the typed density is the only one.
+ */
+function densityFor(state) {
+    const typedDensity = toSourced(state.density, { withUnit: true });
+
+    if (!state.version) {
+        return resolveDensity(state.material?.label, 'density', typedDensity, {}, 'Measured density');
+    }
+
+    return preferMeasuredDensity(measuredOf(state.measured), typedDensity, {}, state.material?.label, 'density');
+}
+
 export function runLitreKilo(state) {
-    if (isBlank(state.amount.value) && isBlank(state.density.value)) {
+    if (isBlank(state.amount.value) && isBlank(state.density.value) && !state.measured) {
         return EMPTY;
     }
 
     const toVolume = state.direction === DIRECTIONS[0];
-    const density = resolveDensity(state.material?.label, 'density', toSourced(state.density, { withUnit: true }), {}, 'Measured density');
+    const density = densityFor(state);
     const amount = toQty(state.amount);
     const label = state.material?.label;
 

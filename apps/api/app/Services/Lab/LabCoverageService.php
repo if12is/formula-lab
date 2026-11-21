@@ -39,7 +39,8 @@ final class LabCoverageService
         $bestMissing = null;
 
         foreach ($trials as $trial) {
-            $held = $trial->measurements->map(fn ($measurement): string => $measurement->property->value)->unique()->all();
+            // A viscosity reading at an added salt % belongs to the salt curve: it is not the formula's own viscosity.
+            $held = $trial->measurements->whereNull('salt_pct')->map(fn ($measurement): string => $measurement->property->value)->unique()->all();
             $missing = array_values(array_diff($required, $held));
 
             if ($bestMissing === null || count($missing) < count($bestMissing)) {

@@ -2,7 +2,8 @@
 /**
  * HLB (F-08), four ways in one page: the required HLB of an oil phase, the split of two emulsifiers for a target HLB, and
  * Griffin's and Davies' HLB of a molecule. Every rHLB, emulsifier HLB and Davies group number is a sourced input: the engine
- * embeds no table. The values are the engine's; this page only wraps each in a trace for the explain panel.
+ * embeds no table. The values are the engine's; this page only wraps each in a trace for the explain panel. A required HLB
+ * the lab already tested on a formula carries a "tested on" tag (O-07), a record only: it changes nothing in the sum.
  */
 import { computed, reactive } from 'vue';
 import { FormField, Input, SegmentedControl } from '@kit';
@@ -12,9 +13,11 @@ import MaterialPicker from '../../components/calculators/MaterialPicker.vue';
 import DecimalField from '../../components/form/DecimalField.vue';
 import QuantityInput from '../../components/form/QuantityInput.vue';
 import SourcedInput from '../../components/form/SourcedInput.vue';
+import TestedOnBadge from '../../components/lab/TestedOnBadge.vue';
 import { useI18n } from '../../composables/useI18n';
 import { MODES, blankGroup, blankHlb, blankOilLine, runHlb } from '../../lib/calculators/hlb';
 import { fillFromMaterial, sourcesOf } from '../../lib/calculators/sourced';
+import { tagsFor } from '../../lib/lab/testedOn';
 import { path } from '../../lib/routes';
 
 defineProps({
@@ -71,6 +74,7 @@ const pickHlb = (field, option) => fillFromMaterial(field, option, 'hlb');
                         <DecimalField v-model="line.mass" label-key="calculators.hlb.fields.oil_mass_n" :label-params="{ n: index + 1 }" hint-key="calculators.hlb.hints.mass" suffix="g" />
                     </div>
                     <SourcedInput v-model="line.hlb" label-key="calculators.hlb.fields.required_hlb_n" :label-params="{ n: index + 1 }" hint-key="calculators.hlb.hints.required_hlb" unit-key="calculators.units.HLB" />
+                    <TestedOnBadge :tags="tagsFor(line.material, 'required_hlb', line.hlb.value)" />
                 </template>
             </LineList>
         </template>

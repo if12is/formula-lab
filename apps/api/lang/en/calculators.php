@@ -67,6 +67,8 @@ return [
         'g/mL' => 'g/mL',
         'kg/L' => 'kg/L',
         'HLB' => 'HLB',
+        'mPa·s' => 'mPa·s',
+        '%' => '%',
         'EGP' => 'EGP',
         'USD' => 'USD',
         'EUR' => 'EUR',
@@ -120,6 +122,10 @@ return [
         ],
     ],
     'subjects' => [
+        'salt_curve' => 'Salt curve',
+        'saltPct' => 'Salt %',
+        'targetViscosity' => 'Wanted viscosity',
+        'viscosity_mPas' => 'Viscosity',
         'mass' => 'Mass',
         'oils' => 'Oils',
         'lines' => 'Lines',
@@ -346,6 +352,7 @@ return [
             'volume_to_mass' => 'Volume to mass',
         ],
         'fields' => [
+            'version' => 'Formula version',
             'direction' => 'Direction',
             'material' => 'Material',
             'mass' => 'Mass',
@@ -354,6 +361,9 @@ return [
             'result_unit' => 'Unit of the result',
         ],
         'hints' => [
+            'version' => 'Optional. If a density was measured for this version in the lab, it is used instead of the estimated one.',
+            'lab_density_used' => 'Lab-measured density used instead of the estimated one:',
+            'lab_density_none' => 'No density was measured for this version in the lab, so the density typed below (an estimate) is used.',
             'material' => 'Optional. Picking a material fills its density from its data when it has one.',
             'density' => 'Measure the density of this very batch. There is no default: without one the engine does not compute.',
         ],

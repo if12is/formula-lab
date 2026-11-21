@@ -20,6 +20,7 @@ export type Unit =
   | MassUnit
   | VolumeUnit
   | DensityUnit
+  | '%'
   | '%w/w'
   | '%w/v'
   | '%v/v'
@@ -46,6 +47,8 @@ const UNIT_DEFS: Record<Unit, UnitDef> = {
   mL: { dimension: 'volume', group: 'volume', factor: '1' },
   'g/mL': { dimension: 'density', group: 'density', factor: '1' },
   'kg/L': { dimension: 'density', group: 'density', factor: '1' },
+  /** A plain percentage of another quantity (a relative difference); never mixes with the %w/w family. */
+  '%': { dimension: 'fraction', group: '%', factor: '1' },
   '%w/w': { dimension: 'fraction', group: '%w/w', factor: '1' },
   '%w/v': { dimension: 'fraction', group: '%w/v', factor: '1' },
   '%v/v': { dimension: 'fraction', group: '%v/v', factor: '1' },

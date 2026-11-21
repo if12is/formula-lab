@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Lab\LabDensityController;
 use App\Http\Controllers\Lab\LabProtocolController;
 use App\Http\Controllers\Lab\LabTrialController;
 use Illuminate\Support\Facades\Route;
@@ -14,6 +15,7 @@ Route::redirect('/lab', '/lab/trials')->name('lab.home');
 Route::prefix('lab')->name('lab.')->group(function (): void {
     Route::get('formulas/options', [LabTrialController::class, 'formulaOptions'])->name('formulas.options');
     Route::get('formula-versions/search', [LabTrialController::class, 'versionSearch'])->name('formula-versions.search');
+    Route::get('formula-versions/{version}/density', [LabDensityController::class, 'show'])->whereUuid('version')->name('formula-versions.density');
 
     Route::prefix('trials')->name('trials.')->group(function (): void {
         Route::get('/', [LabTrialController::class, 'index'])->name('index');

@@ -22,6 +22,8 @@ return [
         'cloud_point' => ['units' => ['°C'], 'protocol' => null],
         'foam' => ['units' => ['mm', 'mL'], 'protocol' => null],
         'stability_4w' => ['units' => ['%'], 'protocol' => null],
+        /* Active matter found by MBAS or titration, compared with the computed one (O-05). */
+        'active_matter' => ['units' => ['%w/w'], 'protocol' => null],
     ],
 
     /*
@@ -45,6 +47,7 @@ return [
         'cloud_point' => ['min' => null, 'max' => null],
         'foam' => ['min' => null, 'max' => null],
         'stability_4w' => ['min' => null, 'max' => null],
+        'active_matter' => ['min' => null, 'max' => null],
     ],
 
     /*
@@ -72,6 +75,16 @@ return [
             'steps' => ['prepare_sample', 'select_spindle', 'measure', 'record'],
         ],
     ],
+
+    /*
+    | "Tested on formula X" (O-07): the measurement that counts as a stability result. A completed trial holding it, on an
+    | approved version, records the version's doses and required HLBs as tested values. No acceptance limit is applied
+    | here: approval and completion are the owner's decision, not a threshold (orchestration/HUMAN-TODO.md).
+    */
+    'stability_property' => 'stability_4w',
+
+    /* Property keys of the expected-vs-measured comparison (O-05): the lab property and the material property it is computed from. */
+    'comparison' => ['lab_property' => 'active_matter', 'material_property' => 'active_matter'],
 
     /* Longest text accepted for the free-text fields. */
     'max_text_length' => 255,
