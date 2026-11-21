@@ -13,7 +13,9 @@ export type Dimension =
 export type MassUnit = 'kg' | 'g' | 'mg';
 export type VolumeUnit = 'L' | 'mL';
 export type DensityUnit = 'g/mL' | 'kg/L';
-export type Currency = 'EGP' | 'USD';
+/** Currencies the engine can hold money in. A non-EGP amount becomes EGP only through a dated rate (core/fx.ts). */
+export const CURRENCIES = ['EGP', 'USD', 'EUR', 'CNY', 'SAR', 'AED', 'GBP'] as const;
+export type Currency = (typeof CURRENCIES)[number];
 export type Unit =
   | MassUnit
   | VolumeUnit
@@ -50,6 +52,11 @@ const UNIT_DEFS: Record<Unit, UnitDef> = {
   'mgKOH/g': { dimension: 'acid-value', group: 'mgKOH/g', factor: '1' },
   EGP: { dimension: 'money', group: 'EGP', factor: '1', currency: 'EGP' },
   USD: { dimension: 'money', group: 'USD', factor: '1', currency: 'USD' },
+  EUR: { dimension: 'money', group: 'EUR', factor: '1', currency: 'EUR' },
+  CNY: { dimension: 'money', group: 'CNY', factor: '1', currency: 'CNY' },
+  SAR: { dimension: 'money', group: 'SAR', factor: '1', currency: 'SAR' },
+  AED: { dimension: 'money', group: 'AED', factor: '1', currency: 'AED' },
+  GBP: { dimension: 'money', group: 'GBP', factor: '1', currency: 'GBP' },
   'mPa·s': { dimension: 'viscosity', group: 'mPa·s', factor: '1' },
   /** Dimensionless piece count (whole packs). */
   pc: { dimension: 'count', group: 'count', factor: '1' },

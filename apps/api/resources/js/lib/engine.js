@@ -3,7 +3,7 @@
  * arithmetic on a formula or a price: every figure shown comes out of the engine (draftSummary, balanceQs,
  * calculate, resolveValue). This file only prepares what the engine takes and sorts what it gives back.
  */
-import { ENGINE_VERSION, balanceQs, calculate, draftSummary, inputLeaf, isDecimalString, resolveValue, sourcedEgp, traced } from '@fl/engine';
+import { ENGINE_VERSION, balanceQs, calculate, convertFromEgp, convertMoney, draftSummary, inputLeaf, isDecimalString, materialUsdExposure, productCostBreakdown, qty, resolveValue, sourcedEgp, traced } from '@fl/engine';
 
 /** Arabic-Indic and Persian digits, and the Arabic decimal separators, typed into a number field become plain ASCII text. */
 export function normalizeDecimalText(text) {
@@ -72,16 +72,76 @@ export function balanceLines(lines) {
     return { ok: true, percent: result.value.balanceEvent.after, event: result.value.balanceEvent };
 }
 
-/** Engine Candidates from a material's price quotes. */
+/**
+ * The exchange rate the server chose for a price (App\Services\Currency\ExchangeRateLookupService: the latest rate dated on
+ * or before the quote date) as the engine's FxRate, pinned to that quote date with `forDate` so the engine uses it for prices
+ * of that day only. Undefined for an EGP price and for a foreign one the server found no rate for: the engine then reports
+ * `fx:XXX->EGP` as missing. The browser neither picks nor computes a rate.
+ */
+function fxRateOf(currency, quotedOn, fx) {
+    if (!fx || currency === 'EGP') {
+        return undefined;
+    }
+
+    return {
+        from: currency,
+        to: 'EGP',
+        rate: fx.rate,
+        date: fx.rate_date,
+        sourceId: fx.source_id,
+        source: fx.source_title,
+        confidence: fx.confidence,
+        forDate: quotedOn,
+    };
+}
+
+/** Engine Candidates from a material's price quotes; the quote itself rides along as `_row` for what the engine does not need. */
 function priceCandidates(prices) {
     return prices.map((price) => ({
         _id: price.id,
+        _row: price,
         value: price.amount,
         unit: price.currency,
         sourceId: price.source_id,
         confidence: price.confidence,
         validFrom: price.quoted_on,
     }));
+}
+
+/**
+ * A quote in EGP by the engine's convertMoney, whatever its confidence (this is for showing, not for costing: costing
+ * goes through calculate and its confidence rules). Returns { currency, egp, fx } for an EGP quote (egp = the amount itself)
+ * and for a foreign one with a rate (egp = the converted amount, fx = { rate, date, source, sourceId }); or
+ * { currency, egp: null, missing: { currency, date } } when there is no rate for its date.
+ */
+export function priceInEgp(price) {
+    if (price.currency === 'EGP') {
+        return { currency: 'EGP', egp: price.amount, fx: null, missing: null };
+    }
+
+    const rate = fxRateOf(price.currency, price.quoted_on, price.fx);
+    const converted = rate ? convertMoney(qty(price.amount, price.currency), 'EGP', rate) : null;
+
+    if (!converted?.ok) {
+        return { currency: price.currency, egp: null, fx: null, missing: { currency: price.currency, date: price.quoted_on } };
+    }
+
+    return { currency: price.currency, egp: converted.value.amount.value.toFixed(), fx: { rate: rate.rate, date: rate.date, source: rate.source, sourceId: rate.sourceId, confidence: rate.confidence }, missing: null };
+}
+
+/**
+ * An EGP amount in the display currency by the engine's convertFromEgp, with the newest rate the server sent for it
+ * (`rate` as in the shared `currency` prop). Null without a rate. The figure sits next to the EGP one, never replaces it.
+ */
+export function toDisplayCurrency(egp, currency, rate) {
+    if (egp === null || egp === undefined || egp === '' || !rate) {
+        return null;
+    }
+
+    const fx = { from: currency, to: 'EGP', rate: rate.rate, date: rate.rate_date, sourceId: rate.source_id, source: rate.source_title, confidence: rate.confidence };
+    const converted = convertFromEgp(qty(egp, 'EGP'), currency, fx);
+
+    return converted.ok ? converted.value.amount.value.toFixed() : null;
 }
 
 /** The price quote the engine would cost a material with, or null when there is none (engine resolveValue). */
@@ -103,15 +163,17 @@ export function pickPrice(prices, materialId) {
  *   perKgTraced  the engine's { value, unit, trace } behind perKg, or null
  *   missing  [{ materialId, property, reason }] straight from the engine (prices, formula problems)
  *   warnings [{ key, details[] }]
- *   prices   { [materialId]: chosen quote }
+ *   prices   { [materialId]: chosen quote (engine candidate; `_row` is the server's quote with its `fx`) }
+ *   equivalents { [materialId]: priceInEgp(chosen quote) } what each chosen price is in EGP, or why it cannot be
+ *   usdShare the engine's traced "% of the material cost that is USD-linked", or null when the cost is not sound
  */
 export function costLines(lines, materials, datasetVersion) {
     if (lines.length === 0) {
-        return { state: 'empty', perKg: null, perKgTraced: null, missing: [], warnings: [], prices: {} };
+        return { state: 'empty', perKg: null, perKgTraced: null, usdShare: null, missing: [], warnings: [], prices: {}, equivalents: {} };
     }
 
     if (lines.some((line) => !line.material_id)) {
-        return { state: 'incomplete', perKg: null, perKgTraced: null, missing: [], warnings: [], prices: {} };
+        return { state: 'incomplete', perKg: null, perKgTraced: null, usdShare: null, missing: [], warnings: [], prices: {}, equivalents: {} };
     }
 
     const engineLines = lines.map((line) => ({ materialId: line.material_id, percentWW: line.percent }));
@@ -127,6 +189,8 @@ export function costLines(lines, materials, datasetVersion) {
 
     const prices = {};
     const sourced = {};
+    const equivalents = {};
+    const rates = new Map();
 
     for (const line of lines) {
         const chosen = pickPrice(materials[line.material_id]?.prices ?? [], line.material_id);
@@ -134,21 +198,31 @@ export function costLines(lines, materials, datasetVersion) {
         if (chosen) {
             prices[line.material_id] = chosen;
             sourced[line.material_id] = { value: chosen.value, unit: chosen.unit, sourceId: chosen.sourceId, confidence: chosen.confidence, validFrom: chosen.validFrom };
+            equivalents[line.material_id] = priceInEgp(chosen._row);
+
+            // Rates the server chose for these prices, each pinned to its quote date; the same rate of the same day appears once.
+            const rate = fxRateOf(chosen.unit, chosen.validFrom, chosen._row.fx);
+
+            if (rate) {
+                rates.set(`${rate.from}|${rate.date}|${rate.sourceId}|${rate.forDate}`, rate);
+            }
         }
     }
 
+    const fxRates = [...rates.values()];
     const output = calculate({
         engineVersion: ENGINE_VERSION,
         datasetVersion,
         formula: { lines: engineLines },
         prices: sourced,
+        fxRates,
         policy: { rounding: 'default' },
     });
 
     // calculate() checks the formula first and stops there when it does not add up to 100. The price of every line is
     // judged by the same engine rule on its own (sourcedEgp), so a missing or estimated price shows while the formula is
     // still being typed, not only once it is complete.
-    const lineChecks = lines.map((line) => sourcedEgp(line.material_id, 'price', line.material_id, sourced[line.material_id], { policy: {} }));
+    const lineChecks = lines.map((line) => sourcedEgp(line.material_id, 'price', line.material_id, sourced[line.material_id], { policy: {}, fxRates }));
     const seen = new Set();
     const missing = [...output.missing, ...lineChecks.flatMap((check) => (check.ok ? [] : check.missing))].filter((gap) => {
         const key = `${gap.materialId ?? ''}|${gap.property}|${gap.reason}`;
@@ -157,10 +231,16 @@ export function costLines(lines, materials, datasetVersion) {
     });
     const warnings = [...new Set([...output.warnings, ...lineChecks.flatMap((check) => check.warnings)])];
 
+    // The USD-linked share of the material cost, from the engine's per-material breakdown (only when the cost itself is sound).
+    const breakdown = missing.length === 0 ? productCostBreakdown({ lines: engineLines, prices: sourced, fxRates, policy: {} }, '0') : null;
+    const exposure = breakdown?.ok ? materialUsdExposure(breakdown.value) : null;
+
     return {
         state: 'ready',
         perKg: output.results['cost.materialPerKg']?.value ?? null,
         perKgTraced: output.results['cost.materialPerKg'] ?? null,
+        usdShare: exposure?.ok ? exposure.value.usdSharePct : null,
+        equivalents,
         missing,
         warnings: warnings.map((warning) => {
             const [key, ...details] = warning.split(':');

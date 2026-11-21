@@ -5,7 +5,7 @@ namespace App\Support;
 use Illuminate\Http\Request;
 
 /**
- * The interface preferences a visitor has saved (theme, locale), read from cookies.
+ * The interface preferences a visitor has saved (theme, locale, display currency), read from cookies.
  * One place for the cookie names, the allowed values and the defaults, so the
  * middleware and the shared Inertia props agree. Saving goes through UiPreferenceService.
  */
@@ -23,6 +23,14 @@ final class UiPreferences
         $saved = $request->cookie(config('ui.cookies.locale'));
 
         return is_string($saved) && self::isSupportedLocale($saved) ? $saved : config('app.locale');
+    }
+
+    /** The currency costs are shown in next to EGP; the base currency means no second figure. */
+    public static function displayCurrency(Request $request): string
+    {
+        $saved = $request->cookie(config('ui.cookies.display_currency'));
+
+        return is_string($saved) && Currencies::isSupported($saved) ? $saved : Currencies::base();
     }
 
     public static function isSupportedLocale(string $locale): bool

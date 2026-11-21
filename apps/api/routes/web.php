@@ -10,9 +10,11 @@ Route::get('/', fn () => Inertia::render('Dashboard'))->name('home');
 
 Route::put('/settings/theme', [SettingsController::class, 'theme'])->name('settings.theme');
 Route::put('/settings/locale', [SettingsController::class, 'locale'])->name('settings.locale');
+Route::put('/settings/display-currency', [SettingsController::class, 'displayCurrency'])->name('settings.display-currency');
 
 require __DIR__.'/formulation.php';
 require __DIR__.'/calculators.php';
+require __DIR__.'/settings.php';
 
 // Sidebar destinations that are not built yet. A section leaves this list when it gets its own route.
 Route::get('/{section}', ComingSoonController::class)

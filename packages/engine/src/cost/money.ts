@@ -13,7 +13,7 @@ export interface MoneyContext {
 
 /**
  * A dated, sourced money value as an EGP trace node. Non-EGP values need an explicit dated
- * rate in ctx.fxRates (no default rates); L7 needs a signed override; low confidence warns.
+ * rate in ctx.fxRates (no default rates; a rate with `forDate` applies only to prices dated that day); L7 needs a signed override; low confidence warns.
  * Missing/invalid input is reported under `property`, never defaulted to zero.
  */
 export function sourcedEgp(
@@ -45,7 +45,7 @@ export function sourcedEgp(
   if (currency === 'EGP') {
     return ok(leaf, gated.warnings);
   }
-  const rate = ctx.fxRates?.find((r) => r.from === currency && r.to === 'EGP');
+  const rate = ctx.fxRates?.find((r) => r.from === currency && r.to === 'EGP' && (r.forDate === undefined || r.forDate === sv.validFrom));
   if (rate === undefined) {
     return missing([{ materialId, property: `fx:${currency}->EGP`, reason: 'cost.fx_rate_required' }], gated.warnings);
   }
@@ -53,6 +53,6 @@ export function sourcedEgp(
   if (!converted.ok) {
     return converted;
   }
-  const rateLeaf = referenceLeaf(`FX ${currency}->EGP ${rate.date} (${rate.source})`, rate.rate, 'EGP', rate.sourceId);
+  const rateLeaf = referenceLeaf(`FX ${currency}->EGP ${rate.date} (${rate.source})`, rate.rate, 'EGP', rate.sourceId, rate.confidence);
   return ok(traced('fx', `${label} in EGP`, converted.value.amount.value, 'EGP', [leaf, rateLeaf]), gated.warnings);
 }

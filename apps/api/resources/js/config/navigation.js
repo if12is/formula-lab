@@ -2,7 +2,7 @@
  * The sidebar, defined once. Labels are lang keys (lang/<locale>/nav.php); icons are Phosphor.
  * AppLayout renders it and derives the breadcrumbs from it. Sections not built yet point at the
  * ComingSoon placeholder (config/ui.php `placeholder_sections`); a section leaves that list when
- * it gets its own route.
+ * it gets its own route. An item with a `parentId` is listed in the sidebar and shows that item before it in the breadcrumbs.
  */
 export const navigation = [
     {
@@ -35,7 +35,10 @@ export const navigation = [
     {
         id: 'system',
         labelKey: 'nav.groups.system',
-        items: [{ id: 'settings', href: '/settings', icon: 'ph:gear', labelKey: 'nav.settings' }],
+        items: [
+            { id: 'settings', href: '/settings', icon: 'ph:gear', labelKey: 'nav.settings', exact: true },
+            { id: 'exchange-rates', href: '/settings/exchange-rates', icon: 'ph:currency-circle-dollar', labelKey: 'nav.exchange_rates', parentId: 'settings' },
+        ],
     },
 ];
 

@@ -68,6 +68,12 @@ return [
         'kg/L' => 'kg/L',
         'HLB' => 'HLB',
         'EGP' => 'EGP',
+        'USD' => 'USD',
+        'EUR' => 'EUR',
+        'CNY' => 'CNY',
+        'SAR' => 'SAR',
+        'AED' => 'AED',
+        'GBP' => 'GBP',
         'pc' => 'pcs',
     ],
     'fields' => [

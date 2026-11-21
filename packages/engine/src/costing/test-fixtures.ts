@@ -1,5 +1,6 @@
 import type { Confidence, SourcedValue } from '../contract';
 import type { FxRate } from '../core/fx';
+import type { Currency } from '../core/quantity';
 import type { SourcedScalar } from '../core/parse';
 import type { PackagingBomItem } from '../packaging/bom';
 import { productCostBreakdown } from './product-cost';
@@ -9,7 +10,7 @@ import { computeUnitCost, type UnitCost, type UnitCostInput } from './unit-cost'
  * TEST INPUTS ONLY (sourceId 'TEST-FIXTURE'). Fictional prices chosen so every figure is exact by hand;
  * never imported by production code.
  */
-export const money = (value: string, unit: 'EGP' | 'USD' = 'EGP', confidence: Confidence = 'L2_supplier_tds'): SourcedValue => ({
+export const money = (value: string, unit: Currency = 'EGP', confidence: Confidence = 'L2_supplier_tds'): SourcedValue => ({
   value,
   unit,
   sourceId: 'TEST-FIXTURE',

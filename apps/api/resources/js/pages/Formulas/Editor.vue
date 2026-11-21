@@ -15,6 +15,7 @@ import { path } from '../../lib/routes';
 import { Alert, Badge, Button, Card, DescriptionList, FieldError, FormField, IconButton, Input, PageHeader, RadioGroup, Select, StickyBar, Textarea, Tooltip } from '@kit';
 import ExplainableNum from '../../components/explain/ExplainableNum.vue';
 import EntitySelect from '../../components/form/EntitySelect.vue';
+import DisplayCurrencyLine from '../../components/currency/DisplayCurrencyLine.vue';
 import ConfidenceBadge from '../../components/materials/ConfidenceBadge.vue';
 import MaterialFormModal from '../../components/materials/MaterialFormModal.vue';
 import Num from '../../components/Num.vue';
@@ -97,9 +98,10 @@ const cost = computed(() => draft.cost.value);
 
 /* What the explain panel can name: each material by its name (the engine labels it by id), each price by its source. */
 const entities = computed(() => Object.fromEntries(Object.entries(draft.materials).map(([id, material]) => [id, { label: material.label, href: path('materials.show', { material: id }) }])));
-const sources = computed(() => Object.fromEntries(Object.entries(draft.materials).flatMap(([id, material]) => (material.prices ?? []).map((price) => [
-    price.source_id,
-    { title: price.source_title ?? null, href: path('materials.show', { material: id, tab: 'prices' }) },
+const sources = computed(() => Object.fromEntries(Object.entries(draft.materials).flatMap(([id, material]) => (material.prices ?? []).flatMap((price) => [
+    [price.source_id, { title: price.source_title ?? null, href: path('materials.show', { material: id, tab: 'prices' }) }],
+    // The exchange rate behind a foreign price: its source opens the exchange rates screen.
+    ...(price.fx ? [[price.fx.source_id, { title: price.fx.source_title, href: path('settings.exchange-rates.index') }]] : []),
 ]))));
 const sumTrace = computed(() => sumTraced(draft.lines.value, draft.labelOf, draft.summary.value.sum));
 const formulaGaps = computed(() => cost.value.missing.filter((gap) => gap.property === 'formula'));
@@ -110,12 +112,19 @@ const priceGaps = computed(() => {
         byMaterial.set(gap.materialId, [...(byMaterial.get(gap.materialId) ?? []), gap]);
     }
 
-    return [...byMaterial].map(([materialId, gaps]) => ({
-        materialId,
-        label: draft.labelOf(materialId),
-        reasons: [...new Set(gaps.map((gap) => gap.reason))],
-        href: path('materials.show', { material: materialId, tab: 'prices' }),
-    }));
+    return [...byMaterial].map(([materialId, gaps]) => {
+        // A foreign price without a rate for its date: the way out is an exchange rate, not another price.
+        const fxGap = gaps.map((gap) => gap.property.match(/^fx:([A-Z]{3})->EGP$/)).find(Boolean);
+        const priced = cost.value.prices[materialId];
+
+        return {
+            materialId,
+            label: draft.labelOf(materialId),
+            reasons: [...new Set(gaps.map((gap) => gap.reason))],
+            href: path('materials.show', { material: materialId, tab: 'prices' }),
+            fx: fxGap ? { currency: fxGap[1], date: priced?.validFrom ?? null, href: path('settings.exchange-rates.index', { new_currency: fxGap[1], ...(priced ? { new_date: priced.validFrom } : {}) }) } : null,
+        };
+    });
 });
 const reasonsText = (reasons) => reasons.map((reason) => t(`engine.${reason}`)).join(' ');
 const estimateGap = computed(() => cost.value.missing.some((gap) => gap.reason === 'confidence.l7_requires_signed_override'));
@@ -141,6 +150,7 @@ const costGapReason = computed(() => {
     return estimateGap.value ? 'formulas.cost.not_reliable_estimate' : 'formulas.cost.reason_prices';
 });
 const linePrice = (line) => (line.material_id ? cost.value.prices[line.material_id] ?? null : null);
+const lineEquivalent = (line) => (line.material_id ? cost.value.equivalents[line.material_id] ?? null : null);
 const hasLinePrice = (line) => Boolean(line.material_id) && Boolean(draft.materials[line.material_id]);
 
 /* ---- actions ------------------------------------------------------------ */
@@ -280,7 +290,14 @@ const percentValid = (line) => line.percent === '' || isDecimalString(line.perce
                             <p v-if="hasLinePrice(line)" class="flex flex-wrap items-center gap-x-2 gap-y-1 text-label text-ink-3">
                                 <template v-if="linePrice(line)">
                                     <span>{{ t('formulas.lines.price') }}</span>
-                                    <span class="text-ink-2"><Num :value="linePrice(line).value" :decimals="2" /> {{ t('formulas.units.egp_per_kg') }}</span>
+                                    <span class="text-ink-2" :data-price-currency="linePrice(line).unit">
+                                        <template v-if="linePrice(line).unit === 'EGP'"><Num :value="linePrice(line).value" :decimals="2" /> {{ t('formulas.units.egp_per_kg') }}</template>
+                                        <template v-else>
+                                            <Num :value="linePrice(line).value" :currency="linePrice(line).unit" :decimals="2" /> {{ t('formulas.units.per_kg') }}
+                                            <template v-if="lineEquivalent(line)?.egp !== null"> ≈ <Num :value="lineEquivalent(line).egp" :decimals="2" /> {{ t('formulas.units.egp_per_kg') }}</template>
+                                        </template>
+                                    </span>
+                                    <Badge v-if="lineEquivalent(line)?.missing" tone="warning" size="sm" icon="ph:warning" data-testid="line-fx-missing">{{ t('materials.price.egp_missing_reason') }}</Badge>
                                     <ConfidenceBadge :confidence="linePrice(line).confidence" />
                                 </template>
                                 <span v-else>{{ t('formulas.lines.no_price') }}</span>
@@ -343,6 +360,11 @@ const percentValid = (line) => line.percent === '' || isDecimalString(line.perce
                         </span>
                         <span v-if="cost.perKg !== null" class="text-label text-ink-3">{{ t('formulas.units.egp_per_kg') }}</span>
                     </div>
+                    <DisplayCurrencyLine :egp="cost.perKg" suffix-key="formulas.units.per_kg" />
+                    <p v-if="cost.usdShare" class="flex flex-wrap items-baseline gap-x-1 text-label text-ink-2" data-testid="usd-exposure">
+                        <span class="font-semibold text-ink"><ExplainableNum :traced="cost.usdShare" :decimals="1" :label="t('formulas.cost.usd_exposure_label')" :entities="entities" :sources="sources" /> %</span>
+                        <span>{{ t('formulas.cost.usd_exposure') }}</span>
+                    </p>
 
                     <Alert v-if="estimateGap" tone="warning" icon="ph:warning" :title="t('formulas.cost.not_reliable_estimate')" data-testid="estimate-warning">
                         {{ t('formulas.cost.not_reliable_description') }}
@@ -357,6 +379,7 @@ const percentValid = (line) => line.percent === '' || isDecimalString(line.perce
                             <li v-for="gap in priceGaps" :key="gap.materialId" class="flex flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2">
                                 <span class="font-semibold text-ink">{{ gap.label }}</span>
                                 <span class="min-w-0 flex-1 text-label text-ink-3">{{ reasonsText(gap.reasons) }}</span>
+                                <Button v-if="gap.fx" :href="gap.fx.href" variant="link" size="sm" icon="ph:currency-circle-dollar" data-testid="add-rate-link">{{ gap.fx.date ? t('formulas.cost.add_rate', { currency: gap.fx.currency, date: gap.fx.date }) : t('exchange_rates.add') }}</Button>
                                 <Button :href="gap.href" variant="link" size="sm" icon="ph:arrow-square-out">{{ t('formulas.cost.add_price') }}</Button>
                             </li>
                         </ul>
@@ -412,6 +435,10 @@ const percentValid = (line) => line.percent === '' || isDecimalString(line.perce
                             <Tooltip v-else-if="estimateGap" :content="t('formulas.cost.not_reliable_estimate')">
                                 <Badge tone="danger" icon="ph:warning" tabindex="0">{{ t('formulas.cost.not_reliable_short') }}</Badge>
                             </Tooltip>
+                        </span>
+                        <DisplayCurrencyLine :egp="cost.perKg" suffix-key="formulas.units.per_kg" data-testid="bar-display-currency" />
+                        <span v-if="cost.usdShare" class="flex items-baseline gap-1 text-label text-ink-3" data-testid="bar-usd-exposure">
+                            <ExplainableNum :traced="cost.usdShare" :decimals="1" :label="t('formulas.cost.usd_exposure_label')" :entities="entities" :sources="sources" /> % {{ t('formulas.cost.usd_exposure') }}
                         </span>
                     </span>
                 </span>

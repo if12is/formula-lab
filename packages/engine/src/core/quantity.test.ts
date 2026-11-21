@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  currencyOf, dimensionOf, isUnit, Quantity, qty, UNITS, UnitMismatchError,
+  CURRENCIES, currencyOf, dimensionOf, isUnit, Quantity, qty, UNITS, UnitMismatchError,
 } from './quantity';
 import { D } from './decimal';
 
@@ -30,6 +30,15 @@ describe('Quantity', () => {
     expect(qty('1', 'EGP').dimension).toBe('money');
     expect(currencyOf('USD')).toBe('USD');
     expect(currencyOf('kg')).toBeUndefined();
+  });
+  it('every supported currency is its own money unit that never mixes with another', () => {
+    expect([...CURRENCIES]).toEqual(['EGP', 'USD', 'EUR', 'CNY', 'SAR', 'AED', 'GBP']);
+    for (const currency of CURRENCIES) {
+      expect(isUnit(currency)).toBe(true);
+      expect(currencyOf(currency)).toBe(currency);
+      expect(qty('1', currency).dimension).toBe('money');
+    }
+    expect(() => qty('1', 'EUR').add(qty('1', 'USD'))).toThrow(UnitMismatchError);
   });
   it('converts inside a dimension exactly', () => {
     expect(qty('1500', 'g').to('kg').value.toFixed()).toBe('1.5');

@@ -16,6 +16,7 @@ return [
     'lab' => 'Lab',
     'production' => 'Production',
     'settings' => 'Settings',
+    'exchange_rates' => 'Exchange rates',
     'user' => [
         'name' => 'Demo user',
         'role' => 'No account connected yet',

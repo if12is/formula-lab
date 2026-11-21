@@ -57,9 +57,9 @@ export function sourcedLeaf(label: string, sv: SourcedValue): Traced {
   return build('input', label, sv.value, sv.unit, [], { sourceId: sv.sourceId, confidence: sv.confidence });
 }
 
-/** A leaf with a source but no confidence level (e.g. an exchange rate). */
-export function referenceLeaf(label: string, value: string | Dec, unit: Unit, sourceId: string): Traced {
-  return build('input', label, value, unit, [], { sourceId });
+/** A leaf with a source and, when it has one, a confidence level (e.g. an exchange rate). */
+export function referenceLeaf(label: string, value: string | Dec, unit: Unit, sourceId: string, confidence?: Confidence): Traced {
+  return build('input', label, value, unit, [], { sourceId, confidence });
 }
 
 /** Everything a calculation step produced: keyed results, every gap, every warning. */

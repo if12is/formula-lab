@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Actions;
 
+use App\Actions\Settings\RememberDisplayCurrencyPreferenceAction;
 use App\Actions\Settings\RememberLocalePreferenceAction;
 use App\Actions\Settings\RememberThemePreferenceAction;
 use Illuminate\Support\Facades\Cookie;
@@ -28,6 +29,17 @@ class RememberUiPreferenceActionsTest extends TestCase
 
         $this->assertNotNull($cookie);
         $this->assertSame('en', $cookie->getValue());
+        $this->assertEqualsWithDelta(time() + config('ui.cookie_minutes') * 60, $cookie->getExpiresTime(), 5);
+    }
+
+    public function test_it_queues_the_display_currency_cookie_with_the_configured_lifetime(): void
+    {
+        app(RememberDisplayCurrencyPreferenceAction::class)('USD');
+
+        $cookie = Cookie::queued(config('ui.cookies.display_currency'));
+
+        $this->assertNotNull($cookie);
+        $this->assertSame('USD', $cookie->getValue());
         $this->assertEqualsWithDelta(time() + config('ui.cookie_minutes') * 60, $cookie->getExpiresTime(), 5);
     }
 }

@@ -12,8 +12,12 @@
 import { dec, isDecimalString, type Dec } from '../core/decimal';
 import { missing, ok, type Result } from '../core/result';
 import { decOf, inputLeaf, traced, type Traced } from '../trace/trace';
-import { sumTraced } from './line';
+import { sumTraced, type LineCurrency } from './line';
+import type { ProductCostBreakdown } from './product-cost';
 import type { UnitCost, UnitCostLine } from './unit-cost';
+
+/** What exposure needs of a leaf line: its key, EGP per unit and the currency of its price. */
+type ExposureLeaf = { key: string; currency: LineCurrency | 'mixed'; perUnit: Traced };
 
 export interface UsdLineExposure {
   key: string;
@@ -41,7 +45,7 @@ export const EXPOSURE_REASONS = {
   LINE_NOT_FOUND: 'exposure.line_not_found',
 } as const;
 
-function exposureOf(line: UnitCostLine): Traced {
+function exposureOf(line: ExposureLeaf): Traced {
   const v = line.currency === 'USD' ? decOf(line.perUnit) : dec('0');
   return traced('usd_linked', `${line.key} USD-linked share (EGP)`, v, 'EGP', [line.perUnit]);
 }
@@ -51,23 +55,39 @@ function leafLines(cost: UnitCost): UnitCostLine[] {
   return cost.lines.flatMap((l) => (l.key === 'product' ? cost.materialLines : [l]));
 }
 
-/** Share of the unit cost linked to USD, in total and per line. */
-export function usdExposure(cost: UnitCost): Result<UsdExposure> {
-  if (cost.materialLines.length === 0 && cost.lines.some((l) => l.key === 'product')) {
-    return missing([{ property: 'product.materials', reason: EXPOSURE_REASONS.BREAKDOWN_REQUIRED }]);
-  }
-  const total = decOf(cost.total);
+/** Share of a cost linked to USD, from its total and its leaf lines. */
+function exposureFrom(totalCost: Traced, leaves: readonly ExposureLeaf[]): Result<UsdExposure> {
+  const total = decOf(totalCost);
   if (total.isZero()) {
     return missing([{ property: 'unitCost.total', reason: EXPOSURE_REASONS.TOTAL_ZERO }]);
   }
-  const byLine = leafLines(cost).map((l): UsdLineExposure => {
+  const byLine = leaves.map((l): UsdLineExposure => {
     const usdLinked = exposureOf(l);
     const line = decOf(l.perUnit);
     return { key: l.key, perUnit: l.perUnit, usdLinked, usdSharePct: line.isZero() ? null : decOf(usdLinked).div(line).mul(100).toFixed() };
   });
   const usdLinked = sumTraced('USD-linked unit cost (EGP) = Σ USD-linked lines', byLine.map((b) => b.usdLinked));
-  const usdSharePct = traced('div', 'USD-linked share of unit cost % = USD-linked ÷ total × 100', decOf(usdLinked).div(total).mul(100), '%w/w', [usdLinked, cost.total]);
-  return ok({ total: cost.total, usdLinked, usdSharePct, byLine });
+  const usdSharePct = traced('div', 'USD-linked share of unit cost % = USD-linked ÷ total × 100', decOf(usdLinked).div(total).mul(100), '%w/w', [usdLinked, totalCost]);
+  return ok({ total: totalCost, usdLinked, usdSharePct, byLine });
+}
+
+/** Share of the unit cost linked to USD, in total and per line. */
+export function usdExposure(cost: UnitCost): Result<UsdExposure> {
+  if (cost.materialLines.length === 0 && cost.lines.some((l) => l.key === 'product')) {
+    return missing([{ property: 'product.materials', reason: EXPOSURE_REASONS.BREAKDOWN_REQUIRED }]);
+  }
+  return exposureFrom(cost.total, leafLines(cost));
+}
+
+/**
+ * Share of a formula's material cost per kg linked to USD (the editor's cost bar): the per-material contributions of a
+ * productCostBreakdown are the leaf lines, so no packaging or conversion is involved.
+ */
+export function materialUsdExposure(breakdown: ProductCostBreakdown): Result<UsdExposure> {
+  return exposureFrom(
+    breakdown.costPerKg,
+    breakdown.contributions.map((c) => ({ key: `product:${c.materialId}`, currency: c.currency, perUnit: c.perKg })),
+  );
 }
 
 export interface PriceScenario {

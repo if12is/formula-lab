@@ -58,6 +58,37 @@ describe('materialCostPerKg', () => {
     }
   });
 
+  it('every supported currency converts through its own dated rate and never through another currency\'s', () => {
+    for (const currency of ['EUR', 'CNY', 'SAR', 'AED', 'GBP'] as const) {
+      const p = { A: price('2', { unit: currency }) };
+      const wrong = materialCostPerKg({ lines: [L('A', '100')], prices: p, fxRates: [usd], policy: {} });
+      expect(!wrong.ok && wrong.missing[0]).toMatchObject({ materialId: 'A', property: `fx:${currency}->EGP` });
+      const rate: FxRate = { from: currency, to: 'EGP', rate: '10.5', date: '2026-02-01', sourceId: 'FX-2', source: 'TEST' };
+      const r = materialCostPerKg({ lines: [L('A', '100')], prices: p, fxRates: [usd, rate], policy: {} });
+      expect(r.ok && r.value.value).toBe('21');
+    }
+  });
+
+  it('a rate chosen for a price date (forDate) applies to prices of that day only; no other rate means missing', () => {
+    const jan: FxRate = { ...usd, rate: '40', date: '2026-01-02', forDate: '2026-01-05' };
+    const feb: FxRate = { ...usd, rate: '50', date: '2026-02-01', forDate: '2026-02-03' };
+    const prices = { A: price('1', { unit: 'USD', validFrom: '2026-01-05' }), B: price('1', { unit: 'USD', validFrom: '2026-02-03' }), C: price('1', { unit: 'USD', validFrom: '2026-03-01' }) };
+    const both = materialCostPerKg({ lines: [L('A', '50'), L('B', '50')], prices, fxRates: [jan, feb], policy: {} });
+    expect(both.ok && both.value.value).toBe('45');
+    const gap = materialCostPerKg({ lines: [L('A', '50'), L('C', '50')], prices, fxRates: [jan, feb], policy: {} });
+    expect(!gap.ok && gap.missing).toEqual([{ materialId: 'C', property: 'fx:USD->EGP', reason: 'cost.fx_rate_required' }]);
+  });
+
+  it('the rate leaf names the rate, its date and source, and carries its source id and confidence', () => {
+    const rate: FxRate = { ...usd, date: '2026-01-30', source: 'CBE', sourceId: 'SRC-CBE', confidence: 'L4_regulatory_db' };
+    const r = materialCostPerKg({ lines: [L('A', '100')], prices: { A: price('2', { unit: 'USD' }) }, fxRates: [rate], policy: {} });
+    if (!r.ok) {
+      throw new Error('expected ok');
+    }
+    const leaf = leavesOf(r.value.trace).find((n) => n.sourceId === 'SRC-CBE');
+    expect(leaf).toMatchObject({ label: 'FX USD->EGP 2026-01-30 (CBE)', value: '48', confidence: 'L4_regulatory_db' });
+  });
+
   it('low confidence warns; L7 is missing without override and allowed with one', () => {
     const lines1 = [L('A', '100')];
     const warn = materialCostPerKg({ lines: lines1, prices: { A: price('1', { confidence: 'L5_reference' }) }, policy: { allowConfidenceBelow: 'L3_standard' } });

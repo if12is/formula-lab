@@ -81,5 +81,12 @@ return [
         'balance_events.*.after' => 'balanced percentage',
         'from' => 'first version',
         'to' => 'second version',
+        'currency' => 'currency',
+        'from_currency' => 'currency',
+        'rate' => 'exchange rate',
+        'rate_date' => 'exchange rate date',
+        'new_currency' => 'currency',
+        'new_date' => 'date',
+        'date' => 'date',
     ],
 ];

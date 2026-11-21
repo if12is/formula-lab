@@ -18,6 +18,8 @@ return [
     'balance_note' => 'q.s. balance: :material :before → :after',
     'units' => [
         'egp_per_kg' => 'EGP/kg',
+        'currency_per_kg' => '{currency}/kg',
+        'per_kg' => 'per kg',
     ],
     'columns' => [
         'code' => 'Code',
@@ -110,6 +112,9 @@ return [
         'reason_incomplete' => 'Choose a material on every line to see a cost.',
         'reason_formula' => 'The formula must be valid and add up to 100 before it can be costed.',
         'reason_prices' => 'Every material needs a usable price.',
+        'add_rate' => 'Add a {currency} exchange rate for {date}',
+        'usd_exposure' => 'of the material cost is USD-linked',
+        'usd_exposure_label' => 'USD exposure',
     ],
     'reason' => [
         'title' => 'Why this version',

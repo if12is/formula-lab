@@ -20,7 +20,7 @@ import Num from '../../components/Num.vue';
 import StatusBadge from '../../components/StatusBadge.vue';
 import { useI18n } from '../../composables/useI18n';
 import { useProperties } from '../../composables/useProperties';
-import { pickPrice, resolveProperties } from '../../lib/engine';
+import { pickPrice, priceInEgp, resolveProperties } from '../../lib/engine';
 
 const props = defineProps({
     material: { type: Object, required: true },
@@ -31,6 +31,7 @@ const props = defineProps({
     statusOptions: { type: Array, required: true },
     confidenceOptions: { type: Array, required: true },
     sourceKindOptions: { type: Array, required: true },
+    currencyOptions: { type: Array, required: true },
     urls: { type: Object, required: true },
 });
 
@@ -67,6 +68,10 @@ const facts = computed(() => [
 
 const groups = computed(() => resolveProperties(props.properties));
 const costingPrice = computed(() => pickPrice(props.prices.map((price) => ({ ...price })), props.material.id));
+/** What each quote is in EGP, by the engine (convertMoney) with the rate the server found for the quote date. */
+const equivalents = computed(() => Object.fromEntries(props.prices.map((price) => [price.id, priceInEgp(price)])));
+const inEgp = (row) => equivalents.value[row.id];
+const addRateHref = (row) => path('settings.exchange-rates.index', { new_currency: row.currency, new_date: row.quoted_on });
 const estimateOnly = computed(() => costingPrice.value?.confidence === 'L7_estimate');
 
 const sourceLabel = (row) => (row.source_kind === 'unverified_entry' ? t('materials.unverified_source') : row.source_title);
@@ -85,6 +90,7 @@ const propertyColumns = computed(() => [
 const priceColumns = computed(() => [
     { key: 'used', label: t('materials.price.columns.used') },
     { key: 'amount', label: t('materials.price.columns.amount'), align: 'end' },
+    { key: 'egp', label: t('materials.price.columns.egp'), align: 'end' },
     { key: 'quoted_on', label: t('materials.price.columns.quoted_on') },
     { key: 'source', label: t('materials.price.columns.source'), hideBelow: 'md' },
     { key: 'confidence', label: t('materials.price.columns.confidence') },
@@ -268,14 +274,33 @@ async function removePrice(row) {
                     :columns="priceColumns"
                     :rows="prices"
                     row-key="id"
-                    :mobile-columns="['used', 'amount', 'quoted_on']"
+                    :mobile-columns="['used', 'amount', 'egp', 'quoted_on']"
                     :caption="t('materials.tabs.prices')"
                 >
                     <template #cell-used="{ row }">
                         <Badge v-if="costingPrice && costingPrice._id === row.id" tone="success" icon="ph:check-circle">{{ t('materials.price.used') }}</Badge>
                         <span v-else class="text-ink-3">{{ t('common.no_data') }}</span>
                     </template>
-                    <template #cell-amount="{ row }"><Num :value="row.amount" :decimals="2" /> <span class="text-label text-ink-3">{{ t('formulas.units.egp_per_kg') }}</span></template>
+                    <template #cell-amount="{ row }">
+                        <span class="whitespace-nowrap" :data-price-currency="row.currency">
+                            <Num v-if="row.currency === 'EGP'" :value="row.amount" :decimals="2" />
+                            <Num v-else :value="row.amount" :currency="row.currency" :decimals="2" />
+                            <span class="text-label text-ink-3"> {{ row.currency === 'EGP' ? t('formulas.units.egp_per_kg') : t('formulas.units.per_kg') }}</span>
+                        </span>
+                    </template>
+                    <template #cell-egp="{ row }">
+                        <span v-if="row.currency !== 'EGP'" class="flex flex-col items-end gap-0.5" data-testid="price-egp">
+                            <span class="whitespace-nowrap">
+                                <Num :value="inEgp(row).egp" :decimals="2" reason-key="materials.price.egp_missing_reason" /> <span v-if="inEgp(row).egp !== null" class="text-label text-ink-3">{{ t('formulas.units.egp_per_kg') }}</span>
+                            </span>
+                            <span v-if="inEgp(row).fx" class="text-label text-ink-3" data-testid="price-fx">
+                                {{ t('exchange_rates.display.rate_prefix') }} <Num :value="inEgp(row).fx.rate" /> · <bdi dir="ltr" class="tnum">{{ inEgp(row).fx.date }}</bdi> · {{ inEgp(row).fx.source }}
+                            </span>
+                            <a v-else-if="inEgp(row).missing" :href="addRateHref(row)" class="text-label text-primary-ink underline underline-offset-2" data-testid="price-add-rate">
+                                {{ t('materials.price.add_rate', { currency: row.currency, date: row.quoted_on }) }}
+                            </a>
+                        </span>
+                    </template>
                     <template #cell-quoted_on="{ row }"><bdi dir="ltr" class="tnum">{{ row.quoted_on }}</bdi></template>
                     <template #cell-source="{ row }">{{ sourceLabel(row) }}</template>
                     <template #cell-confidence="{ row }"><ConfidenceBadge :confidence="row.confidence" /></template>
@@ -317,6 +342,6 @@ async function removePrice(row) {
             :confidence-options="confidenceOptions"
             :source-kind-options="sourceKindOptions"
         />
-        <PriceModal v-model:open="addingPrice" :material-id="material.id" :urls="urls" :confidence-options="confidenceOptions" :source-kind-options="sourceKindOptions" />
+        <PriceModal v-model:open="addingPrice" :material-id="material.id" :urls="urls" :currency-options="currencyOptions" :confidence-options="confidenceOptions" :source-kind-options="sourceKindOptions" />
     </div>
 </template>

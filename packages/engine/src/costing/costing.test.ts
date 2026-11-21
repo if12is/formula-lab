@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { dec } from '../core/decimal';
 import { inputLeaf, leavesOf } from '../trace/trace';
 import { conversionCostPerUnit } from './conversion';
-import { itemPriceScenario, usdExposure, usdScenario } from './exposure';
+import { lineCurrency } from './line';
+import { itemPriceScenario, materialUsdExposure, usdExposure, usdScenario } from './exposure';
+import { productCostBreakdown } from './product-cost';
 import { qualityCostPerUnit } from './quality';
 import { compareSkuSizes } from './sku-compare';
 import { bottle, cap, fullCost, fullInput, money, productFixture, scalar, usdRate } from './test-fixtures';
@@ -208,8 +210,38 @@ describe('I-01 full unit cost', () => {
   });
 });
 
+describe('USD exposure of a formula material cost (editor cost bar)', () => {
+  const priced = (value: string, unit: 'EGP' | 'USD' | 'EUR') => ({ value, unit, sourceId: 'TEST-FIXTURE', confidence: 'L2_supplier_tds' as const, validFrom: '2026-01-01' });
+  const lines = [{ materialId: 'A', percentWW: '50' }, { materialId: 'B', percentWW: '30' }, { materialId: 'C', percentWW: '20' }];
+  const prices = { A: priced('10', 'EGP'), B: priced('2', 'USD'), C: priced('1', 'EUR') };
+  const fxRates = [usdRate, { ...usdRate, from: 'EUR' as const, rate: '60' }];
+
+  it('only the USD-priced material is USD-linked: 0.3 × 2 × 50 = 30 of 5 + 30 + 12 = 47', () => {
+    const breakdown = productCostBreakdown({ lines, prices, fxRates, policy: {} }, '0');
+    expect(breakdown.ok).toBe(true);
+    const e = breakdown.ok ? materialUsdExposure(breakdown.value) : undefined;
+    expect(e?.ok && [e.value.total.value, e.value.usdLinked.value, r10(e.value.usdSharePct.value)]).toEqual(['47', '30', '63.829787234']);
+    expect(e?.ok && e.value.byLine.map((l) => [l.key, l.usdLinked.value])).toEqual([['product:A', '0'], ['product:B', '30'], ['product:C', '0']]);
+  });
+
+  it('an EGP-only formula has 0 % exposure, and a zero total is missing, never a share', () => {
+    const egp = productCostBreakdown({ lines: [{ materialId: 'A', percentWW: '100' }], prices: { A: priced('10', 'EGP') }, policy: {} }, '0');
+    const e = egp.ok ? materialUsdExposure(egp.value) : undefined;
+    expect(e?.ok && e.value.usdSharePct.value).toBe('0');
+    const free = productCostBreakdown({ lines: [{ materialId: 'A', percentWW: '100' }], prices: { A: priced('0', 'EGP') }, policy: {} }, '0');
+    const z = free.ok ? materialUsdExposure(free.value) : undefined;
+    expect(z && !z.ok && z.missing[0]?.reason).toBe('exposure.total_cost_is_zero');
+  });
+});
+
 describe('I-06 USD exposure', () => {
   const cost = fullCost();
+
+  it('a line priced in another foreign currency keeps its own currency and is not USD-linked', () => {
+    expect(lineCurrency(money('1', 'EUR'))).toBe('EUR');
+    expect(lineCurrency(money('1', 'USD'))).toBe('USD');
+    expect(lineCurrency(money('1', 'EGP'))).toBe('EGP');
+  });
 
   it('case 1: USD-linked = material B 0.5 × 12.5 = 6.25 + cap 1 + IFRA 0.02 = 7.27 of 17.585 = 41.34205...%', () => {
     const e = usdExposure(cost);

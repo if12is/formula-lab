@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Substance;
 use App\Models\TradeMaterial;
+use App\Services\Currency\Providers\ExchangeRateProvider;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Schema\Blueprint;
@@ -20,7 +21,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // The source of exchange rates is a config choice (config/currencies.php), so a CBE provider is a drop-in.
+        $this->app->bind(ExchangeRateProvider::class, fn ($app): ExchangeRateProvider => $app->make(config('currencies.providers')[config('currencies.provider')]));
     }
 
     /**

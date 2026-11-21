@@ -8,7 +8,8 @@ import { computed, watch } from 'vue';
 import { router, usePage } from '@inertiajs/vue3';
 import { AppShell, Breadcrumbs, DropdownItem, LocaleSwitcher, NavItem, SidebarSection, UserMenu, toast } from '@kit';
 import { useI18n } from '../composables/useI18n';
-import { findNavigationItem, homeItem, navigation } from '../config/navigation';
+import DisplayCurrencyMenu from '../components/currency/DisplayCurrencyMenu.vue';
+import { findNavigationItem, homeItem, navigation, navigationItems } from '../config/navigation';
 
 const page = usePage();
 const { t, locale } = useI18n();
@@ -22,8 +23,11 @@ const crumbs = computed(() => {
         return [{ label: t(homeItem.labelKey), icon: homeItem.icon }];
     }
 
+    const parent = navigationItems.find((item) => item.id === current.parentId);
+
     return [
         { label: t(homeItem.labelKey), icon: homeItem.icon, href: homeItem.href },
+        ...(parent ? [{ label: t(parent.labelKey), href: parent.href }] : []),
         { label: t(current.labelKey) },
     ];
 });
@@ -67,6 +71,7 @@ function switchLocale(code) {
 
         <template #topbar-end>
             <LocaleSwitcher :model-value="locale" :locales="locales" compact @update:model-value="switchLocale" />
+            <DisplayCurrencyMenu />
         </template>
 
         <!-- Placeholder until sign-in exists (the users table and its settings come later). -->

@@ -7,11 +7,10 @@ return [
     'default_tenant_name' => 'Default',
 
     /*
-    | Reference prices entered in Formula Lab are money per kilogram in one currency. The engine
-    | costs EGP per kg; other currencies need a dated exchange rate and are not entered here yet.
+    | Reference prices entered in Formula Lab are money per kilogram, in the currency they were quoted in (default: the
+    | base currency, config/currencies.php). The engine costs EGP per kg; another currency needs a dated exchange rate.
     */
     'price' => [
-        'currency' => 'EGP',
         'per_unit' => 'kg',
     ],
 

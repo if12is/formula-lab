@@ -127,6 +127,35 @@ class MaterialDataEntryTest extends TestCase
         $this->assertSame(Confidence::L2SupplierTds, $price->confidence);
     }
 
+    public function test_it_adds_a_price_in_a_foreign_currency_as_it_was_quoted(): void
+    {
+        $this->post("/materials/{$this->material->id}/prices", $this->price(['currency' => 'USD', 'amount' => '2.5']))
+            ->assertRedirect($this->showUrl('prices'))
+            ->assertSessionHas('success', __('materials.price_added'));
+
+        $price = Price::query()->firstOrFail();
+        $this->assertSame('USD', $price->currency);
+        $this->assertSame('2.5', $price->amount);
+        $this->assertDatabaseHas('audit_log', ['table_name' => 'prices', 'record_id' => $price->id, 'action' => 'create']);
+    }
+
+    public function test_it_defaults_the_currency_to_egp_when_none_is_sent_or_it_is_empty(): void
+    {
+        $this->post("/materials/{$this->material->id}/prices", $this->price(['currency' => null]))->assertSessionHasNoErrors();
+        $this->post("/materials/{$this->material->id}/prices", $this->price(['currency' => 'EGP', 'quoted_on' => '2026-03-02']))->assertSessionHasNoErrors();
+
+        $this->assertSame(['EGP', 'EGP'], Price::query()->pluck('currency')->all());
+    }
+
+    public function test_it_refuses_an_unsupported_currency_with_a_translated_message(): void
+    {
+        $this->post("/materials/{$this->material->id}/prices", $this->price(['currency' => 'JPY']))
+            ->assertSessionHasErrors(['currency' => __('validation.in', ['attribute' => __('validation.attributes.currency')])]);
+        $this->post("/materials/{$this->material->id}/prices", $this->price(['currency' => 'usd']))->assertSessionHasErrors('currency');
+
+        $this->assertDatabaseCount('prices', 0);
+    }
+
     public function test_it_refuses_a_price_without_date_source_or_amount_and_a_negative_amount(): void
     {
         $this->post("/materials/{$this->material->id}/prices", ['amount' => '', 'quoted_on' => '', 'source_id' => '', 'confidence' => ''])

@@ -76,3 +76,15 @@ export async function expectRtlAndFits(page: Page): Promise<void> {
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
   await expectNoHorizontalScroll(page);
 }
+
+/** Removes every exchange rate, so a spec that adds the first one starts from "no rate" whatever earlier runs left in the database. */
+export function resetExchangeRates(): void {
+  execSync(`php artisan tinker --execute='App\\Models\\ExchangeRate::query()->delete();'`, { cwd: 'apps/api', stdio: 'pipe' });
+}
+
+/** Picks the display currency in the topbar menu (the server keeps it in a cookie). */
+export async function setDisplayCurrency(page: Page, name: RegExp | string): Promise<void> {
+  await page.getByRole('button', { name: 'العملة المعروضة' }).click();
+  await page.getByRole('menuitemradio', { name }).click();
+  await page.keyboard.press('Escape');
+}

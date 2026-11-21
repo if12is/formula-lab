@@ -11,8 +11,8 @@ test.describe('app shell', () => {
     await expect(sidebar.getByText('Formula Lab').first()).toBeVisible();
     const nav = sidebar.getByRole('navigation');
     await expect(nav).toBeVisible();
-    // dashboard, formulas, materials, calculators, compliance, lab, production, settings
-    await expect(nav.getByRole('link')).toHaveCount(8);
+    // dashboard, formulas, materials, calculators, compliance, lab, production, settings, exchange rates
+    await expect(nav.getByRole('link')).toHaveCount(9);
     await expect(nav.getByRole('link', { name: 'لوحة التحكم' })).toHaveAttribute('aria-current', 'page');
     await expect(page.getByRole('heading', { level: 1, name: 'لوحة التحكم' })).toBeVisible();
     await expect(page).toHaveTitle('لوحة التحكم - Formula Lab');

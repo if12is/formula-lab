@@ -41,7 +41,7 @@ export function productCostBreakdown(input: MaterialCostInput, wastagePct: strin
           return {
             materialId: line.materialId,
             perKg: traced('div', `${line.materialId} per net kg = term ÷ (1 − w/100)`, dec(term.value).div(y), 'EGP', [{ value: term.value, unit: term.unit, trace: term }]),
-            currency: currencyOf(price.unit) === 'USD' ? 'USD' : 'EGP',
+            currency: currencyOf(price.unit) ?? 'EGP',
           };
         });
         return ok({ costPerKg: net, contributions });

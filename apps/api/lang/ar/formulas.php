@@ -18,6 +18,8 @@ return [
     'balance_note' => 'موازنة q.s.: :material :before ← :after',
     'units' => [
         'egp_per_kg' => 'ج.م/كجم',
+        'currency_per_kg' => '{currency}/كجم',
+        'per_kg' => 'للكجم',
     ],
     'columns' => [
         'code' => 'الكود',
@@ -110,6 +112,9 @@ return [
         'reason_incomplete' => 'اختر خامة في كل سطر لتظهر التكلفة.',
         'reason_formula' => 'يجب أن تكون التركيبة صالحة ومجموعها 100 قبل أن تُحسب تكلفتها.',
         'reason_prices' => 'كل خامة تحتاج إلى سعر صالح.',
+        'add_rate' => 'إضافة سعر صرف {currency} بتاريخ {date}',
+        'usd_exposure' => 'من تكلفة الخامات مرتبطة بالدولار',
+        'usd_exposure_label' => 'الارتباط بالدولار',
     ],
     'reason' => [
         'title' => 'سبب هذه النسخة',

@@ -17,6 +17,7 @@ return [
     'cookies' => [
         'theme' => 'fl_theme',
         'locale' => 'fl_locale',
+        'display_currency' => 'fl_display_currency',
     ],
 
     /* Lifetime of those cookies, in minutes (one year). */
@@ -26,7 +27,7 @@ return [
     | lang/<locale>/<group>.php files shared with the frontend as one flat
     | dictionary ("group.key"). Server-only groups (validation, auth) stay out.
     */
-    'shared_groups' => ['app', 'nav', 'common', 'filters', 'theme', 'locale', 'dashboard', 'errors', 'enums', 'dev', 'engine', 'materials', 'formulas', 'properties', 'calculators'],
+    'shared_groups' => ['app', 'nav', 'common', 'filters', 'theme', 'locale', 'dashboard', 'errors', 'enums', 'dev', 'engine', 'materials', 'formulas', 'properties', 'calculators', 'currencies', 'exchange_rates'],
 
     /* Sidebar destinations that render the ComingSoon page until they are built. */
     'placeholder_sections' => ['compliance', 'lab', 'production', 'settings'],

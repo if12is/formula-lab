@@ -2,6 +2,7 @@
 
 namespace App\Services\Settings;
 
+use App\Actions\Settings\RememberDisplayCurrencyPreferenceAction;
 use App\Actions\Settings\RememberLocalePreferenceAction;
 use App\Actions\Settings\RememberThemePreferenceAction;
 
@@ -11,6 +12,7 @@ final class UiPreferenceService
     public function __construct(
         private RememberThemePreferenceAction $rememberTheme,
         private RememberLocalePreferenceAction $rememberLocale,
+        private RememberDisplayCurrencyPreferenceAction $rememberDisplayCurrency,
     ) {}
 
     public function updateTheme(string $theme): void
@@ -21,5 +23,10 @@ final class UiPreferenceService
     public function updateLocale(string $locale): void
     {
         ($this->rememberLocale)($locale);
+    }
+
+    public function updateDisplayCurrency(string $currency): void
+    {
+        ($this->rememberDisplayCurrency)($currency);
     }
 }

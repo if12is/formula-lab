@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Settings\UpdateDisplayCurrencyRequest;
 use App\Http\Requests\Settings\UpdateLocaleRequest;
 use App\Http\Requests\Settings\UpdateThemeRequest;
 use App\Services\Settings\UiPreferenceService;
@@ -27,5 +28,12 @@ class SettingsController extends Controller
 
         // The new locale only applies from the next request, so the confirmation is worded in it now.
         return back()->with('success', __('settings.locale_saved', [], $locale));
+    }
+
+    public function displayCurrency(UpdateDisplayCurrencyRequest $request): RedirectResponse
+    {
+        $this->uiPreferenceService->updateDisplayCurrency($request->validated('currency'));
+
+        return back()->with('success', __('settings.display_currency_saved'));
     }
 }

@@ -14,6 +14,7 @@ use App\Services\Material\MaterialDetailService;
 use App\Services\Material\MaterialListService;
 use App\Services\Material\MaterialOptionService;
 use App\Services\Material\MaterialService;
+use App\Support\Currencies;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -58,6 +59,7 @@ class MaterialController extends Controller
             'tab' => in_array($tab, self::TABS, true) ? $tab : self::TABS[0],
             'statusOptions' => TradeMaterialStatus::options(),
             'confidenceOptions' => Confidence::options(),
+            'currencyOptions' => Currencies::options(),
             'sourceKindOptions' => SourceKind::selectableOptions(),
             'urls' => $this->lookupUrls(),
         ]);

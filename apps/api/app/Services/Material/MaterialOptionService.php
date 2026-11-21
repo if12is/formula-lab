@@ -5,14 +5,20 @@ namespace App\Services\Material;
 use App\Enums\SourceKind;
 use App\Models\Price;
 use App\Models\TradeMaterial;
+use App\Services\Currency\ExchangeRateLookupService;
 use Illuminate\Support\Collection;
 
 /**
  * Trade materials as typeahead options, with their price quotes: the formula editor hands the quotes to the
- * engine, which picks the one to cost with (best confidence, then latest date).
+ * engine, which picks the one to cost with (best confidence, then latest date). A price in another currency carries the
+ * exchange rate of its quote date (ExchangeRateLookupService), which the engine converts with.
  */
 final class MaterialOptionService
 {
+    public function __construct(
+        private ExchangeRateLookupService $exchangeRateLookup,
+    ) {}
+
     /** @return list<array<string, mixed>> */
     public function search(string $term): array
     {
@@ -57,6 +63,7 @@ final class MaterialOptionService
     public function option(TradeMaterial $material, Collection $prices): array
     {
         $details = array_filter([$material->grade, $material->function]);
+        $rates = $this->exchangeRateLookup->forPrices($prices);
 
         return [
             'value' => $material->getKey(),
@@ -72,6 +79,8 @@ final class MaterialOptionService
                 'source_id' => $price->source_id,
                 'source_title' => $price->source->kind === SourceKind::UnverifiedEntry->value ? SourceKind::UnverifiedEntry->label() : $price->source->title,
                 'confidence' => $price->confidence->value,
+                // The rate of the quote date (null for EGP, or when none exists: the engine then reports it missing).
+                'fx' => $rates[(string) $price->getKey()],
             ])->values()->all(),
         ];
     }

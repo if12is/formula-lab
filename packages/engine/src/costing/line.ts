@@ -1,6 +1,6 @@
 /** Shared building blocks of the per-unit cost modules (packaging, conversion, quality, unit cost). */
 import type { MissingData, SourcedValue } from '../contract';
-import { currencyOf, type Unit } from '../core/quantity';
+import { currencyOf, type Currency, type Unit } from '../core/quantity';
 import type { SourcedScalar } from '../core/parse';
 import { dec } from '../core/decimal';
 import type { Result } from '../core/result';
@@ -9,7 +9,7 @@ import { resolveSourcedNumber, type ResolvedNumber } from '../sourced-input';
 import { decOf, traced, type Traced } from '../trace/trace';
 
 /** Currency of the price a line is built on (after FX the line is always EGP). */
-export type LineCurrency = 'EGP' | 'USD';
+export type LineCurrency = Currency;
 
 /** One per-unit cost line: EGP per selling unit, with the currency of the underlying price. */
 export interface CostLine {
@@ -24,7 +24,7 @@ export interface CostLine {
 
 /** Currency of an already validated money value. */
 export function lineCurrency(sv: SourcedValue): LineCurrency {
-  return currencyOf(sv.unit) === 'USD' ? 'USD' : 'EGP';
+  return currencyOf(sv.unit) ?? 'EGP';
 }
 
 export interface ScalarBounds {

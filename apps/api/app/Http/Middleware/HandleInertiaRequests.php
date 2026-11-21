@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\Currency\DisplayCurrencyService;
 use App\Support\PropertyRegistry;
 use App\Support\Translations;
 use App\Support\UiPreferences;
@@ -25,6 +26,8 @@ class HandleInertiaRequests extends Middleware
      *
      * @see https://inertiajs.com/asset-versioning
      */
+    public function __construct(private DisplayCurrencyService $displayCurrencyService) {}
+
     public function version(Request $request): ?string
     {
         return parent::version($request);
@@ -61,6 +64,8 @@ class HandleInertiaRequests extends Middleware
             // The known material properties (key, label key, units): selectors and labels read this one list.
             'propertyRegistry' => fn (): array => PropertyRegistry::options(),
             'theme' => ['preference' => UiPreferences::theme($request)],
+            // The base currency, the visitor's display currency and the newest rate for it (the second figure next to EGP).
+            'currency' => fn (): array => $this->displayCurrencyService->props(UiPreferences::displayCurrency($request)),
             // The whole dictionary travels once per locale; later visits leave it out.
             'translations' => Inertia::once(fn (): array => Translations::for($locale))->as("translations.{$locale}"),
         ];

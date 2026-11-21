@@ -6,6 +6,7 @@ use App\Models\AuditLog;
 use App\Models\Price;
 use App\Models\PropertyValue;
 use App\Models\TradeMaterial;
+use App\Services\Currency\ExchangeRateLookupService;
 
 /** Read side of one material's page: its facts, sourced properties, price quotes and audit trail. */
 final class MaterialDetailService
@@ -15,6 +16,7 @@ final class MaterialDetailService
 
     public function __construct(
         private SubstanceService $substanceService,
+        private ExchangeRateLookupService $exchangeRateLookup,
     ) {}
 
     /**
@@ -102,12 +104,15 @@ final class MaterialDetailService
     /** @return list<array<string, mixed>> */
     private function prices(TradeMaterial $material): array
     {
-        return Price::query()
+        $prices = Price::query()
             ->with('source')
             ->where('trade_material_id', $material->getKey())
             ->orderByDesc('quoted_on')
             ->orderBy('id')
-            ->get()
+            ->get();
+        $rates = $this->exchangeRateLookup->forPrices($prices);
+
+        return $prices
             ->map(fn (Price $price): array => [
                 'id' => $price->getKey(),
                 'amount' => $price->amount,
@@ -118,6 +123,7 @@ final class MaterialDetailService
                 'source_title' => $price->source->title,
                 'source_kind' => $price->source->kind,
                 'confidence' => $price->confidence->value,
+                'fx' => $rates[(string) $price->getKey()],
             ])
             ->all();
     }

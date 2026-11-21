@@ -18,7 +18,7 @@ final class PriceService
     ) {}
 
     /**
-     * @param  array{amount: string, quoted_on: string, source_id: string, confidence: string}  $data
+     * @param  array{amount: string, currency?: string|null, quoted_on: string, source_id: string, confidence: string}  $data
      */
     public function add(TradeMaterial $material, array $data, ?int $userId = null): Price
     {
