@@ -39,7 +39,7 @@ for (const theme of ['light', 'dark'] as const) {
         };
 
         // O-03: the entry (a viscosity reading with its salt %), then the formula's curve read by the engine.
-        await openTrial(page, 'DEMO-LAB-CURVE/T2');
+        await openTrial(page, 'DEMO-LAB-CURVE-SHOTS/T2');
         if (theme === 'dark') {
           await setTheme(page, 'dark');
         }
@@ -52,7 +52,7 @@ for (const theme of ['light', 'dark'] as const) {
         await shot('salt-entry', 'measurement-form');
 
         await page.getByTestId('salt-curve-link').click();
-        await expect(page.getByTestId('salt-curve')).toHaveAttribute('data-points', /^[23]$/); // 2 seeded points, 3 once lab-loop-2.spec has added its 2 % reading
+        await expect(page.getByTestId('salt-curve')).toHaveAttribute('data-points', '2'); // the seeded 0 % and 1 % points: this formula is its own, lab-loop-2.spec adds its reading to DEMO-LAB-CURVE
         await page.getByTestId('salt-query').getByRole('textbox').fill('0.5');
         await expect(result(page, 'viscosity')).toContainText('635.0');
         await expect(page.getByTestId('salt-chart').locator('svg').first()).toBeVisible();

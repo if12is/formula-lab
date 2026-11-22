@@ -12,4 +12,6 @@ return [
     'retry' => 'Try again',
     'cancel' => 'Cancel',
     'request_failed' => 'The request failed. Try again in a moment.',
+    'list_separator' => ', ',
+    'sentence_separator' => ' ',
 ];

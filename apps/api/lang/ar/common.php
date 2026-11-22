@@ -12,4 +12,6 @@ return [
     'retry' => 'حاول مرة أخرى',
     'cancel' => 'إلغاء',
     'request_failed' => 'تعذّر تنفيذ الطلب. حاول مرة أخرى بعد قليل.',
+    'list_separator' => '، ',
+    'sentence_separator' => ' ',
 ];

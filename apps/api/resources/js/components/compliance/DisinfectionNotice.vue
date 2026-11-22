@@ -34,11 +34,12 @@ const dirty = computed(() => [...claims.value].sort().join('|') !== [...props.sa
 const evaluation = computed(() => evaluateDisinfection(props.familyGroup, claims.value));
 const notice = computed(() => (evaluation.value.ok ? evaluation.value.notice : null));
 
+const missingText = computed(() => (evaluation.value.ok ? '' : evaluation.value.missing.map((gap) => reasonText(t, has, gap.reason)).join(t('common.sentence_separator'))));
 const guide = computed(() => notice.value?.pathway ?? null);
 const triggerText = (trigger) => (trigger.kind === 'family_group'
     ? t('disinfection.trigger_family_group', { group: t(`families.groups.${trigger.code}`) })
     : t('disinfection.trigger_claim', { claim: t(`disinfection.claims.${trigger.code}`) }));
-const reviewClaims = computed(() => (notice.value?.reviewClaims ?? []).map((code) => t(`disinfection.claims.${code}`)).join('، '));
+const reviewClaims = computed(() => (notice.value?.reviewClaims ?? []).map((code) => t(`disinfection.claims.${code}`)).join(t('common.list_separator')));
 
 function save() {
     router.put(path('formulas.claims.update', props.formulaId), { claims: claims.value }, {
@@ -65,11 +66,11 @@ function save() {
         </div>
 
         <Alert v-if="!evaluation.ok" tone="warning" icon="ph:warning" data-testid="disinfection-invalid">
-            {{ evaluation.missing.map((gap) => reasonText(t, has, gap.reason)).join(' ') }}
+            {{ missingText }}
         </Alert>
         <Alert v-else-if="notice.status === 'applies'" tone="warning" icon="ph:warning" :title="t('disinfection.applies_title')" data-testid="disinfection-notice" data-status="applies">
             <p>{{ t('disinfection.applies', { guide: guide.guideCode, edition: guide.guideEdition }) }}</p>
-            <p class="mt-2 text-label">{{ t('disinfection.triggers') }}: {{ notice.triggers.map(triggerText).join('، ') }}</p>
+            <p class="mt-2 text-label">{{ t('disinfection.triggers') }}: {{ notice.triggers.map(triggerText).join(t('common.list_separator')) }}</p>
             <p class="mt-2 text-label">{{ t('disinfection.caveat') }}</p>
             <p class="mt-1 text-label text-ink-3">{{ t('disinfection.source') }}</p>
         </Alert>

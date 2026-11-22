@@ -86,9 +86,12 @@ class LabDemoSeeder extends Seeder
 
     public const TESTED_CODE = 'DEMO-LAB-TESTED';
 
+    /** A second curve formula of its own: the screenshot spec reads it while the behaviour spec adds a reading to DEMO-LAB-CURVE, so neither changes the other's count. */
+    public const CURVE_SHOTS_CODE = 'DEMO-LAB-CURVE-SHOTS';
+
     private function seedLoopTwo(LabTrialService $trials, FormulaVersionService $versions, FormulaWorkflowService $workflow, LabProtocol $ph, LabProtocol $viscosity): void
     {
-        if (Formula::query()->whereIn('code', [self::CURVE_CODE, self::TESTED_CODE])->exists()) {
+        if (Formula::query()->whereIn('code', [self::CURVE_CODE, self::TESTED_CODE, self::CURVE_SHOTS_CODE])->exists()) {
             return;
         }
 
@@ -101,15 +104,10 @@ class LabDemoSeeder extends Seeder
         PropertyValue::factory()->create(['entity_type' => 'trade_material', 'entity_id' => $surfactant->id, 'property' => 'required_hlb', 'unit' => 'HLB', 'value' => '11', 'confidence' => Confidence::L5Reference, 'source_id' => $reference->id, 'valid_from' => '2026-01-15']);
 
         // The salt curve: two points on a completed trial, and an open trial for the person to add more (and an active reading).
-        $curve = $this->version($versions, self::CURVE_CODE, 'Demo salt-curve shampoo', $surfactant, $water);
-        $closed = $trials->start($curve, ['batch_size' => '500', 'batch_unit' => 'g', 'trial_date' => '2026-11-14', 'operator' => 'Demo Chemist']);
-        foreach ([['0', '120'], ['1', '1150']] as [$salt, $value]) {
-            $trials->record($closed, ['property' => 'viscosity', 'value' => $value, 'unit' => 'mPa·s', 'salt_pct' => $salt, 'lab_protocol_id' => $viscosity->id, 'instrument' => 'Demo Brookfield 2', 'measured_at' => '2026-11-14T10:'.($salt === '0' ? '00' : '30')]);
-        }
-        $trials->record($closed, ['property' => 'density', 'value' => '1.05', 'unit' => 'g/mL', 'method' => 'Demo bench method', 'instrument' => 'Demo pycnometer 25 mL', 'measured_at' => '2026-11-14T11:00']);
-        $trials->complete($closed);
-        $open = $trials->start($curve, ['batch_size' => '500', 'batch_unit' => 'g', 'trial_date' => '2026-11-20', 'operator' => 'Demo Technician']);
+        $this->curveFormula($trials, $versions, self::CURVE_CODE, 'Demo salt-curve shampoo', $surfactant, $water, $viscosity, $open);
         $trials->record($open, ['property' => 'active_matter', 'value' => '8.1', 'unit' => '%w/w', 'method' => 'Demo MBAS titration', 'instrument' => 'Demo burette', 'measured_at' => '2026-11-20T09:00']);
+
+        $this->curveFormula($trials, $versions, self::CURVE_SHOTS_CODE, 'Demo salt-curve shampoo for screenshots', $surfactant, $water, $viscosity, $unused);
 
         // Approved, with a stability result: its dose and required HLB are recorded as tested.
         $tested = $this->version($versions, self::TESTED_CODE, 'Demo tested shampoo', $surfactant, $water);
@@ -121,6 +119,25 @@ class LabDemoSeeder extends Seeder
         $trials->record($stable, ['property' => 'stability_4w', 'value' => '97', 'unit' => '%', 'method' => 'Demo 4 weeks at 40 C', 'instrument' => 'Demo oven', 'measured_at' => '2026-12-08T10:00']);
         $trials->complete($stable);
         $workflow->approve($tested, null, 'Passed the bench and the stability test');
+    }
+
+    /**
+     * A formula with its salt curve: two viscosity points (0 % and 1 % salt) on a completed trial, and an open trial for more readings.
+     *
+     * @param  LabTrial|null  $open  receives the open trial
+     */
+    private function curveFormula(LabTrialService $trials, FormulaVersionService $versions, string $code, string $name, TradeMaterial $surfactant, TradeMaterial $water, LabProtocol $viscosity, ?LabTrial &$open): FormulaVersion
+    {
+        $curve = $this->version($versions, $code, $name, $surfactant, $water);
+        $closed = $trials->start($curve, ['batch_size' => '500', 'batch_unit' => 'g', 'trial_date' => '2026-11-14', 'operator' => 'Demo Chemist']);
+        foreach ([['0', '120'], ['1', '1150']] as [$salt, $value]) {
+            $trials->record($closed, ['property' => 'viscosity', 'value' => $value, 'unit' => 'mPa·s', 'salt_pct' => $salt, 'lab_protocol_id' => $viscosity->id, 'instrument' => 'Demo Brookfield 2', 'measured_at' => '2026-11-14T10:'.($salt === '0' ? '00' : '30')]);
+        }
+        $trials->record($closed, ['property' => 'density', 'value' => '1.05', 'unit' => 'g/mL', 'method' => 'Demo bench method', 'instrument' => 'Demo pycnometer 25 mL', 'measured_at' => '2026-11-14T11:00']);
+        $trials->complete($closed);
+        $open = $trials->start($curve, ['batch_size' => '500', 'batch_unit' => 'g', 'trial_date' => '2026-11-20', 'operator' => 'Demo Technician']);
+
+        return $curve;
     }
 
     private function seedShampooTrials(LabTrialService $trials, Formula $formula, LabProtocol $ph, LabProtocol $viscosity): void
