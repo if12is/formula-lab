@@ -9,10 +9,13 @@ test.beforeAll(() => {
   execSync('php artisan db:seed --class=ListDemoSeeder --force', { cwd: 'apps/api', stdio: 'pipe' });
 });
 
+// Unique to the fixture rows: other specs create materials whose names contain "E2E" (e.g. the cost specs' E2E-COST-*).
+const FIXTURE = 'E2E Material';
+
 const rows = (page: import('@playwright/test').Page) => page.locator('tbody tr');
 
 test('search, select filter and sort live in the URL and survive a reload', async ({ page }) => {
-  await page.goto('/__dev/list-demo?search=E2E');
+  await page.goto('/__dev/list-demo?search=E2E%20Material');
   await expect(page.getByRole('heading', { level: 1, name: 'تجربة مكونات القوائم' })).toBeVisible();
   await expect(rows(page)).toHaveCount(10);
 
@@ -23,7 +26,7 @@ test('search, select filter and sort live in the URL and survive a reload', asyn
   await expect(rows(page).first()).toContainText('E2E Material 07');
 
   // Select filter (status) writes ?status=
-  await page.getByRole('searchbox').fill('E2E');
+  await page.getByRole('searchbox').fill(FIXTURE);
   await expect(rows(page)).toHaveCount(10);
   await page.locator('[data-filter-controls]').getByRole('button', { name: 'الحالة' }).click();
   await page.getByRole('menuitemradio', { name: 'نشط' }).click();
@@ -40,7 +43,7 @@ test('search, select filter and sort live in the URL and survive a reload', asyn
 
   // A reload keeps search, filter and sort (the URL is the state)
   await page.reload();
-  await expect(page.getByRole('searchbox')).toHaveValue('E2E');
+  await expect(page.getByRole('searchbox')).toHaveValue(FIXTURE);
   await expect(page).toHaveURL(/status=active/);
   await expect(rows(page)).toHaveCount(8);
   await expect(rows(page).first()).toContainText('E2E Material 24');
@@ -48,7 +51,7 @@ test('search, select filter and sort live in the URL and survive a reload', asyn
 });
 
 test('clear all resets search and filters but keeps the sort', async ({ page }) => {
-  await page.goto('/__dev/list-demo?search=E2E&status=active&sort=trade_name&dir=desc&is_mixture=1');
+  await page.goto('/__dev/list-demo?search=E2E%20Material&status=active&sort=trade_name&dir=desc&is_mixture=1');
   await expect(rows(page)).toHaveCount(1); // only 15 is both active (every 3rd) and a mixture (every 5th)
   // With filter chips showing, the kit's own "Clear all" (chips row) clears the filters and the search.
   await page.getByRole('button', { name: 'مسح الكل', exact: true }).click();
@@ -59,7 +62,7 @@ test('clear all resets search and filters but keeps the sort', async ({ page }) 
 });
 
 test('page two keeps filters, and a filter change returns to page one', async ({ page }) => {
-  await page.goto('/__dev/list-demo?search=E2E');
+  await page.goto('/__dev/list-demo?search=E2E%20Material');
   await page.getByRole('button', { name: /2/ }).filter({ hasText: /^2$/ }).first().click();
   await expect(page).toHaveURL(/page=2/);
   await expect(rows(page).first()).toContainText('E2E Material 11');
@@ -77,8 +80,8 @@ test('filtered-empty state offers a way out', async ({ page }) => {
 });
 
 test('entity selects: local combobox and server-searched typeahead', async ({ page }) => {
-  // ?search=E2E scopes the preloaded options to the fixture rows, whatever else the database holds.
-  await page.goto('/__dev/list-demo?search=E2E');
+  // ?search=E2E Material scopes the preloaded options to the fixture rows, whatever else the database holds.
+  await page.goto('/__dev/list-demo?search=E2E%20Material');
 
   const selected = page.getByTestId('selected-values');
   await expect(selected).toContainText('—');
@@ -106,7 +109,7 @@ test('entity selects: local combobox and server-searched typeahead', async ({ pa
 
 test('list controls fit a phone without horizontal scroll', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/__dev/list-demo?search=E2E');
+  await page.goto('/__dev/list-demo?search=E2E%20Material');
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(0);
   await expect(page.getByRole('searchbox')).toBeVisible();

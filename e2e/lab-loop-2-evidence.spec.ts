@@ -52,7 +52,7 @@ for (const theme of ['light', 'dark'] as const) {
         await shot('salt-entry', 'measurement-form');
 
         await page.getByTestId('salt-curve-link').click();
-        await expect(page.getByTestId('salt-curve')).toHaveAttribute('data-points', '3');
+        await expect(page.getByTestId('salt-curve')).toHaveAttribute('data-points', /^[23]$/); // 2 seeded points, 3 once lab-loop-2.spec has added its 2 % reading
         await page.getByTestId('salt-query').getByRole('textbox').fill('0.5');
         await expect(result(page, 'viscosity')).toContainText('635.0');
         await expect(page.getByTestId('salt-chart').locator('svg').first()).toBeVisible();

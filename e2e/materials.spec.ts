@@ -112,6 +112,8 @@ test('the library, a material and its tabs fit a phone, in RTL', async ({ page }
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
   await expectNoHorizontalScroll(page);
 
+  // The library is paginated and other specs add materials: search for the one to open instead of relying on page one.
+  await page.goto('/materials?search=Demo%20SLES');
   await page.getByText('Demo SLES').first().click();
   await page.waitForURL(/\/materials\/[0-9a-f-]{36}/);
   await settle(page);

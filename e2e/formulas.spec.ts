@@ -167,8 +167,9 @@ test('the formulas list keeps its filters in the address across a reload', async
 });
 
 test('the materials library keeps its filters, with a filtered-empty state, across a reload', async ({ page }) => {
-  await page.goto('/materials?search=Demo&status=active&sort=trade_name&dir=desc');
-  await expect(page.locator('tbody tr').first()).toContainText('Demo Water');
+  await page.goto('/materials?search=Demo%20Water&status=active&sort=trade_name&dir=desc');
+  // "Family demo Water" (another seeder) matches the search too: pick the row that starts with the name.
+  await expect(page.locator('tbody tr').filter({ hasText: /^Demo Water/ })).toHaveCount(1);
   await expect(page.locator('[data-filter-count]')).toHaveText('1'); // the kit counts filters; the search text is not one
 
   await page.locator('[data-filter-controls]').getByRole('button', { name: 'مربوطة بسند' }).click();
@@ -178,7 +179,7 @@ test('the materials library keeps its filters, with a filtered-empty state, acro
   await page.reload();
   await expect(page).toHaveURL(/has_sanad_link=1/);
   await expect(page).toHaveURL(/status=active/);
-  await expect(page.getByRole('searchbox')).toHaveValue('Demo');
+  await expect(page.getByRole('searchbox')).toHaveValue('Demo Water');
   await expect(page.getByRole('heading', { name: 'لا توجد نتائج تطابق هذه الفلاتر' })).toBeVisible();
 });
 

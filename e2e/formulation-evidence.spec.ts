@@ -32,6 +32,7 @@ for (const theme of ['light', 'dark'] as const) {
         await expect(page.locator('tbody tr, [data-mobile-table] li').first()).toBeVisible();
         await shot('materials-list');
 
+        await page.goto('/materials?search=Demo%20SLES'); // the library is paginated: do not rely on page one
         await page.getByText('Demo SLES').first().click();
         await expect(page.locator('[data-property="density"]')).toBeVisible();
         await shot('material-detail');

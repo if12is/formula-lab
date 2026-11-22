@@ -37,7 +37,7 @@
 Laravel 13 + PostgreSQL + Inertia 3 + Vue 3 + Taif Kit + Tailwind 4 + Vite 8 · `packages/engine` و`packages/optimizer` (HiGHS WASM) · Electron (أوفلاين) · Claude Haiku عبر API من السيرفر.
 
 ## أوامر
-`pnpm test` · `pnpm typecheck` · `pnpm lint` · `pnpm test:php` (أو `cd apps/api && php artisan test`) · `pnpm e2e`
+`pnpm test` · `pnpm typecheck` · `pnpm lint` · `pnpm test:php` (أو `cd apps/api && php artisan test`) · `pnpm e2e` (بيبدأ كل مرة من قاعدة `formula_lab_e2e` نضيفة: `migrate:fresh --seed` + الـ demo seeders من `e2e/support/global-setup.ts`، وبيرفض يلمس أي قاعدة تانية؛ الإعدادات في `e2e/support/e2e-env.ts`)
 
 ## قواعد الواجهة والكود (طلب صاحب المشروع 2026-11-21)
 - كود نضيف من غير تكرار: كل component أو منطق مكرر يبقى مصدر واحد (single source of truth). مكونات الشاشات المشتركة (فلاتر، selectors، جداول) تتعمل مرة واحدة وتتعاد في كل الصفحات.
