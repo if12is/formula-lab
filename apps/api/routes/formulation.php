@@ -54,6 +54,7 @@ Route::prefix('formulas')->name('formulas.')->group(function (): void {
         Route::get('compare', [FormulaVersionController::class, 'compare'])->name('compare');
         Route::get('salt-curve', [FormulaSaltCurveController::class, 'show'])->name('salt-curve');
         Route::put('tax', [FormulaController::class, 'updateTax'])->name('tax.update');
+        Route::put('unit-cost', [FormulaController::class, 'updateUnitCost'])->name('unit-cost.update');
         Route::put('ifra-category', [FormulaController::class, 'updateIfraCategory'])->name('ifra-category.update');
         Route::get('versions/{version:version}/edit', [FormulaVersionController::class, 'edit'])->whereNumber('version')->name('versions.edit');
         Route::post('versions/{version:version}', [FormulaVersionController::class, 'store'])->whereNumber('version')->name('versions.store');

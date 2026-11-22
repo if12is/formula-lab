@@ -13,6 +13,7 @@ return [
     'calculators' => 'الحاسبات',
     'compliance' => 'المطابقة',
     'lab' => 'المعمل',
+    'price_lists' => 'قوائم الأسعار',
     'production' => 'الإنتاج',
     'settings' => 'الإعدادات',
     'exchange_rates' => 'أسعار الصرف',

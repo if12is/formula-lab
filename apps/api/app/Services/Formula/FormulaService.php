@@ -5,7 +5,9 @@ namespace App\Services\Formula;
 use App\Actions\Formula\CreateFormulaAction;
 use App\Actions\Formula\UpdateFormulaIfraCategoryAction;
 use App\Actions\Formula\UpdateFormulaTaxAction;
+use App\Actions\Formula\UpdateFormulaUnitCostAction;
 use App\Actions\Tenancy\EnsureDefaultTenantAction;
+use App\Enums\Confidence;
 use App\Enums\TaxMode;
 use App\Exceptions\Domain\InvalidFormulaVersionException;
 use App\Exceptions\Domain\InvalidTaxSettingException;
@@ -23,6 +25,7 @@ final class FormulaService
         private FormulaVersionService $formulaVersionService,
         private UpdateFormulaIfraCategoryAction $updateIfraCategory,
         private UpdateFormulaTaxAction $updateTax,
+        private UpdateFormulaUnitCostAction $updateUnitCost,
     ) {}
 
     /** The IFRA category is a fact about the product, not about one version, so it is saved on the formula itself. */
@@ -39,6 +42,12 @@ final class FormulaService
     public function setTax(Formula $formula, TaxMode $mode, ?string $ratePct): Formula
     {
         return ($this->updateTax)($formula, $mode, $ratePct);
+    }
+
+    /** The unit cost the price lists check prices against is a fact about the product (with its source), so it is saved on the formula itself. */
+    public function setUnitCost(Formula $formula, string $unitCost, string $sourceId, Confidence $confidence): Formula
+    {
+        return ($this->updateUnitCost)($formula, $unitCost, $sourceId, $confidence);
     }
 
     /**

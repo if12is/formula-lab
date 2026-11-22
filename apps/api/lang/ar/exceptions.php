@@ -59,4 +59,13 @@ return [
     'lab_salt_only_for_viscosity' => 'المادة المضافة (الملح) تُسجَّل مع قراءة اللزوجة فقط.',
     'lab_salt_not_decimal' => 'نسبة الملح ليست رقماً عشرياً صالحاً.',
     'lab_tested_values_not_computed' => 'تعذّر حساب الجرعات وقيم HLB المجرَّبة للتجربة :trial.',
+    'price_list_products_not_published' => 'المنتجات التالية لم تُنشر في سند بعد؛ انشرها أولاً ثم انشر القائمة: :products',
+    'price_list_prices_incomplete' => 'لا يمكن نشر القائمة: سعر هذه المنتجات ناقص (تكلفة الوحدة أو القاعدة أو السعر المتفق عليه): :products',
+    'price_list_too_many_items' => 'القائمة فيها :count منتجاً وسند يقبل :max كحد أقصى في الطلب الواحد.',
+    'price_list_no_sanad_link' => 'لا يوجد جهاز سند مربوط ولا عنوان مباشر لسند؛ اربط سند أولاً.',
+    'price_list_product_already_on_list' => 'المنتج :product موجود في هذه القائمة بالفعل.',
+    'price_list_unknown_rule' => 'قاعدة الهامش «:rule» غير معرّفة في إعدادات التسعير.',
+    'price_list_customer_already_assigned' => 'العميل :customer مربوط بالفعل بالقائمة «:list»؛ العميل في سند يتبع قائمة واحدة فقط.',
+    'price_list_customer_unavailable' => 'العميل :customer غير نشط أو مؤرشف في سند ولا يمكن ربطه بقائمة.',
+    'price_list_cross_tenant' => 'هذا السجل يتبع مستأجراً آخر.',
 ];

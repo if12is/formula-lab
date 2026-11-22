@@ -25,5 +25,6 @@ return [
     'scripts' => [
         'validate-rule-set' => 'scripts/validate-rule-set.ts',
         'tested-values' => 'scripts/tested-values.ts',
+        'price-list-lines' => 'scripts/price-list-lines.ts',
     ],
 ];

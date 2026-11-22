@@ -25,7 +25,11 @@ final class MockSanadService
      */
     public function list(string $resource, ?string $cursor, ?string $updatedSince, ?string $kind = null): array
     {
-        $rows = $resource === 'products' ? $this->products() : $this->fixture($resource);
+        $rows = match ($resource) {
+            'products' => $this->products(),
+            'customers' => $this->customers(),
+            default => $this->fixture($resource),
+        };
 
         if ($kind !== null && $kind !== '') {
             $rows = array_values(array_filter($rows, fn (array $row): bool => ($row['item_kind'] ?? $row['_item_kind'] ?? null) === $kind));
@@ -222,11 +226,170 @@ final class MockSanadService
         return ['status' => 200, 'body' => $response];
     }
 
-    /** Forgets everything the mock remembered (upserted products, processed orders). */
+    /**
+     * Upserts a price list by uuid with its item rows (contract 8.2). Atomic: an unknown product refuses the whole request and the
+     * list is not created. Omitted `items` leave the stored ones alone; a null price removes a product. Prices are stored at 2 dp.
+     *
+     * @param  array<string, mixed>  $data  validated body
+     * @return array{status: int, body: array<string, mixed>}
+     */
+    public function upsertPriceList(string $uuid, array $data): array
+    {
+        $existing = $this->overlay('price_lists')[$uuid] ?? null;
+        $applied = $this->applyPriceListItems($existing['items'] ?? [], (array) ($data['items'] ?? []));
+        if ($applied['errors'] !== []) {
+            return $this->priceListInvalid($applied['errors']);
+        }
+
+        $updatedAt = now()->utc()->format('Y-m-d\TH:i:s\Z');
+        $list = [
+            'uuid' => $uuid,
+            'name' => $data['name'],
+            'currency' => 'EGP',
+            'is_active' => array_key_exists('is_active', $data) ? (bool) $data['is_active'] : ($existing['is_active'] ?? true),
+            'items' => $applied['stored'],
+            'updated_at' => $updatedAt,
+        ];
+        $this->remember('price_lists', $uuid, $list);
+
+        return ['status' => $existing === null ? 201 : 200, 'body' => $this->priceListBody($list, $existing === null, $applied)];
+    }
+
+    /**
+     * Items only (contract 8.3). 404 for an unknown list.
+     *
+     * @param  array<string, mixed>  $data  validated body
+     * @return array{status: int, body: array<string, mixed>}
+     */
+    public function upsertPriceListItems(string $uuid, array $data): array
+    {
+        $list = $this->overlay('price_lists')[$uuid] ?? null;
+        if ($list === null) {
+            return ['status' => 404, 'body' => ['message' => __('sanad.mock.price_list_not_found')]];
+        }
+
+        $applied = $this->applyPriceListItems($list['items'], (array) $data['items']);
+        if ($applied['errors'] !== []) {
+            return $this->priceListInvalid($applied['errors']);
+        }
+
+        $list['items'] = $applied['stored'];
+        $list['updated_at'] = now()->utc()->format('Y-m-d\TH:i:s\Z');
+        $this->remember('price_lists', $uuid, $list);
+
+        return ['status' => 200, 'body' => $this->priceListBody($list, false, $applied)];
+    }
+
+    /**
+     * Assigns a customer to a list, or detaches it with null (contract 8.4). Returns the customer payload of 8.5.
+     *
+     * @return array{status: int, body: array<string, mixed>}
+     */
+    public function assignCustomerPriceList(string $customerUuid, ?string $listUuid): array
+    {
+        $customer = collect($this->customers())->firstWhere('uuid', $customerUuid);
+        if ($customer === null || isset($customer['deleted'])) {
+            return ['status' => 404, 'body' => ['message' => __('sanad.mock.customer_not_found')]];
+        }
+
+        if ($listUuid !== null) {
+            $list = $this->overlay('price_lists')[$listUuid] ?? null;
+            if ($list === null) {
+                return ['status' => 422, 'body' => ['message' => __('sanad.mock.price_list_not_found'), 'errors' => ['price_list_uuid' => [__('sanad.mock.price_list_not_found')]]]];
+            }
+            if (! $list['is_active']) {
+                return ['status' => 422, 'body' => ['message' => __('sanad.mock.price_list_inactive'), 'errors' => ['price_list_uuid' => [__('sanad.mock.price_list_inactive')]]]];
+            }
+        }
+
+        if (($customer['price_list_uuid'] ?? null) !== $listUuid) {
+            $customer['price_list_uuid'] = $listUuid;
+            $customer['updated_at'] = now()->utc()->format('Y-m-d\TH:i:s\Z');
+            $this->remember('customers', $customerUuid, $customer);
+        }
+
+        return ['status' => 200, 'body' => $customer];
+    }
+
+    /** Forgets everything the mock remembered (upserted products, processed orders, price lists, customer assignments). */
     public function reset(): void
     {
         Cache::forget(self::CACHE_PREFIX.'products');
         Cache::forget(self::CACHE_PREFIX.'orders');
+        Cache::forget(self::CACHE_PREFIX.'price_lists');
+        Cache::forget(self::CACHE_PREFIX.'customers');
+    }
+
+    /**
+     * @param  array<string, string>  $stored  product uuid => price (2 dp)
+     * @param  list<array<string, mixed>>  $rows  request item rows
+     * @return array{stored: array<string, string>, upserted: list<array{product_uuid: string, price: string}>, removed: list<string>, errors: array<string, list<string>>}
+     */
+    private function applyPriceListItems(array $stored, array $rows): array
+    {
+        $errors = [];
+        $upserted = [];
+        $removed = [];
+
+        foreach ($rows as $index => $row) {
+            $productUuid = (string) $row['product_uuid'];
+            if ($this->productRow($productUuid) === null) {
+                $errors["items.{$index}.product_uuid"] = [__('sanad.mock.unknown_product', ['product' => $productUuid])];
+
+                continue;
+            }
+            if ($row['price'] === null) {
+                unset($stored[$productUuid]);
+                $removed[] = $productUuid;
+            } else {
+                $stored[$productUuid] = $this->money($row['price']);
+                $upserted[] = ['product_uuid' => $productUuid, 'price' => $stored[$productUuid]];
+            }
+        }
+
+        return ['stored' => $stored, 'upserted' => $upserted, 'removed' => $removed, 'errors' => $errors];
+    }
+
+    /**
+     * @param  array<string, list<string>>  $errors
+     * @return array{status: int, body: array<string, mixed>}
+     */
+    private function priceListInvalid(array $errors): array
+    {
+        return ['status' => 422, 'body' => ['message' => __('sanad.mock.price_list_invalid'), 'errors' => $errors]];
+    }
+
+    /**
+     * The 8.2 response: `items` / `removed` echo the rows of this request; `items_count` is the list's total.
+     *
+     * @param  array<string, mixed>  $list
+     * @param  array{upserted: list<array{product_uuid: string, price: string}>, removed: list<string>}  $applied
+     * @return array<string, mixed>
+     */
+    private function priceListBody(array $list, bool $created, array $applied): array
+    {
+        return [
+            'uuid' => $list['uuid'],
+            'name' => $list['name'],
+            'currency' => 'EGP',
+            'is_active' => $list['is_active'],
+            'created' => $created,
+            'items' => $applied['upserted'],
+            'removed' => $applied['removed'],
+            'items_count' => count($list['items']),
+            'updated_at' => $list['updated_at'],
+        ];
+    }
+
+    /** @return list<array<string, mixed>> fixtures overlaid with customers whose assignment changed */
+    private function customers(): array
+    {
+        $rows = collect($this->fixture('customers'))->keyBy('uuid');
+        foreach ($this->overlay('customers') as $uuid => $row) {
+            $rows[$uuid] = $row;
+        }
+
+        return $rows->values()->all();
     }
 
     /** @return list<array<string, mixed>> fixtures overlaid with upserted products */

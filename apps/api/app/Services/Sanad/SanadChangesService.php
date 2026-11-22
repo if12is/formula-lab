@@ -3,6 +3,7 @@
 namespace App\Services\Sanad;
 
 use App\Actions\Sanad\ApplySanadBatchChangeAction;
+use App\Actions\Sanad\ApplySanadCustomerChangeAction;
 use App\Actions\Sanad\ApplySanadProductChangeAction;
 use App\Actions\Sanad\ApplySanadPurchaseChangeAction;
 use App\Actions\Sanad\ApplySanadSupplierChangeAction;
@@ -25,6 +26,7 @@ final class SanadChangesService
     public function __construct(
         private readonly ApplySanadProductChangeAction $applyProduct,
         private readonly ApplySanadSupplierChangeAction $applySupplier,
+        private readonly ApplySanadCustomerChangeAction $applyCustomer,
         private readonly ApplySanadPurchaseChangeAction $applyPurchase,
         private readonly ApplySanadBatchChangeAction $applyBatch,
         private readonly ReconcileTradeMaterialLinkAction $reconcileMaterialLink,
@@ -90,6 +92,7 @@ final class SanadChangesService
         $outcome = match ($entity) {
             SanadEntity::Product => ($this->applyProduct)($tenantId, $item),
             SanadEntity::Supplier => ($this->applySupplier)($tenantId, $item),
+            SanadEntity::Customer => ($this->applyCustomer)($tenantId, $item),
             SanadEntity::Purchase => ($this->applyPurchase)($tenantId, $item),
             SanadEntity::Batch => ($this->applyBatch)($tenantId, $item),
             // Accepted but not stored: Formula Lab only needs movements in the actual-cost phase (Q).

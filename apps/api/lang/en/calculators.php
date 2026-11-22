@@ -103,6 +103,8 @@ return [
         'user_input' => 'Typed by the user',
         'estimate' => 'Estimate',
         'ops' => [
+            'round' => 'Rounding',
+            'margin' => 'Margin',
             'input' => 'Input',
             'add' => 'Add',
             'sub' => 'Subtract',
@@ -122,6 +124,15 @@ return [
         ],
     ],
     'subjects' => [
+        'priceList' => [
+            'unitCost' => 'Unit cost',
+            'spec' => 'Pricing method',
+            'rule' => 'Margin rule',
+            'marginBasis' => 'Margin basis',
+            'marginPct' => 'Margin percent',
+            'distributionCostPerUnit' => 'Distribution cost per unit',
+            'overridePrice' => 'Agreed price',
+        ],
         'salt_curve' => 'Salt curve',
         'saltPct' => 'Salt %',
         'targetViscosity' => 'Wanted viscosity',

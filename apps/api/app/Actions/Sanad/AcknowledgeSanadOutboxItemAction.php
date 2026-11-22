@@ -2,6 +2,7 @@
 
 namespace App\Actions\Sanad;
 
+use App\Actions\Pricing\RecordPriceListAckAction;
 use App\Enums\Sanad\SanadOutboxStatus;
 use App\Models\SanadDevice;
 use App\Models\SanadOutbox;
@@ -14,10 +15,13 @@ use Illuminate\Support\Str;
  * belongs to another device or was already acked (ignored, never an error).
  *
  * A failed item is flagged for human review and re-queued as a fresh row so Sanad's cursor sees it again,
- * until it has failed `sanad.outbox.max_failures` times; then it stays flagged and an alert is logged.
+ * until it has failed `sanad.outbox.max_failures` times; then it stays flagged and an alert is logged. A price list item also
+ * reports its verdict to the price list it is about (RecordPriceListAckAction).
  */
 final class AcknowledgeSanadOutboxItemAction
 {
+    public function __construct(private readonly RecordPriceListAckAction $recordPriceListAck) {}
+
     /**
      * @param  array{id: string, status: string, result?: array<string, mixed>|null, error?: array<string, mixed>|null}  $ack
      */
@@ -46,15 +50,15 @@ final class AcknowledgeSanadOutboxItemAction
             }
             $item->save();
 
-            if ($status === SanadOutboxStatus::Failed) {
-                $this->retryOrAlert($item);
-            }
+            $requeued = $status === SanadOutboxStatus::Failed ? $this->retryOrAlert($item) : null;
+
+            ($this->recordPriceListAck)($item, $requeued);
 
             return true;
         });
     }
 
-    private function retryOrAlert(SanadOutbox $failed): void
+    private function retryOrAlert(SanadOutbox $failed): ?SanadOutbox
     {
         if ($failed->failures >= config('sanad.outbox.max_failures')) {
             Log::alert('Sanad outbox item failed repeatedly and needs human review.', [
@@ -64,10 +68,10 @@ final class AcknowledgeSanadOutboxItemAction
                 'failures' => $failed->failures,
             ]);
 
-            return;
+            return null;
         }
 
-        SanadOutbox::query()->create([
+        return SanadOutbox::query()->create([
             'id' => config('sanad.outbox.id_prefix').Str::lower((string) Str::ulid()),
             'device_id' => $failed->device_id,
             'kind' => $failed->kind,

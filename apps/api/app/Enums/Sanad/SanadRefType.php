@@ -11,6 +11,7 @@ enum SanadRefType: string
 
     case Product = 'product';
     case Supplier = 'supplier';
+    case Customer = 'customer';
     case Purchase = 'purchase';
     case PurchaseItem = 'purchase_item';
     case Batch = 'batch';

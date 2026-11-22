@@ -32,6 +32,7 @@ final class EnqueueSanadMessageAction
             SanadOutboxKind::ProductionOrder => $payload['external_id'] ?? null,
             SanadOutboxKind::ProductUpsert => $payload['uuid'] ?? null,
             SanadOutboxKind::WholesalePrices => $payload['product_uuid'] ?? null,
+            SanadOutboxKind::PriceListUpsert => $payload['uuid'] ?? null,
         };
 
         if ($kind === SanadOutboxKind::ProductionOrder && $externalId !== null) {

@@ -2,6 +2,7 @@
 
 namespace Tests\fakes\sanad;
 
+use App\Support\Dev\StringDecimal;
 use GuzzleHttp\Promise\PromiseInterface;
 use Illuminate\Http\Client\Request;
 use Illuminate\Http\Client\ResponseSequence;
@@ -32,10 +33,14 @@ final class SanadFake
     private const ROUTES = [
         'products' => ['GET', '/products$'],
         'suppliers' => ['GET', '/suppliers$'],
+        'customers' => ['GET', '/customers$'],
         'purchases' => ['GET', '/purchases$'],
         'stock' => ['GET', '/stock$'],
         'upsertProduct' => ['PUT', '/products/[^/]+$'],
         'wholesalePrices' => ['PUT', '/products/[^/]+/wholesale-prices$'],
+        'upsertPriceList' => ['PUT', '/price-lists/[^/]+$'],
+        'upsertPriceListItems' => ['PUT', '/price-lists/[^/]+/items$'],
+        'assignCustomerPriceList' => ['PUT', '/customers/[^/]+/price-list$'],
         'consume' => ['POST', '/production-orders/[^/]+/consume$'],
         'receive' => ['POST', '/production-orders/[^/]+/receive$'],
     ];
@@ -90,6 +95,18 @@ final class SanadFake
     }
 
     /** @param  list<array<string, mixed>>  $rows */
+    public static function customers(array $rows, ?string $nextCursor = null): void
+    {
+        self::collection('customers', [$rows], $nextCursor);
+    }
+
+    /** Several pages of customers; page N is returned for cursor `page-N`. @param  list<list<array<string, mixed>>>  $pages */
+    public static function customerPages(array $pages): void
+    {
+        self::collection('customers', $pages);
+    }
+
+    /** @param  list<array<string, mixed>>  $rows */
     public static function purchases(array $rows, ?string $nextCursor = null): void
     {
         self::collection('purchases', [$rows], $nextCursor);
@@ -113,6 +130,66 @@ final class SanadFake
                 'is_sellable' => (bool) ($body['is_sellable'] ?? false),
                 'updated_at' => '2026-11-21T09:30:00Z',
             ], $status);
+        });
+    }
+
+    /**
+     * PUT price-lists/{uuid} (contract 8.2): echoes the list, its item rows as stored (2 dp) and the removed products, 201 on create.
+     * Like Sanad it refuses a JSON number as a price (422) and anything but EGP.
+     */
+    public static function upsertPriceList(array $response = [], int $status = 201): void
+    {
+        self::respond('upsertPriceList', function (Request $request) use ($response, $status) {
+            $body = $request->data();
+            $uuid = Str::afterLast((string) parse_url($request->url(), PHP_URL_PATH), '/');
+            $invalid = self::priceListInvalid($body);
+            if ($invalid !== null) {
+                return $invalid;
+            }
+            $rows = (array) ($body['items'] ?? []);
+
+            return Http::response($response + [
+                'uuid' => $uuid,
+                'name' => $body['name'] ?? '',
+                'currency' => 'EGP',
+                'is_active' => (bool) ($body['is_active'] ?? true),
+                'created' => $status === 201,
+                'items' => array_values(array_map(fn (array $row): array => ['product_uuid' => $row['product_uuid'], 'price' => self::twoPlaces((string) $row['price'])], array_filter($rows, fn (array $row): bool => $row['price'] !== null))),
+                'removed' => array_values(array_map(fn (array $row): string => $row['product_uuid'], array_filter($rows, fn (array $row): bool => $row['price'] === null))),
+                'items_count' => count(array_filter($rows, fn (array $row): bool => $row['price'] !== null)),
+                'updated_at' => '2026-11-21T09:30:00Z',
+            ], $status);
+        });
+    }
+
+    /** PUT price-lists/{uuid}/items (contract 8.3): same shape as the upsert with `created: false`. */
+    public static function upsertPriceListItems(array $response = []): void
+    {
+        self::respond('upsertPriceListItems', function (Request $request) use ($response) {
+            $body = $request->data();
+            $invalid = self::priceListInvalid($body);
+            if ($invalid !== null) {
+                return $invalid;
+            }
+            $rows = (array) ($body['items'] ?? []);
+
+            return Http::response($response + [
+                'uuid' => Str::of((string) parse_url($request->url(), PHP_URL_PATH))->beforeLast('/items')->afterLast('/')->toString(),
+                'created' => false,
+                'items' => array_values(array_map(fn (array $row): array => ['product_uuid' => $row['product_uuid'], 'price' => self::twoPlaces((string) $row['price'])], array_filter($rows, fn (array $row): bool => $row['price'] !== null))),
+                'removed' => array_values(array_map(fn (array $row): string => $row['product_uuid'], array_filter($rows, fn (array $row): bool => $row['price'] === null))),
+                'updated_at' => '2026-11-21T09:30:00Z',
+            ]);
+        });
+    }
+
+    /** PUT customers/{uuid}/price-list (contract 8.4): echoes the customer with the requested `price_list_uuid` (null detaches). */
+    public static function assignCustomerPriceList(array $overrides = []): void
+    {
+        self::respond('assignCustomerPriceList', function (Request $request) use ($overrides) {
+            $uuid = Str::of((string) parse_url($request->url(), PHP_URL_PATH))->beforeLast('/price-list')->afterLast('/')->toString();
+
+            return Http::response(self::customer($overrides + ['uuid' => $uuid, 'price_list_uuid' => $request->data()['price_list_uuid'] ?? null]));
         });
     }
 
@@ -229,6 +306,21 @@ final class SanadFake
         ];
     }
 
+    /** @return array<string, mixed> A contract 8.5 customer row: only what pricing needs. */
+    public static function customer(array $overrides = []): array
+    {
+        return $overrides + [
+            'uuid' => (string) Str::uuid(),
+            'code' => 'CLT-0001',
+            'name' => 'Wholesaler',
+            'name_en' => null,
+            'is_active' => true,
+            'is_wholesale' => false,
+            'price_list_uuid' => null,
+            'updated_at' => '2026-11-21T09:30:00Z',
+        ];
+    }
+
     /**
      * @param  list<array<string, mixed>>  $items
      * @return array<string, mixed>
@@ -308,6 +400,31 @@ final class SanadFake
 
             return Http::response(['data' => $rows, 'next_cursor' => $next]);
         });
+    }
+
+    /**
+     * The 422 Sanad answers to a bad price list body (contract 8.2): a price must be a decimal string above zero, or null.
+     *
+     * @param  array<string, mixed>  $body
+     */
+    private static function priceListInvalid(array $body): ?PromiseInterface
+    {
+        if (isset($body['currency']) && $body['currency'] !== 'EGP') {
+            return Http::response(['message' => 'invalid', 'errors' => ['currency' => ['EGP only']]], 422);
+        }
+        foreach ((array) ($body['items'] ?? []) as $index => $row) {
+            $price = $row['price'] ?? null;
+            if ($price !== null && (! is_string($price) || preg_match('/^\d+(\.\d+)?$/', $price) !== 1 || StringDecimal::compare($price, '0') <= 0)) {
+                return Http::response(['message' => 'invalid', 'errors' => ["items.{$index}.price" => ['decimal string above zero or null']]], 422);
+            }
+        }
+
+        return null;
+    }
+
+    private static function twoPlaces(string $price): string
+    {
+        return StringDecimal::round($price, 2);
     }
 
     private static function externalId(Request $request): string

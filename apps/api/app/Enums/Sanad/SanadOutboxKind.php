@@ -12,4 +12,5 @@ enum SanadOutboxKind: string
     case ProductionOrder = 'production_order';
     case ProductUpsert = 'product_upsert';
     case WholesalePrices = 'wholesale_prices';
+    case PriceListUpsert = 'price_list_upsert';
 }

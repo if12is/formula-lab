@@ -41,6 +41,16 @@ final class SanadClient
     }
 
     /**
+     * The customers feed (contract 8.5): only what pricing needs.
+     *
+     * @throws SanadIntegrationException
+     */
+    public function customers(?string $cursor = null, ?string $updatedSince = null): SanadPage
+    {
+        return $this->page('/customers', ['cursor' => $cursor, 'updated_since' => $updatedSince]);
+    }
+
+    /**
      * @throws SanadIntegrationException
      */
     public function purchases(?string $since = null, ?string $cursor = null): SanadPage
@@ -99,6 +109,44 @@ final class SanadClient
     public function wholesalePrices(string $uuid, array $data, ?string $idempotencyKey = null): array
     {
         return $this->write('PUT', "/products/{$uuid}/wholesale-prices", $data, $idempotencyKey);
+    }
+
+    /**
+     * Upserts a price list by uuid with its item rows (contract 8.2; `price: null` removes a product).
+     *
+     * @param  array<string, mixed>  $data  `{name, currency?, is_active?, items?}`
+     * @return array<string, mixed>
+     *
+     * @throws SanadIntegrationException
+     */
+    public function upsertPriceList(string $uuid, array $data, ?string $idempotencyKey = null): array
+    {
+        return $this->write('PUT', "/price-lists/{$uuid}", $data, $idempotencyKey);
+    }
+
+    /**
+     * Items only (contract 8.3).
+     *
+     * @param  list<array{product_uuid: string, price: string|null}>  $items
+     * @return array<string, mixed>
+     *
+     * @throws SanadIntegrationException
+     */
+    public function upsertPriceListItems(string $uuid, array $items, ?string $idempotencyKey = null): array
+    {
+        return $this->write('PUT', "/price-lists/{$uuid}/items", ['items' => $items], $idempotencyKey);
+    }
+
+    /**
+     * Assigns a customer to a price list, or detaches it with a null list uuid (contract 8.4).
+     *
+     * @return array<string, mixed> the customer payload with its new `price_list_uuid`
+     *
+     * @throws SanadIntegrationException
+     */
+    public function assignCustomerPriceList(string $customerUuid, ?string $priceListUuid, ?string $idempotencyKey = null): array
+    {
+        return $this->write('PUT', "/customers/{$customerUuid}/price-list", ['price_list_uuid' => $priceListUuid], $idempotencyKey);
     }
 
     /**

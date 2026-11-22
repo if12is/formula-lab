@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Formula;
 
+use App\Enums\Confidence;
 use App\Exceptions\Domain\InvalidTaxSettingException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Formula\StoreFormulaRequest;
 use App\Http\Requests\Formula\UpdateFormulaIfraCategoryRequest;
 use App\Http\Requests\Formula\UpdateFormulaTaxRequest;
+use App\Http\Requests\Formula\UpdateFormulaUnitCostRequest;
 use App\Models\Formula;
 use App\Services\Formula\FormulaEditorService;
 use App\Services\Formula\FormulaListService;
@@ -67,6 +69,14 @@ class FormulaController extends Controller
         }
 
         return back()->with('success', __('tax.saved'));
+    }
+
+    /** The unit cost (with its source and confidence) the price lists check prices against, saved on the formula. */
+    public function updateUnitCost(UpdateFormulaUnitCostRequest $request, Formula $formula): RedirectResponse
+    {
+        $this->formulaService->setUnitCost($formula, $request->validated('unit_cost'), $request->validated('source_id'), Confidence::from($request->validated('confidence')));
+
+        return back()->with('success', __('price_lists.cost.saved'));
     }
 
     /** A formula opens at its latest version. */

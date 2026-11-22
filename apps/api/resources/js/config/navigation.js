@@ -32,7 +32,10 @@ export const navigation = [
     {
         id: 'operations',
         labelKey: 'nav.groups.operations',
-        items: [{ id: 'production', href: '/production', icon: 'ph:factory', labelKey: 'nav.production' }],
+        items: [
+            { id: 'price-lists', href: '/price-lists', icon: 'ph:tag', labelKey: 'nav.price_lists' },
+            { id: 'production', href: '/production', icon: 'ph:factory', labelKey: 'nav.production' },
+        ],
     },
     {
         id: 'system',

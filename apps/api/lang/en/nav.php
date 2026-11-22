@@ -13,6 +13,7 @@ return [
     'calculators' => 'Calculators',
     'compliance' => 'Compliance',
     'lab' => 'Lab',
+    'price_lists' => 'Price lists',
     'production' => 'Production',
     'settings' => 'Settings',
     'exchange_rates' => 'Exchange rates',

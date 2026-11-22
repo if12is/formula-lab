@@ -35,6 +35,12 @@ return [
         'id_prefix' => 'ob_',
     ],
 
+    /* Price lists (contract section 8). */
+    'price_lists' => [
+        // Sanad refuses a request with more item rows than this (8.2); a list that needs more is refused here, never split.
+        'max_items_per_request' => 500,
+    ],
+
     'idempotency' => [
         // Contract section 6: keys are kept at least 7 days.
         'retention_days' => 7,

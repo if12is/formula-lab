@@ -22,6 +22,7 @@ const TONES = {
     // NOT_APPLICABLE: the rule's scope does not match this product, so it says nothing either way.
     check_status: { PASS: 'success', FAIL: 'danger', UNKNOWN: 'warning', NOT_APPLICABLE: 'neutral' },
     rule_set_status: { draft: 'warning', published: 'success' },
+    price_list_sync_status: { draft: 'neutral', pending: 'info', applied: 'success', failed: 'danger', conflict: 'warning' },
 };
 
 const { t } = useI18n();

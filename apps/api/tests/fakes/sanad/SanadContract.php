@@ -70,6 +70,39 @@ final class SanadContract
         Assert::assertMatchesRegularExpression(self::ISO_UTC, $row['updated_at']);
     }
 
+    /** @param  array<string, mixed>  $row Contract 8.5: pricing fields only, no balances, phones or addresses. */
+    public static function assertCustomer(array $row): void
+    {
+        foreach (['uuid', 'code', 'name', 'name_en', 'is_active', 'is_wholesale', 'price_list_uuid', 'updated_at'] as $key) {
+            Assert::assertArrayHasKey($key, $row, $key);
+        }
+        Assert::assertIsBool($row['is_active']);
+        Assert::assertIsBool($row['is_wholesale']);
+        Assert::assertTrue($row['price_list_uuid'] === null || is_string($row['price_list_uuid']));
+        Assert::assertMatchesRegularExpression(self::ISO_UTC, $row['updated_at']);
+        foreach (['balance', 'phone', 'address', 'email', 'current_balance'] as $key) {
+            Assert::assertArrayNotHasKey($key, $row, "{$key} is not part of the customers feed");
+        }
+    }
+
+    /** @param  array<string, mixed>  $body Contract 8.2 / 8.3 response of a price list upsert. */
+    public static function assertPriceListResponse(array $body, bool $withItemsCount = true): void
+    {
+        foreach (['uuid', 'items', 'removed', 'created', 'updated_at'] as $key) {
+            Assert::assertArrayHasKey($key, $body, $key);
+        }
+        Assert::assertIsBool($body['created']);
+        Assert::assertIsList($body['items']);
+        Assert::assertIsList($body['removed']);
+        foreach ($body['items'] as $row) {
+            Assert::assertArrayHasKey('product_uuid', $row);
+            self::assertDecimalString($row, 'price');
+        }
+        if ($withItemsCount) {
+            Assert::assertIsInt($body['items_count']);
+        }
+    }
+
     /** @param  array<string, mixed>  $row */
     public static function assertPurchase(array $row): void
     {

@@ -41,6 +41,11 @@ return [
         'invalid_mass' => 'The mass must be a positive weight.',
         'invalid_volume' => 'The volume must be a positive amount.',
     ],
+    'price_list' => [
+        'spec_missing' => 'No pricing method was chosen: a margin rule or an agreed price.',
+        'spec_invalid' => 'The pricing method is not known.',
+        'invalid_margin_basis' => 'The margin basis is not known: it must be percent on cost or percent of price.',
+    ],
     'salt_curve' => [
         'formula_curve_missing' => 'This formula has no salt curve: record viscosity readings at different salt levels in lab trials.',
     ],

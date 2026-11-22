@@ -59,4 +59,13 @@ return [
     'lab_salt_only_for_viscosity' => 'Added salt can only be recorded with a viscosity reading.',
     'lab_salt_not_decimal' => 'The salt percentage is not a valid decimal number.',
     'lab_tested_values_not_computed' => 'The tested doses and HLB values of trial :trial could not be worked out.',
+    'price_list_products_not_published' => 'These products are not published to Sanad yet; publish them first, then publish the list: :products',
+    'price_list_prices_incomplete' => 'The list cannot be published: the price of these products is incomplete (unit cost, rule or agreed price): :products',
+    'price_list_too_many_items' => 'The list has :count products and Sanad accepts :max at most per request.',
+    'price_list_no_sanad_link' => 'There is no linked Sanad device and no direct Sanad address; link Sanad first.',
+    'price_list_product_already_on_list' => 'The product :product is already on this list.',
+    'price_list_unknown_rule' => 'The margin rule ":rule" is not defined in the pricing settings.',
+    'price_list_customer_already_assigned' => 'The customer :customer is already on the list ":list"; a Sanad customer follows one list only.',
+    'price_list_customer_unavailable' => 'The customer :customer is inactive or archived in Sanad and cannot be put on a list.',
+    'price_list_cross_tenant' => 'This record belongs to another tenant.',
 ];

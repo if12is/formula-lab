@@ -83,6 +83,7 @@ return [
     'sanad_entity' => [
         'product' => 'Product',
         'supplier' => 'Supplier',
+        'customer' => 'Customer',
         'purchase' => 'Purchase',
         'batch' => 'Batch',
         'stock_movement' => 'Stock movement',
@@ -94,6 +95,7 @@ return [
     'sanad_ref_type' => [
         'product' => 'Product',
         'supplier' => 'Supplier',
+        'customer' => 'Customer',
         'purchase' => 'Purchase',
         'purchase_item' => 'Purchase line',
         'batch' => 'Batch',
@@ -108,6 +110,7 @@ return [
         'production_order' => 'Production order',
         'product_upsert' => 'Product upsert',
         'wholesale_prices' => 'Wholesale prices',
+        'price_list_upsert' => 'Price list',
     ],
     'sanad_outbox_status' => [
         'pending' => 'Pending',
@@ -144,5 +147,16 @@ return [
     'tax_mode' => [
         'disabled' => 'Tax disabled',
         'rate' => 'Rate',
+    ],
+    'price_list_mode' => [
+        'rule' => 'Margin rule',
+        'override' => 'Agreed price',
+    ],
+    'price_list_sync_status' => [
+        'draft' => 'Not published',
+        'pending' => 'Waiting for Sanad',
+        'applied' => 'Applied in Sanad',
+        'failed' => 'Failed to apply',
+        'conflict' => 'Conflict in Sanad',
     ],
 ];

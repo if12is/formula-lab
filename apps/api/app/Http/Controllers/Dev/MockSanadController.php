@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Dev;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Dev\AssignMockSanadCustomerPriceListRequest;
 use App\Http\Requests\Dev\ConsumeMockSanadOrderRequest;
 use App\Http\Requests\Dev\ListMockSanadRequest;
 use App\Http\Requests\Dev\ReceiveMockSanadOrderRequest;
 use App\Http\Requests\Dev\UpdateMockSanadWholesalePricesRequest;
+use App\Http\Requests\Dev\UpsertMockSanadPriceListItemsRequest;
+use App\Http\Requests\Dev\UpsertMockSanadPriceListRequest;
 use App\Http\Requests\Dev\UpsertMockSanadProductRequest;
 use App\Services\Dev\MockSanadService;
 use Illuminate\Http\JsonResponse;
@@ -24,6 +27,11 @@ class MockSanadController extends Controller
     public function suppliers(ListMockSanadRequest $request): JsonResponse
     {
         return $this->list('suppliers', $request);
+    }
+
+    public function customers(ListMockSanadRequest $request): JsonResponse
+    {
+        return $this->list('customers', $request);
     }
 
     public function purchases(ListMockSanadRequest $request): JsonResponse
@@ -50,6 +58,27 @@ class MockSanadController extends Controller
         return $result === null
             ? response()->json(['message' => __('sanad.mock.unknown_product', ['product' => $uuid])], 404)
             : response()->json($result);
+    }
+
+    public function upsertPriceList(UpsertMockSanadPriceListRequest $request, string $uuid): JsonResponse
+    {
+        $result = $this->mock->upsertPriceList($uuid, $request->validated());
+
+        return response()->json($result['body'], $result['status']);
+    }
+
+    public function upsertPriceListItems(UpsertMockSanadPriceListItemsRequest $request, string $uuid): JsonResponse
+    {
+        $result = $this->mock->upsertPriceListItems($uuid, $request->validated());
+
+        return response()->json($result['body'], $result['status']);
+    }
+
+    public function assignCustomerPriceList(AssignMockSanadCustomerPriceListRequest $request, string $uuid): JsonResponse
+    {
+        $result = $this->mock->assignCustomerPriceList($uuid, $request->validated('price_list_uuid'));
+
+        return response()->json($result['body'], $result['status']);
     }
 
     public function consume(ConsumeMockSanadOrderRequest $request, string $externalId): JsonResponse

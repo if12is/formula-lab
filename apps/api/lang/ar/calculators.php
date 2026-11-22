@@ -103,6 +103,8 @@ return [
         'user_input' => 'مدخل المستخدم',
         'estimate' => 'تقدير',
         'ops' => [
+            'round' => 'تقريب',
+            'margin' => 'هامش',
             'input' => 'مدخل',
             'add' => 'جمع',
             'sub' => 'طرح',
@@ -122,6 +124,15 @@ return [
         ],
     ],
     'subjects' => [
+        'priceList' => [
+            'unitCost' => 'تكلفة الوحدة',
+            'spec' => 'طريقة التسعير',
+            'rule' => 'قاعدة الهامش',
+            'marginBasis' => 'أساس الهامش',
+            'marginPct' => 'نسبة الهامش',
+            'distributionCostPerUnit' => 'تكلفة التوزيع للوحدة',
+            'overridePrice' => 'السعر المتفق عليه',
+        ],
         'salt_curve' => 'منحنى الملح',
         'saltPct' => 'نسبة الملح',
         'targetViscosity' => 'اللزوجة المطلوبة',

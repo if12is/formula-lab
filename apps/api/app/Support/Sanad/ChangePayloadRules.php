@@ -17,6 +17,7 @@ final class ChangePayloadRules
         return match ($entity) {
             SanadEntity::Product => self::product(),
             SanadEntity::Supplier => self::supplier(),
+            SanadEntity::Customer => self::customer(),
             SanadEntity::Purchase => self::purchase(),
             SanadEntity::Batch => self::batch(),
             SanadEntity::StockMovement => [],
@@ -57,6 +58,19 @@ final class ChangePayloadRules
             'tax_number' => ['nullable', 'string', 'max:100'],
             'payment_terms' => ['nullable', 'integer', 'min:0', 'max:32767'],
             'is_active' => ['nullable', 'boolean'],
+        ];
+    }
+
+    /** @return array<string, mixed> Contract 8.5: only what pricing needs. */
+    private static function customer(): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'name_en' => ['nullable', 'string', 'max:255'],
+            'code' => ['nullable', 'string', 'max:100'],
+            'is_active' => ['nullable', 'boolean'],
+            'is_wholesale' => ['nullable', 'boolean'],
+            'price_list_uuid' => ['nullable', 'uuid'],
         ];
     }
 

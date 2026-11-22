@@ -83,6 +83,7 @@ return [
     'sanad_entity' => [
         'product' => 'منتج',
         'supplier' => 'مورد',
+        'customer' => 'عميل',
         'purchase' => 'فاتورة شراء',
         'batch' => 'دفعة',
         'stock_movement' => 'حركة مخزون',
@@ -94,6 +95,7 @@ return [
     'sanad_ref_type' => [
         'product' => 'منتج',
         'supplier' => 'مورد',
+        'customer' => 'عميل',
         'purchase' => 'فاتورة شراء',
         'purchase_item' => 'بند شراء',
         'batch' => 'دفعة',
@@ -108,6 +110,7 @@ return [
         'production_order' => 'أمر إنتاج',
         'product_upsert' => 'تسجيل منتج',
         'wholesale_prices' => 'أسعار جملة',
+        'price_list_upsert' => 'قائمة أسعار',
     ],
     'sanad_outbox_status' => [
         'pending' => 'قيد الانتظار',
@@ -144,5 +147,16 @@ return [
     'tax_mode' => [
         'disabled' => 'تعطيل الضريبة',
         'rate' => 'نسبة',
+    ],
+    'price_list_mode' => [
+        'rule' => 'قاعدة هامش',
+        'override' => 'سعر متفق عليه',
+    ],
+    'price_list_sync_status' => [
+        'draft' => 'لم تُنشر',
+        'pending' => 'بانتظار سند',
+        'applied' => 'طُبّقت في سند',
+        'failed' => 'فشل التطبيق',
+        'conflict' => 'تعارض في سند',
     ],
 ];
