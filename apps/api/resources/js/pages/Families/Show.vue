@@ -6,6 +6,7 @@
  */
 import { Head } from '@inertiajs/vue3';
 import { Alert, Badge, Button, Card, DescriptionList, EmptyState, PageHeader } from '@kit';
+import DisinfectionNotice from '../../components/compliance/DisinfectionNotice.vue';
 import VerificationBadge from '../../components/families/VerificationBadge.vue';
 import { useI18n } from '../../composables/useI18n';
 
@@ -34,6 +35,8 @@ const facts = [
         </PageHeader>
 
         <div class="flex flex-col gap-4">
+            <DisinfectionNotice :family-group="family.group" />
+
             <Card :title="t('families.show.facts')">
                 <DescriptionList :items="facts" :columns="2" data-testid="family-facts">
                     <template #regulator>

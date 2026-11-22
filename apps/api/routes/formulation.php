@@ -4,6 +4,7 @@ use App\Http\Controllers\Formula\FormulaController;
 use App\Http\Controllers\Formula\FormulaSaltCurveController;
 use App\Http\Controllers\Formula\FormulaVersionController;
 use App\Http\Controllers\Formula\FormulaWorkflowController;
+use App\Http\Controllers\Fragrance\IfraCertificateController;
 use App\Http\Controllers\Material\MaterialCompositionController;
 use App\Http\Controllers\Material\MaterialController;
 use App\Http\Controllers\Material\MaterialPriceController;
@@ -29,6 +30,8 @@ Route::prefix('materials')->name('materials.')->group(function (): void {
         Route::put('/', [MaterialController::class, 'update'])->name('update');
         Route::post('properties', [MaterialPropertyController::class, 'store'])->name('properties.store');
         Route::delete('properties/{propertyValue}', [MaterialPropertyController::class, 'destroy'])->whereUuid('propertyValue')->name('properties.destroy');
+        Route::post('ifra-certificates', [IfraCertificateController::class, 'store'])->name('ifra-certificates.store');
+        Route::delete('ifra-certificates/{ifraCertificate}', [IfraCertificateController::class, 'destroy'])->whereUuid('ifraCertificate')->name('ifra-certificates.destroy');
         Route::post('prices', [MaterialPriceController::class, 'store'])->name('prices.store');
         Route::delete('prices/{price}', [MaterialPriceController::class, 'destroy'])->whereUuid('price')->name('prices.destroy');
         Route::post('composition', [MaterialCompositionController::class, 'store'])->name('composition.store');
@@ -56,6 +59,7 @@ Route::prefix('formulas')->name('formulas.')->group(function (): void {
         Route::put('tax', [FormulaController::class, 'updateTax'])->name('tax.update');
         Route::put('unit-cost', [FormulaController::class, 'updateUnitCost'])->name('unit-cost.update');
         Route::put('ifra-category', [FormulaController::class, 'updateIfraCategory'])->name('ifra-category.update');
+        Route::put('claims', [FormulaController::class, 'updateClaims'])->name('claims.update');
         Route::get('versions/{version:version}/edit', [FormulaVersionController::class, 'edit'])->whereNumber('version')->name('versions.edit');
         Route::post('versions/{version:version}', [FormulaVersionController::class, 'store'])->whereNumber('version')->name('versions.store');
         Route::post('versions/{version:version}/send-to-lab', [FormulaWorkflowController::class, 'sendToLab'])->whereNumber('version')->name('versions.send-to-lab');

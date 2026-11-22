@@ -26,7 +26,7 @@ class EngineKeysTest extends TestCase
                 continue;
             }
 
-            preg_match_all('/[\'"`]((?:formula|cost|confidence|input|density|batch|engine|soap|water|neutralize|active|alcohol|fragrance|percent_from_weight|compliance|inci|ifra|dsl|tax)\.[a-z0-9_]+)(?![A-Za-z0-9_.])/', (string) file_get_contents($file->getPathname()), $matches);
+            preg_match_all('/[\'"`]((?:formula|cost|confidence|input|density|batch|engine|soap|water|neutralize|active|alcohol|fragrance|percent_from_weight|compliance|inci|ifra|dsl|tax|disinfectant)\.[a-z0-9_]+)(?![A-Za-z0-9_.])/', (string) file_get_contents($file->getPathname()), $matches);
             array_push($keys, ...$matches[1]);
         }
 
@@ -43,7 +43,7 @@ class EngineKeysTest extends TestCase
     {
         $keys = $this->engineMessageKeys();
 
-        foreach (['formula.sum_not_100', 'formula.qs_balance_not_positive', 'cost.price_missing', 'confidence.l7_requires_signed_override', 'confidence.below_policy', 'input.missing', 'engine.version_mismatch', 'soap.no_oils', 'water.concentration_must_be_below_100', 'neutralize.theoretical_start_final_ph_measured', 'active.target_exceeds_raw', 'alcohol.basis_required', 'fragrance.ifra_unknown', 'percent_from_weight.batch_not_positive', 'compliance.composition_missing', 'compliance.ruleset_invalid', 'compliance.rule_pending_source', 'inci.composition_incomplete', 'ifra.certificate_missing', 'dsl.source_missing', 'dsl.pending_source_only_in_draft', 'tax.setting_missing', 'tax.setting_invalid', 'tax.regime_missing'] as $key) {
+        foreach (['formula.sum_not_100', 'formula.qs_balance_not_positive', 'cost.price_missing', 'confidence.l7_requires_signed_override', 'confidence.below_policy', 'input.missing', 'engine.version_mismatch', 'soap.no_oils', 'water.concentration_must_be_below_100', 'neutralize.theoretical_start_final_ph_measured', 'active.target_exceeds_raw', 'alcohol.basis_required', 'fragrance.ifra_unknown', 'percent_from_weight.batch_not_positive', 'compliance.composition_missing', 'compliance.ruleset_invalid', 'compliance.rule_pending_source', 'inci.composition_incomplete', 'ifra.certificate_missing', 'dsl.source_missing', 'dsl.pending_source_only_in_draft', 'tax.setting_missing', 'tax.setting_invalid', 'tax.regime_missing', 'disinfectant.no_ethanol_line', 'disinfectant.claim_unknown', 'disinfectant.flag_not_object'] as $key) {
             $this->assertContains($key, $keys);
         }
     }

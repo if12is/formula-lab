@@ -31,7 +31,7 @@ final class SyncProductFamiliesAction
         $registry = $this->data->registry();
         $templates = $this->data->templates();
 
-        $answer = $this->engine->run('validate-families', ['registry' => $registry, 'templates' => ['templates' => $templates]]);
+        $answer = $this->engine->run('validate-families', ['registry' => $registry, 'templates' => ['templates' => $templates], 'disinfectantFlag' => $this->data->disinfectantFlag()]);
 
         if (($answer['ok'] ?? false) !== true) {
             throw InvalidFamilyDataException::rejectedByEngine($answer['missing'] ?? []);

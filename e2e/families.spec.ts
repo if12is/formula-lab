@@ -3,8 +3,8 @@ import { expect, test } from '@playwright/test';
 import { expectNoHorizontalScroll, pickRecord, settle, stamp } from './support/kit';
 
 /**
- * K-01 / K-02 / K-06 / K-09: the product family registry and the template library. Hand-checked: 13 families (7 detergents + 6
- * personal care); a template line's share is never invented; using a template runs the engine first, and the formula it creates
+ * K-01 / K-02 / K-06 / K-09: the product family registry and the template library. Hand-checked: 17 families (9 detergents + 6
+ * personal care + 2 disinfectants); a template line's share is never invented; using a template runs the engine first, and the formula it creates
  * is the engine's answer (12 + 1.5 + 0.2 + 0.5 = 14.2, so the q.s. water is 85.8).
  */
 test.describe.configure({ mode: 'serial' });
@@ -15,15 +15,15 @@ test.beforeAll(() => {
 
 const code = `DISH-${stamp()}`.toUpperCase();
 
-test('families list: 13 families, regulator and IFRA filters live in the address, and a no-match filter says so', async ({ page }) => {
+test('families list: 17 families, regulator and IFRA filters live in the address, and a no-match filter says so', async ({ page }) => {
   await page.goto('/families');
   await expect(page.getByRole('heading', { level: 1, name: 'عائلات المنتجات' })).toBeVisible();
   await settle(page);
   const rows = page.locator('tbody tr');
-  await expect(rows).toHaveCount(13);
+  await expect(rows).toHaveCount(17);
 
   await page.goto('/families?regulator=EDA');
-  await expect(rows).toHaveCount(6);
+  await expect(rows).toHaveCount(8);
   await page.goto('/families?ifra_category=10B');
   await expect(rows).toHaveCount(1);
   await expect(rows.first()).toContainText('منظف زجاج');
@@ -50,11 +50,11 @@ test('templates list filters by status and the library has no approved template'
   await page.goto('/templates');
   await expect(page.getByRole('heading', { level: 1, name: 'قوالب التركيبات' })).toBeVisible();
   await settle(page);
-  await expect(page.locator('tbody tr')).toHaveCount(13);
+  await expect(page.locator('tbody tr')).toHaveCount(17);
   await page.goto('/templates?status=chemist_approved');
   await expect(page.getByText('لا توجد نتائج تطابق هذه الفلاتر')).toBeVisible();
   await page.goto('/templates?status=theoretical');
-  await expect(page.locator('tbody tr')).toHaveCount(13);
+  await expect(page.locator('tbody tr')).toHaveCount(17);
 });
 
 test('a template shows its lines by role with no invented share', async ({ page }) => {

@@ -17,7 +17,8 @@
     ],
     "groups": [
       "detergents",
-      "personal_care"
+      "personal_care",
+      "disinfectants"
     ],
     "calculations": [
       {
@@ -79,6 +80,16 @@
         "id": "solvent_evaporation",
         "status": "planned",
         "calculatorKey": null
+      },
+      {
+        "id": "disinfectant_active",
+        "status": "available",
+        "calculatorKey": null
+      },
+      {
+        "id": "alcohol_dilution",
+        "status": "available",
+        "calculatorKey": null
       }
     ],
     "measuredProperties": [
@@ -121,6 +132,10 @@
       {
         "id": "corrosion",
         "labProperty": null
+      },
+      {
+        "id": "alcohol_strength",
+        "labProperty": null
       }
     ],
     "roles": [
@@ -143,7 +158,9 @@
       "enzyme",
       "fatty_oil",
       "fragrance",
-      "colorant"
+      "colorant",
+      "alcohol_active",
+      "quaternary_active"
     ]
   },
   "families": [
@@ -299,6 +316,45 @@
       "verification": "pending"
     },
     {
+      "code": "fabric_softener",
+      "group": "detergents",
+      "name": {
+        "ar": "منعم أقمشة",
+        "en": "Fabric softener"
+      },
+      "regulator": "EOS",
+      "ifraCategory": "10A",
+      "requiredCalculations": [
+        "active_matter"
+      ],
+      "measuredProperties": [
+        "viscosity",
+        "stability_4w"
+      ],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending"
+    },
+    {
+      "code": "laundry_fragrance",
+      "group": "detergents",
+      "name": {
+        "ar": "معطر غسيل",
+        "en": "Laundry fragrance (booster)"
+      },
+      "regulator": "EOS",
+      "ifraCategory": "10A",
+      "requiredCalculations": [
+        "fragrance"
+      ],
+      "measuredProperties": [],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending"
+    },
+    {
       "code": "shampoo",
       "group": "personal_care",
       "name": {
@@ -435,6 +491,48 @@
       "confidence": "L7_estimate",
       "verification": "pending",
       "notes": "ifra_9_usually"
+    },
+    {
+      "code": "alcohol_disinfectant",
+      "group": "disinfectants",
+      "name": {
+        "ar": "مطهر كحولي",
+        "en": "Alcohol disinfectant"
+      },
+      "regulator": "EDA",
+      "ifraCategory": null,
+      "requiredCalculations": [
+        "disinfectant_active",
+        "alcohol_dilution"
+      ],
+      "measuredProperties": [
+        "alcohol_strength"
+      ],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending"
+    },
+    {
+      "code": "quat_disinfectant",
+      "group": "disinfectants",
+      "name": {
+        "ar": "مطهر كواترنري",
+        "en": "Quaternary ammonium disinfectant"
+      },
+      "regulator": "EDA",
+      "ifraCategory": null,
+      "requiredCalculations": [
+        "disinfectant_active",
+        "dilution"
+      ],
+      "measuredProperties": [
+        "active_matter"
+      ],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending"
     }
   ]
 }

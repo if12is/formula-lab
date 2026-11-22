@@ -16,15 +16,17 @@ const registry = (registryResult.ok ? registryResult.value : (undefined as never
 const templatesResult = validateFormulaTemplates(templatesJson, registry);
 
 describe('the shipped registry (K-01)', () => {
-  it('validates, and lists the 13 K-02 + K-06 families', () => {
+  it('validates, and lists the 17 families of K-02, K-04, K-05 and K-06', () => {
     expect(registryResult.ok).toBe(true);
     expect(registry.families.map((f) => f.code)).toEqual([
       'dish_liquid', 'laundry_powder', 'laundry_liquid', 'floor_cleaner', 'glass_cleaner', 'bathroom_cleaner', 'degreaser',
+      'fabric_softener', 'laundry_fragrance',
       'shampoo', 'conditioner', 'hand_soap', 'shower_gel', 'bar_soap', 'face_wash',
+      'alcohol_disinfectant', 'quat_disinfectant',
     ]);
   });
 
-  it('is only what plan/00-research/05 says: EOS for detergents, EDA for personal care, no tax regime guessed, nothing verified', () => {
+  it('is only what plan/00-research says: EOS for detergents, EDA for personal care and disinfectants, no tax regime guessed, nothing verified', () => {
     for (const f of registry.families) {
       expect(f.regulator).toBe(f.group === 'detergents' ? 'EOS' : 'EDA');
       expect(f.taxRegime).toBeNull();
@@ -213,5 +215,44 @@ describe('checkTemplateUse: engine validation, then compliance', () => {
   it('engine validation comes first: an unfilled line never reaches compliance', () => {
     const r = checkTemplateUse({ template: t, fill: { water: { materialId: 'M-C' } }, materials: materials(), ruleSets: [], context });
     expect(reasons(r)).toContain(TEMPLATE_REASONS.LINE_MATERIAL_MISSING);
+  });
+});
+
+describe('K-04 / K-05 presets (what plan/00-research/05 states, nothing more)', () => {
+  it('fabric softener: EOS, IFRA 10A, cationic active matter, viscosity and 4-week stability', () => {
+    const f = familyByCode(registry, 'fabric_softener');
+    expect([f?.regulator, f?.ifraCategory, f?.requiredCalculations, f?.measuredProperties]).toEqual(['EOS', '10A', ['active_matter'], ['viscosity', 'stability_4w']]);
+  });
+
+  it('laundry fragrance (booster): EOS and IFRA 10A from the air-care table; the research names no measurement for it', () => {
+    const f = familyByCode(registry, 'laundry_fragrance');
+    expect([f?.regulator, f?.ifraCategory, f?.measuredProperties]).toEqual(['EOS', '10A', []]);
+  });
+
+  it('disinfectants: EDA, no IFRA category stated (null), and the active-concentration calculation (the EDA path notice comes from the disinfectant flag, not a per-family note)', () => {
+    for (const code of ['alcohol_disinfectant', 'quat_disinfectant']) {
+      const f = familyByCode(registry, code);
+      expect(f?.group).toBe('disinfectants');
+      expect(f?.regulator).toBe('EDA');
+      expect(f?.ifraCategory).toBeNull();
+      expect(f?.requiredCalculations).toContain('disinfectant_active');
+      expect(f?.notes).toBeUndefined();
+    }
+  });
+
+  it('ethanol strength is named but the lab cannot record it yet (no %v/v lab property): shown as a gap, not demanded', () => {
+    expect(familyLabRequirements(registry, 'alcohol_disinfectant')).toEqual({ lab: [], notYetRecordable: ['alcohol_strength'] });
+    expect(familyLabRequirements(registry, 'quat_disinfectant')).toEqual({ lab: ['active_matter'], notYetRecordable: [] });
+    expect(familyLabRequirements(registry, 'fabric_softener')).toEqual({ lab: ['viscosity', 'stability_4w'], notYetRecordable: [] });
+  });
+
+  it('every new template is structure only: shares null, one q.s. line, theoretical', () => {
+    const lib = (templatesResult.ok ? templatesResult.value : undefined) as { templates: FormulaTemplate[] };
+    const mine = lib.templates.filter((t) => ['fabric_softener', 'laundry_fragrance', 'alcohol_disinfectant', 'quat_disinfectant'].includes(t.familyCode));
+    expect(mine).toHaveLength(4);
+    for (const t of mine) {
+      expect(t.verification).toBe('theoretical');
+      expect(t.lines.every((l) => l.percentWW === null)).toBe(true);
+    }
   });
 });

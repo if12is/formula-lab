@@ -37,6 +37,18 @@ final class FamilyData
         return $templates;
     }
 
+    /** @return array<string, mixed> The disinfectant flag data (N-12): the EDA path, the claims that trigger it and the groups that imply it. */
+    public function disinfectantFlag(): array
+    {
+        return $this->readJson((string) config('families.disinfectant_flag_path'));
+    }
+
+    /** @return list<string> The claim codes a formula may carry, in the data file's order. */
+    public function claimCodes(): array
+    {
+        return array_column($this->disinfectantFlag()['claims'], 'code');
+    }
+
     /** @return list<array{id: string, status: string, calculatorKey: string|null}> */
     public function calculations(): array
     {

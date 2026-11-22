@@ -6,6 +6,7 @@ use App\Enums\Confidence;
 use App\Exceptions\Domain\InvalidTaxSettingException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Formula\StoreFormulaRequest;
+use App\Http\Requests\Formula\UpdateFormulaClaimsRequest;
 use App\Http\Requests\Formula\UpdateFormulaIfraCategoryRequest;
 use App\Http\Requests\Formula\UpdateFormulaTaxRequest;
 use App\Http\Requests\Formula\UpdateFormulaUnitCostRequest;
@@ -60,6 +61,14 @@ class FormulaController extends Controller
         $this->formulaService->setIfraCategory($formula, $request->validated('ifra_category'));
 
         return back()->with('success', __('compliance.ifra.saved'));
+    }
+
+    /** The claims the product makes (N-12: a disinfection claim puts it on the separate EDA path), saved on the formula from the compliance panel. */
+    public function updateClaims(UpdateFormulaClaimsRequest $request, Formula $formula): RedirectResponse
+    {
+        $this->formulaService->setClaims($formula, $request->claims());
+
+        return back()->with('success', __('disinfection.saved'));
     }
 
     /** The product's tax (disabled, or one of the allowed rates), saved on the formula from the pricing panel. */

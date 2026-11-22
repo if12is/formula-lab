@@ -22,15 +22,15 @@ class ProductFamilyRegistryTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_the_seeder_loads_the_thirteen_families_and_their_templates_and_is_idempotent(): void
+    public function test_the_seeder_loads_the_seventeen_families_and_their_templates_and_is_idempotent(): void
     {
         $this->seed(ProductFamilySeeder::class);
         $this->seed(ProductFamilySeeder::class);
 
-        $this->assertSame(13, ProductFamily::query()->count());
-        $this->assertSame(13, FormulaTemplate::query()->count());
+        $this->assertSame(17, ProductFamily::query()->count());
+        $this->assertSame(17, FormulaTemplate::query()->count());
         $this->assertSame(
-            ['dish_liquid', 'laundry_powder', 'laundry_liquid', 'floor_cleaner', 'glass_cleaner', 'bathroom_cleaner', 'degreaser', 'shampoo', 'conditioner', 'hand_soap', 'shower_gel', 'bar_soap', 'face_wash'],
+            ['dish_liquid', 'laundry_powder', 'laundry_liquid', 'floor_cleaner', 'glass_cleaner', 'bathroom_cleaner', 'degreaser', 'fabric_softener', 'laundry_fragrance', 'shampoo', 'conditioner', 'hand_soap', 'shower_gel', 'bar_soap', 'face_wash', 'alcohol_disinfectant', 'quat_disinfectant'],
             ProductFamily::query()->orderBy('position')->pluck('code')->all(),
         );
     }
@@ -147,6 +147,21 @@ class ProductFamilyRegistryTest extends TestCase
         } catch (InvalidFamilyDataException $exception) {
             $this->assertStringContainsString('families[0].regulator', $exception->getMessage());
             $this->assertStringContainsString(__('families.reasons.regulator_unknown'), $exception->getMessage());
+        }
+
+        $this->assertSame(0, ProductFamily::query()->count());
+    }
+
+    public function test_a_disinfectant_flag_the_engine_rejects_is_worded_from_the_engine_texts_and_nothing_is_loaded(): void
+    {
+        Process::fake(['*' => Process::result('{"ok":false,"missing":[{"property":"claims[1].code","reason":"disinfectant.flag_claim_duplicate"}]}')]);
+
+        try {
+            app(SyncProductFamiliesAction::class)();
+            $this->fail('The sync should have refused the files.');
+        } catch (InvalidFamilyDataException $exception) {
+            $this->assertStringContainsString('claims[1].code', $exception->getMessage());
+            $this->assertStringContainsString(__('engine.disinfectant.flag_claim_duplicate'), $exception->getMessage());
         }
 
         $this->assertSame(0, ProductFamily::query()->count());

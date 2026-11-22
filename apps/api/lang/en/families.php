@@ -36,6 +36,7 @@ return [
     'groups' => [
         'detergents' => 'Detergents',
         'personal_care' => 'Personal care',
+        'disinfectants' => 'Disinfectants',
     ],
     'regulators' => [
         'EOS' => 'Egyptian Organization for Standardization and Quality (EOS)',
@@ -88,6 +89,8 @@ return [
         'builders_fillers_moisture' => 'Builders, fillers and moisture',
         'enzyme_activity' => 'Enzyme activity',
         'solvent_evaporation' => 'Solvents and evaporation',
+        'disinfectant_active' => 'Disinfecting active concentration (ethanol %v/v or quaternary ammonium %w/w)',
+        'alcohol_dilution' => 'Alcohol dilution (OIML R 22)',
     ],
     'measured' => [
         'ph' => 'pH',
@@ -100,6 +103,7 @@ return [
         'bulk_density' => 'Bulk density',
         'solubility' => 'Solubility',
         'corrosion' => 'Corrosion',
+        'alcohol_strength' => 'Alcohol strength (% by volume)',
     ],
     'roles' => [
         'water' => 'Water',
@@ -122,6 +126,8 @@ return [
         'fatty_oil' => 'Fatty oil',
         'fragrance' => 'Fragrance',
         'colorant' => 'Colorant',
+        'alcohol_active' => 'Alcohol (disinfecting active)',
+        'quaternary_active' => 'Quaternary ammonium (disinfecting active)',
     ],
     /*
     | Words of the engine's reason keys `families.<name>`: what the registry and template validators and a template use report.

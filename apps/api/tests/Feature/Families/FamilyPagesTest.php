@@ -24,7 +24,7 @@ class FamilyPagesTest extends TestCase
     {
         $this->get(route('families.index'))->assertOk()->assertInertia(fn (Assert $page) => $page
             ->component('Families/Index')
-            ->where('list.meta.total', 13)
+            ->where('list.meta.total', 17)
             ->where('list.schema.filters.0.key', 'group')
             ->where('list.schema.filters.0.options.0.value', 'detergents')
             ->where('list.schema.filters.1.key', 'regulator')
@@ -45,8 +45,8 @@ class FamilyPagesTest extends TestCase
 
     public function test_filters_by_regulator_group_and_ifra_category_narrow_the_list(): void
     {
-        $this->get(route('families.index', ['regulator' => 'EDA']))->assertInertia(fn (Assert $page) => $page->where('list.meta.total', 6));
-        $this->get(route('families.index', ['group' => 'detergents']))->assertInertia(fn (Assert $page) => $page->where('list.meta.total', 7));
+        $this->get(route('families.index', ['regulator' => 'EDA']))->assertInertia(fn (Assert $page) => $page->where('list.meta.total', 8));
+        $this->get(route('families.index', ['group' => 'detergents']))->assertInertia(fn (Assert $page) => $page->where('list.meta.total', 9));
         $this->get(route('families.index', ['ifra_category' => '10B']))->assertInertia(fn (Assert $page) => $page
             ->where('list.meta.total', 1)->where('list.rows.0.code', 'glass_cleaner'));
         $this->get(route('families.index', ['regulator' => 'EOS', 'search' => 'floor']))->assertInertia(fn (Assert $page) => $page->where('list.meta.total', 1));
@@ -54,7 +54,7 @@ class FamilyPagesTest extends TestCase
 
     public function test_a_value_outside_the_whitelist_is_ignored_not_trusted(): void
     {
-        $this->get(route('families.index', ['regulator' => 'FDA']))->assertInertia(fn (Assert $page) => $page->where('list.meta.total', 13));
+        $this->get(route('families.index', ['regulator' => 'FDA']))->assertInertia(fn (Assert $page) => $page->where('list.meta.total', 17));
     }
 
     public function test_a_family_page_lists_calculations_with_their_calculator_and_what_the_lab_cannot_record_yet(): void
@@ -88,12 +88,12 @@ class FamilyPagesTest extends TestCase
 
         $this->get(route('templates.index'))->assertOk()->assertInertia(fn (Assert $page) => $page
             ->component('Templates/Index')
-            ->where('list.meta.total', 13)
+            ->where('list.meta.total', 17)
             ->where('list.rows.0.status', 'theoretical'));
         $this->get(route('templates.index', ['family' => $shampoo]))->assertInertia(fn (Assert $page) => $page
             ->where('list.meta.total', 1)->where('list.rows.0.code', 'shampoo_basic'));
         $this->get(route('templates.index', ['status' => 'chemist_approved']))->assertInertia(fn (Assert $page) => $page->where('list.meta.total', 0));
-        $this->get(route('templates.index', ['status' => 'theoretical']))->assertInertia(fn (Assert $page) => $page->where('list.meta.total', 13));
+        $this->get(route('templates.index', ['status' => 'theoretical']))->assertInertia(fn (Assert $page) => $page->where('list.meta.total', 17));
         $this->get(route('templates.index', ['search' => 'بلسم']))->assertInertia(fn (Assert $page) => $page->where('list.meta.total', 1));
     }
 

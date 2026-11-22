@@ -445,6 +445,109 @@
       ]
     },
     {
+      "code": "fabric_softener_basic",
+      "familyCode": "fabric_softener",
+      "name": {
+        "ar": "منعم أقمشة (هيكل أساسي)",
+        "en": "Fabric softener (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "water",
+          "role": "water",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "cationic_conditioning_agent",
+          "role": "cationic_conditioning_agent",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "thickener",
+          "role": "thickener",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "preservative",
+          "role": "preservative",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "colorant",
+          "role": "colorant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
+    },
+    {
+      "code": "laundry_fragrance_basic",
+      "familyCode": "laundry_fragrance",
+      "name": {
+        "ar": "معطر غسيل (هيكل أساسي)",
+        "en": "Laundry fragrance (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "water",
+          "role": "water",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "nonionic_surfactant",
+          "role": "nonionic_surfactant",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "preservative",
+          "role": "preservative",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "colorant",
+          "role": "colorant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
+    },
+    {
       "code": "shampoo_basic",
       "familyCode": "shampoo",
       "name": {
@@ -845,6 +948,109 @@
         {
           "key": "fragrance",
           "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
+    },
+    {
+      "code": "alcohol_disinfectant_basic",
+      "familyCode": "alcohol_disinfectant",
+      "name": {
+        "ar": "مطهر كحولي (هيكل أساسي)",
+        "en": "Alcohol disinfectant (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "water",
+          "role": "water",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "alcohol_active",
+          "role": "alcohol_active",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "humectant",
+          "role": "humectant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "colorant",
+          "role": "colorant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
+    },
+    {
+      "code": "quat_disinfectant_basic",
+      "familyCode": "quat_disinfectant",
+      "name": {
+        "ar": "مطهر كواترنري (هيكل أساسي)",
+        "en": "Quaternary ammonium disinfectant (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "water",
+          "role": "water",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "quaternary_active",
+          "role": "quaternary_active",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "nonionic_surfactant",
+          "role": "nonionic_surfactant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "chelating_agent",
+          "role": "chelating_agent",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "colorant",
+          "role": "colorant",
           "percentWW": null,
           "qs": false,
           "optional": true

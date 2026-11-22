@@ -30,6 +30,7 @@ export * from './core/molar-mass';
 export * from './base-equivalent';
 export * from './sourced-input';
 export * from './active';
+export * from './disinfectant';
 export * from './neutralize';
 export * from './soap';
 export * from './report';

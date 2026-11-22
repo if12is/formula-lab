@@ -3,11 +3,12 @@
  * The Laravel app calls this from App\Support\Engine\EngineRunner before it loads the shipped data files into the database, so
  * what is stored passed the same checks the engine's tests apply to the files.
  *
- * stdin : JSON `{ "registry": {...}, "templates": {...} }`
+ * stdin : JSON `{ "registry": {...}, "templates": {...}, "disinfectantFlag": {...} (optional) }`
  * stdout: JSON `{ "ok": true }` or `{ "ok": false, "missing": [{ "property", "reason" }] }`
  * Run   : node --experimental-transform-types --import ./scripts/node-ts/register.mjs scripts/validate-families.ts
  * Exit 0 for any answer, validation failure included; non-zero only when the input is not JSON or lacks a part.
  */
+import { validateDisinfectantFlag } from '../src/disinfectant';
 import { validateFormulaTemplates, validateProductFamilyRegistry } from '../src/families';
 
 async function readStdin(): Promise<string> {
@@ -18,7 +19,7 @@ async function readStdin(): Promise<string> {
   return Buffer.concat(chunks).toString('utf8');
 }
 
-let input: { registry?: unknown; templates?: unknown };
+let input: { registry?: unknown; templates?: unknown; disinfectantFlag?: unknown };
 try {
   input = JSON.parse(await readStdin());
 } catch {
@@ -35,5 +36,7 @@ if (!registry.ok) {
   process.stdout.write(JSON.stringify({ ok: false, missing: registry.missing }));
 } else {
   const templates = validateFormulaTemplates(input.templates, registry.value);
-  process.stdout.write(JSON.stringify(templates.ok ? { ok: true } : { ok: false, missing: templates.missing }));
+  const flag = 'disinfectantFlag' in input ? validateDisinfectantFlag(input.disinfectantFlag, registry.value) : null;
+  const gaps = [...(templates.ok ? [] : templates.missing), ...(flag === null || flag.ok ? [] : flag.missing)];
+  process.stdout.write(JSON.stringify(gaps.length === 0 ? { ok: true } : { ok: false, missing: gaps }));
 }

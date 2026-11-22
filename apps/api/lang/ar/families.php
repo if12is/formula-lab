@@ -36,6 +36,7 @@ return [
     'groups' => [
         'detergents' => 'المنظفات',
         'personal_care' => 'العناية الشخصية',
+        'disinfectants' => 'المطهرات',
     ],
     'regulators' => [
         'EOS' => 'الهيئة المصرية العامة للمواصفات والجودة (EOS)',
@@ -88,6 +89,8 @@ return [
         'builders_fillers_moisture' => 'البنّاءات والمالئات والرطوبة',
         'enzyme_activity' => 'نشاط الإنزيمات',
         'solvent_evaporation' => 'المذيبات والتبخر',
+        'disinfectant_active' => 'تركيز المادة المطهرة الفعالة (إيثانول %v/v أو كواترنري %w/w)',
+        'alcohol_dilution' => 'تخفيف الكحول (OIML R 22)',
     ],
     'measured' => [
         'ph' => 'pH',
@@ -100,6 +103,7 @@ return [
         'bulk_density' => 'الكثافة الظاهرية',
         'solubility' => 'الذوبان',
         'corrosion' => 'التآكل',
+        'alcohol_strength' => 'تركيز الكحول (% بالحجم)',
     ],
     'roles' => [
         'water' => 'ماء',
@@ -122,6 +126,8 @@ return [
         'fatty_oil' => 'زيت دهني',
         'fragrance' => 'عطر',
         'colorant' => 'ملوّن',
+        'alcohol_active' => 'كحول (مادة مطهرة فعالة)',
+        'quaternary_active' => 'كواترنري أمونيوم (مادة مطهرة فعالة)',
     ],
     /*
     | صياغة مفاتيح أسباب المحرك `families.<name>`: اللي بيرجّعه فحص السجل والقوالب واستخدام القالب.

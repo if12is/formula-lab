@@ -59,6 +59,9 @@ final class FormulaEditorService
                 'product_type' => $formula->product_type,
                 'tier' => $formula->tier?->value,
                 'ifra_category' => $formula->ifra_category,
+                'claims' => $formula->claims ?? [],
+                // The registry group of the product's family: the disinfectant notice (N-12) reads it, the engine decides.
+                'family_group' => $formula->productFamily?->group,
             ],
             'version' => [
                 'id' => $version->getKey(),

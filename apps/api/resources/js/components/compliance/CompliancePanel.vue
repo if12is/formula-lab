@@ -2,7 +2,7 @@
 /**
  * The compliance panel of the formula editor. It takes the draft being edited (its lines) and each material's composition,
  * and asks the engine, in the browser, what every rule of the chosen rule sets says (evaluateCompliance), plus the IFRA check of
- * the fragrance oils (checkIfraCompliance). The rule sets that name the formula's product type are chosen at first; any
+ * the fragrance oils (checkIfraCompliance), and shows the separate EDA path notice for disinfectants (DisinfectionNotice). The rule sets that name the formula's product type are chosen at first; any
  * other can be added. The panel only shows: a missing composition is UNKNOWN (never PASS) and says which material to fill in.
  *
  *   <CompliancePanel :draft="draft" :formula="formula" :rule-sets="compliance.ruleSets" :entities="entities" :sources="sources" />
@@ -12,6 +12,7 @@ import { Alert, Button, Card, FormField, MultiSelect, SegmentedControl } from '@
 import { path } from '../../lib/routes';
 import { useI18n } from '../../composables/useI18n';
 import { combinedStatus, complianceState, evaluateIfra, evaluateRuleSet, formulaComposition, gapsByMaterial, ruleSetsForProductType } from '../../lib/compliance';
+import DisinfectionNotice from './DisinfectionNotice.vue';
 import IfraBlock from './IfraBlock.vue';
 import RuleResults from './RuleResults.vue';
 import StatusBadge from '../StatusBadge.vue';
@@ -73,6 +74,9 @@ const compositionGaps = computed(() => gapsByMaterial(evaluations.value.flatMap(
 <template>
     <Card :title="t('compliance.panel.title')" :description="t('compliance.panel.description')" data-testid="compliance-card">
         <div class="flex flex-col gap-5">
+            <!-- N-12: kept apart from the rule results below; the engine decides, nothing here changes the overall status. -->
+            <DisinfectionNotice :formula-id="formula.id" :family-group="formula.family_group ?? null" :saved-claims="formula.claims ?? []" />
+
             <div class="grid gap-4 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
                 <FormField :label="t('compliance.panel.rule_sets')" :hint="t('compliance.panel.rule_sets_hint')">
                     <MultiSelect v-model="selectedIds" :options="options" :placeholder="t('compliance.panel.rule_sets_placeholder')" :aria-label="t('compliance.panel.rule_sets')" data-testid="rule-set-select" />

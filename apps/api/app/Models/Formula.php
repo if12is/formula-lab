@@ -18,13 +18,14 @@ class Formula extends Model
     /** @use HasFactory<FormulaFactory> */
     use HasFactory, HasUuids;
 
-    protected $fillable = ['tenant_id', 'code', 'name', 'product_type', 'product_family_id', 'formula_template_id', 'tier', 'ifra_category', 'tax_mode', 'tax_rate_pct', 'sanad_product_uuid', 'unit_cost', 'unit_cost_source_id', 'unit_cost_confidence'];
+    protected $fillable = ['tenant_id', 'code', 'name', 'product_type', 'product_family_id', 'formula_template_id', 'tier', 'ifra_category', 'claims', 'tax_mode', 'tax_rate_pct', 'sanad_product_uuid', 'unit_cost', 'unit_cost_source_id', 'unit_cost_confidence'];
 
     /** @return array<string, string> */
     protected function casts(): array
     {
         return [
             'tier' => ProductTier::class,
+            'claims' => 'array',
             'tax_mode' => TaxMode::class,
             'unit_cost' => DecimalString::class,
             'unit_cost_confidence' => Confidence::class,

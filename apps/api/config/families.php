@@ -9,6 +9,9 @@
 return [
     'registry_path' => base_path('../../packages/engine/data/product-families.json'),
 
+    /* N-12: the disinfectant flag (which claims put a product on the separate EDA path), validated with the registry. */
+    'disinfectant_flag_path' => base_path('../../packages/engine/data/disinfectant-flag/disinfectant-flag.json'),
+
     'templates_glob' => base_path('../../packages/engine/data/formula-templates/*.json'),
 
     /*

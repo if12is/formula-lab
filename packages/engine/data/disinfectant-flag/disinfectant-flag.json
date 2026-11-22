@@ -1,0 +1,30 @@
+{
+  "id": "disinfectant-flag",
+  "version": "0.1.0",
+  "status": "draft",
+  "sources": [
+    {
+      "id": "plan-00-research-03",
+      "title": "plan/00-research/03-egyptian-regulations.md: EDA guide for licensing factories/lines of disinfectant preparations, EDREX:GL.CALI.009, 2026 edition (project research, not the guide itself)",
+      "confidence": "L7_estimate",
+      "retrievedAt": "2026-11-22"
+    },
+    {
+      "id": "plan-00-research-05",
+      "title": "plan/00-research/05-product-specialties.md section 2: disinfection claims need registration; the program only alerts and never approves (project research, not a regulation)",
+      "confidence": "L7_estimate",
+      "retrievedAt": "2026-11-22"
+    }
+  ],
+  "pathway": {
+    "regulator": "EDA",
+    "guideCode": "EDREX:GL.CALI.009",
+    "guideEdition": "2026",
+    "sourceId": "plan-00-research-03"
+  },
+  "impliedByGroups": ["disinfectants"],
+  "claims": [
+    { "code": "disinfection", "triggersPathway": true, "sourceId": "plan-00-research-05" },
+    { "code": "antibacterial", "triggersPathway": null, "sourceId": "plan-00-research-05" }
+  ]
+}

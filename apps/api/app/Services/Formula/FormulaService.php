@@ -3,6 +3,7 @@
 namespace App\Services\Formula;
 
 use App\Actions\Formula\CreateFormulaAction;
+use App\Actions\Formula\UpdateFormulaClaimsAction;
 use App\Actions\Formula\UpdateFormulaIfraCategoryAction;
 use App\Actions\Formula\UpdateFormulaTaxAction;
 use App\Actions\Formula\UpdateFormulaUnitCostAction;
@@ -24,6 +25,7 @@ final class FormulaService
         private EnsureDefaultTenantAction $ensureDefaultTenant,
         private FormulaVersionService $formulaVersionService,
         private UpdateFormulaIfraCategoryAction $updateIfraCategory,
+        private UpdateFormulaClaimsAction $updateClaims,
         private UpdateFormulaTaxAction $updateTax,
         private UpdateFormulaUnitCostAction $updateUnitCost,
     ) {}
@@ -32,6 +34,16 @@ final class FormulaService
     public function setIfraCategory(Formula $formula, ?string $category): Formula
     {
         return ($this->updateIfraCategory)($formula, $category);
+    }
+
+    /**
+     * The claims a product makes are a fact about the product, not about one version, so they are saved on the formula itself.
+     *
+     * @param  list<string>  $claims
+     */
+    public function setClaims(Formula $formula, array $claims): Formula
+    {
+        return ($this->updateClaims)($formula, $claims);
     }
 
     /**
