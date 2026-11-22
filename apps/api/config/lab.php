@@ -24,6 +24,10 @@ return [
         'stability_4w' => ['units' => ['%'], 'protocol' => null],
         /* Active matter found by MBAS or titration, compared with the computed one (O-05). */
         'active_matter' => ['units' => ['%w/w'], 'protocol' => null],
+        /* Fragrance process losses (L-04): % of the mass entering each stage; they feed the perfume cost. */
+        'ageing_loss' => ['units' => ['%w/w'], 'protocol' => null],
+        'chilling_loss' => ['units' => ['%w/w'], 'protocol' => null],
+        'filtration_loss' => ['units' => ['%w/w'], 'protocol' => null],
     ],
 
     /*
@@ -48,6 +52,9 @@ return [
         'foam' => ['min' => null, 'max' => null],
         'stability_4w' => ['min' => null, 'max' => null],
         'active_matter' => ['min' => null, 'max' => null],
+        'ageing_loss' => ['min' => null, 'max' => null],
+        'chilling_loss' => ['min' => null, 'max' => null],
+        'filtration_loss' => ['min' => null, 'max' => null],
     ],
 
     /*
@@ -84,6 +91,9 @@ return [
     'stability_property' => 'stability_4w',
 
     /* Property keys of the expected-vs-measured comparison (O-05): the lab property and the material property it is computed from. */
+    /* The loss stage of the engine (processLoss) and the lab measurement that carries it (L-04). */
+    'process_loss' => ['ageing' => 'ageing_loss', 'chilling' => 'chilling_loss', 'filtration' => 'filtration_loss'],
+
     'comparison' => ['lab_property' => 'active_matter', 'material_property' => 'active_matter'],
 
     /* Longest text accepted for the free-text fields. */

@@ -110,10 +110,19 @@ return [
         'invalid_input' => 'The value is not a valid number.',
         'table_empty_or_not_loaded' => 'The OIML R 22 table is not loaded.',
     ],
+    'costing' => [
+        'section_empty' => 'This cost section has no items, so it adds nothing.',
+    ],
     'fragrance' => [
         'percents_exceed_100' => 'Oil, fixative and added water add up to 100% or more, leaving nothing for the carrier.',
         'final_ethanol_indicator_only' => 'The final ethanol % by volume is an indicator only: the OIML table is for alcohol and water and the oil is not water.',
         'ifra_unknown' => 'The IFRA check is unknown: there is no valid limit from the fragrance certificate, and that is not a pass.',
+        'loss_must_be_below_100' => 'A stage loss of 100% or more leaves nothing to cost: enter the loss measured in your trial.',
+        'ratio_basis_required' => 'Say where the solubilizer to fragrance ratio comes from: the TDS of the solubilizer or a documented trial.',
+        'clarity_invalid' => 'The clarity observation needs one of clear, hazy or separated, a source and a date.',
+        'clarity_unknown' => 'Clarity is unknown: there is no measured observation of a trial at this ratio, and that is not a pass.',
+        'packaging_item_missing' => 'A perfume needs a bottle, a sprayer and a box: add the missing item with its price.',
+        'cost_excludes_conversion_quality_one_time' => 'This is the direct cost (oil, alcohol, water, fixative, loss, bottle, sprayer, box). Conversion, quality and one-time costs are not included.',
     ],
     'disinfectant' => [
         'no_lines' => 'Add at least one component.',

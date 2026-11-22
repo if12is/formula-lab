@@ -84,6 +84,7 @@ return [
         'mixture_has_no_substance' => 'A mixture is not a single substance. Clear the substance or untick mixture.',
         'value_or_range_required' => 'Enter a value, or a minimum and a maximum.',
         'value_or_range_exclusive' => 'Enter either a single value or a range, not both.',
+        'ifra_category_taken' => 'This certificate already has a limit for this category.',
         'range_order' => 'The minimum must not be above the maximum.',
         'substance_identity_required' => 'Enter at least an INCI name, a CAS number or a name.',
     ],
@@ -119,6 +120,7 @@ return [
         'properties' => 'Properties',
         'prices' => 'Prices',
         'composition' => 'Composition',
+        'fragrance' => 'Fragrance oil',
         'audit' => 'Audit',
     ],
     'composition' => [

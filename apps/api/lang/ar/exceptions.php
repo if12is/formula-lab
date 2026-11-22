@@ -11,6 +11,7 @@ return [
     'workflow_no_completed_trial' => 'لا يمكن اعتماد نسخة دون تجربة معملية مكتملة.',
     'workflow_measurements_missing' => 'الاعتماد يحتاج هذه القياسات من تجربة مكتملة واحدة: :measurements.',
     'workflow_hash_mismatch' => 'سطور هذه النسخة لم تعد تطابق البصمة المسجلة لها، فلا يمكن توقيعها.',
+    'ifra_certificate_has_limits' => 'لا يمكن حذف الشهادة :certificate: يوجد :count حد فئة مقروء منها. احذفها أولاً.',
     'append_only' => 'الجدول :table للإضافة فقط: التعديل والحذف غير مسموحين.',
     'formula_version_lines_required' => 'إصدار التركيبة يحتاج سطراً واحداً على الأقل.',
     'formula_version_reason_required' => 'سبب التعديل مطلوب لكل إصدار بعد الإصدار الأول.',

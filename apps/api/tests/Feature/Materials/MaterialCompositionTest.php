@@ -3,6 +3,7 @@
 namespace Tests\Feature\Materials;
 
 use App\Enums\Confidence;
+use App\Models\IfraCertificate;
 use App\Models\MaterialComposition;
 use App\Models\PropertyValue;
 use App\Models\Source;
@@ -202,18 +203,24 @@ class MaterialCompositionTest extends TestCase
         $this->assertFalse($options[$plain->getKey()]['is_fragrance']);
     }
 
-    public function test_an_ifra_limit_needs_a_category_and_other_properties_ignore_one(): void
+    public function test_an_ifra_limit_needs_a_category_a_certificate_and_other_properties_ignore_both(): void
     {
         $material = TradeMaterial::factory()->create();
         $source = Source::factory()->create();
+        $certificate = IfraCertificate::factory()->create(['trade_material_id' => $material->getKey(), 'source_id' => $source->getKey()]);
         $base = ['unit' => '%w/w', 'source_id' => $source->getKey(), 'confidence' => 'L1_coa_batch', 'valid_from' => '2026-03-01', 'value' => '1.2'];
 
-        $this->post("/materials/{$material->getKey()}/properties", [...$base, 'property' => 'ifra_limit'])->assertSessionHasErrors('category');
-        $this->post("/materials/{$material->getKey()}/properties", [...$base, 'property' => 'ifra_limit', 'category' => 'Cat X'])->assertSessionHasNoErrors();
-        $this->post("/materials/{$material->getKey()}/properties", [...$base, 'property' => 'purity', 'category' => 'ignored'])->assertSessionHasNoErrors();
+        $this->post("/materials/{$material->getKey()}/properties", [...$base, 'property' => 'ifra_limit', 'ifra_certificate_id' => $certificate->getKey()])->assertSessionHasErrors('category');
+        $this->post("/materials/{$material->getKey()}/properties", [...$base, 'property' => 'ifra_limit', 'category' => 'Cat X'])->assertSessionHasErrors('ifra_certificate_id');
+        $this->post("/materials/{$material->getKey()}/properties", [...$base, 'property' => 'ifra_limit', 'category' => 'Cat X', 'ifra_certificate_id' => $certificate->getKey()])->assertSessionHasNoErrors();
+        $this->post("/materials/{$material->getKey()}/properties", [...$base, 'property' => 'purity', 'category' => 'ignored', 'ifra_certificate_id' => $certificate->getKey()])->assertSessionHasNoErrors();
 
-        $this->assertSame('Cat X', PropertyValue::query()->where('property', 'ifra_limit')->firstOrFail()->category);
-        $this->assertNull(PropertyValue::query()->where('property', 'purity')->firstOrFail()->category);
+        $limit = PropertyValue::query()->where('property', 'ifra_limit')->firstOrFail();
+        $this->assertSame('Cat X', $limit->category);
+        $this->assertSame($certificate->getKey(), $limit->ifra_certificate_id);
+        $purity = PropertyValue::query()->where('property', 'purity')->firstOrFail();
+        $this->assertNull($purity->category);
+        $this->assertNull($purity->ifra_certificate_id);
     }
 
     public function test_the_composition_tab_is_one_of_the_tabs(): void

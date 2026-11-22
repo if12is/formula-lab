@@ -67,6 +67,9 @@ return [
         'foam' => 'الرغوة',
         'stability_4w' => 'الثبات بعد 4 أسابيع',
         'active_matter' => 'المادة الفعالة (MBAS أو معايرة)',
+        'ageing_loss' => 'فاقد التعتيق',
+        'chilling_loss' => 'فاقد التبريد',
+        'filtration_loss' => 'فاقد الفلترة',
     ],
     'formula_phase' => [
         'water' => 'الطور المائي',

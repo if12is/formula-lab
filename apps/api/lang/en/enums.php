@@ -67,6 +67,9 @@ return [
         'foam' => 'Foam',
         'stability_4w' => 'Stability at 4 weeks',
         'active_matter' => 'Active matter (MBAS or titration)',
+        'ageing_loss' => 'Ageing loss',
+        'chilling_loss' => 'Chilling loss',
+        'filtration_loss' => 'Filtration loss',
     ],
     'formula_phase' => [
         'water' => 'Water phase',

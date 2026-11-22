@@ -7,7 +7,7 @@
 import { computed, ref, watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import { path } from '../../lib/routes';
-import { Button, DatePicker, FormField, Input, Modal, SegmentedControl, Select } from '@kit';
+import { Alert, Button, DatePicker, FormField, Input, Modal, SegmentedControl, Select } from '@kit';
 import EntitySelect from '../form/EntitySelect.vue';
 import { useI18n } from '../../composables/useI18n';
 import { useProperties } from '../../composables/useProperties';
@@ -19,15 +19,21 @@ const props = defineProps({
     urls: { type: Object, required: true },
     confidenceOptions: { type: Array, required: true },
     sourceKindOptions: { type: Array, required: true },
+    /** The IFRA certificates of this oil: an IFRA limit is read from one of them. */
+    certificates: { type: Array, default: () => [] },
+    /** A certificate to preselect (the add-limit button of its row), and the property it implies. */
+    certificateId: { type: String, default: null },
 });
 
 const open = defineModel('open', { type: Boolean, default: false });
 const { t } = useI18n();
 const { options: propertyOptions, unitsOf } = useProperties();
 
-const blank = () => ({ property: '', value: '', min: '', max: '', unit: '', source_id: null, confidence: undefined, valid_from: null, lot_no: '', category: '' });
+const blank = () => ({ property: '', value: '', min: '', max: '', unit: '', source_id: null, confidence: undefined, valid_from: null, lot_no: '', category: '', ifra_certificate_id: null });
 const form = useForm(blank());
 const mode = ref('value');
+const isIfra = computed(() => form.property === 'ifra_limit');
+const certificateOptions = computed(() => props.certificates.map((certificate) => ({ value: certificate.id, label: certificate.certificate_number })));
 const modes = computed(() => [
     { value: 'value', label: t('materials.property.mode_value') },
     { value: 'range', label: t('materials.property.mode_range') },
@@ -45,6 +51,11 @@ watch(open, (isOpen) => {
         form.defaults(blank()).reset();
         form.clearErrors();
         mode.value = 'value';
+
+        if (props.certificateId) {
+            form.property = 'ifra_limit';
+            form.ifra_certificate_id = props.certificateId;
+        }
     }
 });
 
@@ -57,6 +68,7 @@ function submit() {
             max: mode.value === 'range' ? normalizeDecimalText(data.max) : null,
             confidence: data.confidence ?? null,
             category: data.property === 'ifra_limit' ? data.category : null,
+            ifra_certificate_id: data.property === 'ifra_limit' ? data.ifra_certificate_id : null,
         }))
         .post(path('materials.properties.store', props.materialId), { preserveScroll: true, onSuccess: () => { open.value = false; } });
 }
@@ -77,7 +89,11 @@ function submit() {
                 <Select v-model="form.unit" :options="unitOptions" :placeholder="t('common.select_placeholder')" :disabled="unitOptions.length === 0" />
             </FormField>
 
-            <FormField v-if="form.property === 'ifra_limit'" :label="t('materials.property.category')" :hint="t('materials.property.category_hint')" :error="form.errors.category" required class="sm:col-span-2">
+            <FormField v-if="isIfra" :label="t('fragrance.limit.certificate')" :hint="t('fragrance.limit.certificate_hint')" :error="form.errors.ifra_certificate_id" required class="sm:col-span-2">
+                <Select v-model="form.ifra_certificate_id" :options="certificateOptions" :placeholder="t('common.select_placeholder')" :disabled="certificateOptions.length === 0" />
+            </FormField>
+            <Alert v-if="isIfra && certificateOptions.length === 0" tone="warning" icon="ph:warning" class="sm:col-span-2">{{ t('fragrance.limit.certificate_none') }}</Alert>
+            <FormField v-if="isIfra" :label="t('materials.property.category')" :hint="t('materials.property.category_hint')" :error="form.errors.category" required class="sm:col-span-2">
                 <Input v-model="form.category" ltr maxlength="50" />
             </FormField>
 
@@ -96,16 +112,19 @@ function submit() {
                 </FormField>
             </template>
 
-            <div class="sm:col-span-2">
-                <SourceSelect v-model="form.source_id" :urls="urls" :kind-options="sourceKindOptions" :error="form.errors.source_id" required />
-            </div>
-            <FormField :label="t('materials.fields.confidence')" :hint="t('materials.fields.confidence_hint')" :error="form.errors.confidence" required>
-                <Select v-model="form.confidence" :options="confidenceOptions" :placeholder="t('common.select_placeholder')" />
-            </FormField>
-            <FormField :label="t('materials.property.valid_from')" :hint="t('materials.property.valid_from_hint')" :error="form.errors.valid_from" required>
-                <DatePicker v-model="form.valid_from" />
-            </FormField>
-            <FormField :label="t('materials.property.lot_no')" :hint="t('materials.property.lot_no_hint')" :error="form.errors.lot_no" class="sm:col-span-2">
+            <Alert v-if="isIfra" tone="info" icon="ph:info" class="sm:col-span-2">{{ t('fragrance.limit.from_certificate') }}</Alert>
+            <template v-else>
+                <div class="sm:col-span-2">
+                    <SourceSelect v-model="form.source_id" :urls="urls" :kind-options="sourceKindOptions" :error="form.errors.source_id" required />
+                </div>
+                <FormField :label="t('materials.fields.confidence')" :hint="t('materials.fields.confidence_hint')" :error="form.errors.confidence" required>
+                    <Select v-model="form.confidence" :options="confidenceOptions" :placeholder="t('common.select_placeholder')" />
+                </FormField>
+                <FormField :label="t('materials.property.valid_from')" :hint="t('materials.property.valid_from_hint')" :error="form.errors.valid_from" required>
+                    <DatePicker v-model="form.valid_from" />
+                </FormField>
+            </template>
+            <FormField v-if="!isIfra" :label="t('materials.property.lot_no')" :hint="t('materials.property.lot_no_hint')" :error="form.errors.lot_no" class="sm:col-span-2">
                 <Input v-model="form.lot_no" maxlength="100" ltr />
             </FormField>
         </form>

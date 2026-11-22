@@ -20,7 +20,7 @@ class PropertyValue extends Model
 
     protected $fillable = [
         'tenant_id', 'entity_type', 'entity_id', 'property', 'value', 'min', 'max', 'unit',
-        'source_id', 'confidence', 'valid_from', 'lot_no', 'category', 'created_by',
+        'source_id', 'confidence', 'valid_from', 'lot_no', 'category', 'ifra_certificate_id', 'created_by',
     ];
 
     /** @return array<string, string> */
@@ -39,6 +39,12 @@ class PropertyValue extends Model
     public function entity(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    /** @return BelongsTo<IfraCertificate, $this> The IFRA certificate an `ifra_limit` was read from, when it names one. */
+    public function ifraCertificate(): BelongsTo
+    {
+        return $this->belongsTo(IfraCertificate::class);
     }
 
     /** @return BelongsTo<Source, $this> */

@@ -5,6 +5,7 @@
  *               others lost, and conflicts highlighted
  *   Prices      dated price quotes with source and confidence; the one the engine would cost with is marked
  *   Composition the components (CAS / INCI at an exact % w/w, each with its source) the compliance engine reads
+ *   Fragrance oil  (fragrance oils only) the IFRA certificates with their category limits and what the oil still lacks (L-01)
  *   Audit       every change to the material, its values and its prices, from audit_log
  * Edit and the add forms are modals; the page keeps the tab in its address.
  */
@@ -13,6 +14,8 @@ import { Head, router } from '@inertiajs/vue3';
 import { path } from '../../lib/routes';
 import { Alert, Badge, Button, Card, DataTable, DescriptionList, EmptyState, IconButton, PageHeader, Switch, TabPanel, Tabs, useConfirm } from '@kit';
 import CompositionModal from '../../components/materials/CompositionModal.vue';
+import FragranceOilPanel from '../../components/materials/FragranceOilPanel.vue';
+import IfraCertificateModal from '../../components/materials/IfraCertificateModal.vue';
 import ConfidenceBadge from '../../components/materials/ConfidenceBadge.vue';
 import MaterialFormModal from '../../components/materials/MaterialFormModal.vue';
 import PriceModal from '../../components/materials/PriceModal.vue';
@@ -31,6 +34,7 @@ const props = defineProps({
     properties: { type: Array, required: true },
     prices: { type: Array, required: true },
     composition: { type: Array, required: true },
+    fragrance: { type: Object, default: null },
     audit: { type: Array, required: true },
     tab: { type: String, required: true },
     statusOptions: { type: Array, required: true },
@@ -45,10 +49,13 @@ const { t, has } = useI18n();
 const { confirm } = useConfirm();
 const { label: propertyLabel } = useProperties();
 
-const tab = ref(props.tab);
+// The fragrance tab exists for fragrance oils only; an address naming it on another material opens the first tab.
+const tab = ref(props.tab === 'fragrance' && !props.fragrance ? 'properties' : props.tab);
 const editing = ref(false);
 const addingProperty = ref(false);
 const addingPrice = ref(false);
+const addingCertificate = ref(false);
+const limitCertificate = ref(null);
 const editedComponent = ref(null);
 const componentModal = ref(false);
 
@@ -64,6 +71,7 @@ const tabs = computed(() => [
     { value: 'properties', label: t('materials.tabs.properties'), count: props.properties.length },
     { value: 'prices', label: t('materials.tabs.prices'), count: props.prices.length },
     { value: 'composition', label: t('materials.tabs.composition'), count: props.composition.length },
+    ...(props.fragrance ? [{ value: 'fragrance', label: t('materials.tabs.fragrance'), count: props.fragrance.certificates.length }] : []),
     { value: 'audit', label: t('materials.tabs.audit'), count: props.audit.length },
 ]);
 
@@ -434,6 +442,10 @@ async function removePrice(row) {
                 </template>
             </TabPanel>
 
+            <TabPanel v-if="fragrance" value="fragrance">
+                <FragranceOilPanel :material-id="material.id" :fragrance="fragrance" @add-certificate="addingCertificate = true" @add-limit="(id) => { limitCertificate = id; addingProperty = true; }" />
+            </TabPanel>
+
             <TabPanel value="audit">
                 <p class="mb-4 max-w-prose text-label text-ink-3">{{ t('materials.audit.intro') }}</p>
 
@@ -465,7 +477,11 @@ async function removePrice(row) {
             :urls="urls"
             :confidence-options="confidenceOptions"
             :source-kind-options="sourceKindOptions"
+            :certificates="fragrance?.certificates ?? []"
+            :certificate-id="limitCertificate"
+            @update:open="(isOpen) => { if (!isOpen) limitCertificate = null; }"
         />
+        <IfraCertificateModal v-model:open="addingCertificate" :material-id="material.id" :urls="urls" :confidence-options="confidenceOptions" :source-kind-options="sourceKindOptions" />
         <CompositionModal v-model:open="componentModal" :material-id="material.id" :component="editedComponent" :urls="urls" :confidence-options="confidenceOptions" :source-kind-options="sourceKindOptions" />
         <PriceModal v-model:open="addingPrice" :material-id="material.id" :urls="urls" :currency-options="currencyOptions" :confidence-options="confidenceOptions" :source-kind-options="sourceKindOptions" />
     </div>

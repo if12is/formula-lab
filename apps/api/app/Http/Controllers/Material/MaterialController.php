@@ -26,7 +26,7 @@ use Inertia\Response as InertiaResponse;
 class MaterialController extends Controller
 {
     /** The tabs of the material page; the first is the default. */
-    private const TABS = ['properties', 'prices', 'composition', 'audit'];
+    private const TABS = ['properties', 'prices', 'composition', 'fragrance', 'audit'];
 
     public function __construct(
         private MaterialListService $materialListService,

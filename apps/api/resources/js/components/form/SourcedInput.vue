@@ -33,6 +33,8 @@ const props = defineProps({
     sourceKindOptions: { type: Array, default: null },
     confidenceOptions: { type: Array, default: null },
     labelParams: { type: Object, default: () => ({}) },
+    /** The figure is a finding (a clarity observation) and not a number: only its source, confidence and date are asked for. */
+    valueless: { type: Boolean, default: false },
 });
 
 const field = defineModel({ type: Object, required: true });
@@ -47,7 +49,7 @@ const lookups = computed(() => ({
 const name = computed(() => t(props.labelKey, props.labelParams));
 const unitOptions = computed(() => props.units.map((unit) => ({ value: unit, label: t(`calculators.units.${unit}`) })));
 const suffix = computed(() => (props.units.length === 1 ? t(`calculators.units.${props.units[0]}`) : props.unitKey ? t(props.unitKey) : undefined));
-const sourceMissing = computed(() => field.value.value !== '' && !field.value.sourceId);
+const sourceMissing = computed(() => !props.valueless && field.value.value !== '' && !field.value.sourceId);
 
 // A figure typed or sourced afresh is no longer the material's own.
 function typedValue(value) {
@@ -78,8 +80,8 @@ watch(() => field.value.sourceId, (id) => {
             <Badge v-if="field.fromMaterial" tone="info" size="sm" icon="ph:cube">{{ t('calculators.sourced.from_material', { material: field.fromMaterial.label }) }}</Badge>
         </legend>
         <p v-if="hintKey" class="-mt-1 mb-2 text-label text-ink-3">{{ t(hintKey) }}</p>
-        <div class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)_minmax(0,1fr)]">
-            <div class="flex min-w-0 flex-col gap-3">
+        <div class="grid gap-3" :class="valueless ? 'sm:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]' : 'sm:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)_minmax(0,1fr)]'">
+            <div v-if="!valueless" class="flex min-w-0 flex-col gap-3">
                 <FormField :label="t('calculators.sourced.value_of', { name })">
                     <Input :model-value="field.value" ltr inputmode="decimal" :suffix="suffix" @update:model-value="typedValue" />
                 </FormField>

@@ -94,6 +94,12 @@ class TradeMaterial extends Model
         return $this->hasMany(MaterialComposition::class)->orderBy('created_at')->orderBy('id');
     }
 
+    /** @return HasMany<IfraCertificate, $this> */
+    public function ifraCertificates(): HasMany
+    {
+        return $this->hasMany(IfraCertificate::class)->orderByDesc('issued_on')->orderBy('id');
+    }
+
     /** @return MorphMany<PropertyValue, $this> */
     public function propertyValues(): MorphMany
     {

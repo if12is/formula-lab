@@ -16,5 +16,6 @@ return [
     'available_chlorine' => 'الكلور الفعال',
     'ph' => 'الأس الهيدروجيني (pH)',
     'viscosity' => 'اللزوجة',
+    'flash_point' => 'نقطة الوميض',
     'ifra_limit' => 'حد IFRA للفئة',
 ];

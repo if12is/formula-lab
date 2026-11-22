@@ -248,6 +248,13 @@ return [
         'measured_in' => 'Measured in',
         'use' => 'Use it in litre/kilo',
     ],
+    'process_loss' => [
+        'title' => 'Process losses measured for the version',
+        'description' => 'The newest ageing, chilling and filtration losses measured in the lab for this version. They feed the perfume cost; a stage with no reading stays missing.',
+        'none' => 'No loss has been measured for this stage yet, so the perfume cost needs it typed with its source.',
+        'source_title' => 'Trial :trial loss measurement',
+        'used' => 'Losses from the lab trials of this version are filled in.',
+    ],
     'comparison' => [
         'title' => 'Expected against measured',
         'description' => "The formula's computed active matter (from its line percentages and each material's activity) against what MBAS or titration found. An absolute and a relative difference, and no pass or fail.",

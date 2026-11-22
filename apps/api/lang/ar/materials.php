@@ -84,6 +84,7 @@ return [
         'mixture_has_no_substance' => 'الخليط ليس مادة واحدة. امسح المادة أو ألغِ تحديد خليط.',
         'value_or_range_required' => 'أدخل قيمة، أو حداً أدنى وحداً أقصى.',
         'value_or_range_exclusive' => 'أدخل قيمة واحدة أو نطاقاً، وليس الاثنين معاً.',
+        'ifra_category_taken' => 'هذه الشهادة لها حد لهذه الفئة بالفعل.',
         'range_order' => 'يجب ألا يزيد الحد الأدنى عن الحد الأقصى.',
         'substance_identity_required' => 'أدخل اسم INCI أو رقم CAS أو اسماً على الأقل.',
     ],
@@ -119,6 +120,7 @@ return [
         'properties' => 'الخواص',
         'prices' => 'الأسعار',
         'composition' => 'التركيب',
+        'fragrance' => 'زيت العطر',
         'audit' => 'سجل التعديلات',
     ],
     'composition' => [

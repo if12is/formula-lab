@@ -19,5 +19,7 @@ return [
     'available_chlorine' => ['units' => ['%w/w'], 'label_key' => 'properties.available_chlorine'],
     'ph' => ['units' => ['pH'], 'label_key' => 'properties.ph'],
     'viscosity' => ['units' => ['mPa·s'], 'label_key' => 'properties.viscosity'],
+    /* A fragrance oil's flash point, from its safety data sheet (L-01). */
+    'flash_point' => ['units' => ['°C'], 'label_key' => 'properties.flash_point'],
     'ifra_limit' => ['units' => ['%w/w'], 'label_key' => 'properties.ifra_limit'],
 ];

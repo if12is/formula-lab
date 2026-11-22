@@ -8,6 +8,7 @@ use App\Enums\Confidence;
 use App\Enums\TradeMaterialStatus;
 use App\Models\ComplianceRule;
 use App\Models\Formula;
+use App\Models\IfraCertificate;
 use App\Models\MaterialComposition;
 use App\Models\PropertyValue;
 use App\Models\RuleSet;
@@ -80,7 +81,9 @@ class ComplianceDemoSeeder extends Seeder
         $mystery = $this->material('Zz Cmpl Mystery Material', 'Additive', null, []);
         $ethanol = $this->material('Zz Cmpl Ethanol', 'Solvent', $coa, [['TEST-0002', 'ALCOHOL DENAT.', '100']]);
         $oil = $this->material('Zz Cmpl Fragrance Oil', 'Fragrance', $coa, [['TEST-0005', 'PARFUM', '100']], fragrance: true);
-        PropertyValue::factory()->create(['entity_type' => 'trade_material', 'entity_id' => $oil->getKey(), 'property' => 'ifra_limit', 'category' => 'Demo category A', 'value' => '0.9', 'unit' => '%w/w', 'source_id' => $coa->getKey(), 'confidence' => Confidence::L1CoaBatch, 'valid_from' => '2026-03-01']);
+        // L-01: the limit is read from a certificate of the oil. No density, flash point or price is seeded: the fragrance tab shows them as missing.
+        $certificate = IfraCertificate::factory()->create(['trade_material_id' => $oil->getKey(), 'certificate_number' => 'DEMO-CERT-1', 'ifra_amendment' => 'Demo amendment', 'issuer' => 'Demo lab', 'issued_on' => '2026-03-01', 'source_id' => $coa->getKey(), 'confidence' => Confidence::L1CoaBatch]);
+        PropertyValue::factory()->create(['entity_type' => 'trade_material', 'entity_id' => $oil->getKey(), 'property' => 'ifra_limit', 'category' => 'Demo category A', 'value' => '0.9', 'unit' => '%w/w', 'source_id' => $coa->getKey(), 'confidence' => Confidence::L1CoaBatch, 'valid_from' => '2026-03-01', 'ifra_certificate_id' => $certificate->getKey()]);
 
         $formula = fn (string $code, string $name, string $type, array $lines, ?string $ifra = null): Formula => tap(
             Formula::query()->create(['tenant_id' => $tenant->getKey(), 'code' => $code, 'name' => $name, 'product_type' => $type, 'ifra_category' => $ifra]),

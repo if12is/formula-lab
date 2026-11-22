@@ -27,6 +27,11 @@ return [
         'string' => 'يجب أن يكون حقل :attribute على الأقل :min حرفاً.',
     ],
     'attributes' => [
+        'ifra_certificate_id' => 'شهادة IFRA',
+        'certificate_number' => 'رقم الشهادة',
+        'ifra_amendment' => 'تعديل IFRA',
+        'issuer' => 'الجهة المصدرة',
+        'issued_on' => 'تاريخ الإصدار',
         'is_active' => 'الحالة',
         'unit_cost' => 'تكلفة الوحدة',
         'mode' => 'طريقة التسعير',

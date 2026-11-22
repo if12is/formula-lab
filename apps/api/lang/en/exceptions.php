@@ -11,6 +11,7 @@ return [
     'workflow_no_completed_trial' => 'A version cannot be approved without a completed lab trial.',
     'workflow_measurements_missing' => 'The approval needs these measurements from one completed trial: :measurements.',
     'workflow_hash_mismatch' => 'The lines of this version no longer match its recorded hash, so it cannot be signed.',
+    'ifra_certificate_has_limits' => 'Certificate :certificate cannot be removed: :count category limit(s) are read from it. Remove them first.',
     'append_only' => ':table is append-only: update and delete are not allowed.',
     'formula_version_lines_required' => 'A formula version needs at least one line.',
     'formula_version_reason_required' => 'A reason is required for every version after the first.',

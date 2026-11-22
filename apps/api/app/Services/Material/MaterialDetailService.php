@@ -8,6 +8,7 @@ use App\Models\Price;
 use App\Models\PropertyValue;
 use App\Models\TradeMaterial;
 use App\Services\Currency\ExchangeRateLookupService;
+use App\Services\Fragrance\FragranceProfileService;
 
 /** Read side of one material's page: its facts, sourced properties, price quotes and audit trail. */
 final class MaterialDetailService
@@ -19,10 +20,11 @@ final class MaterialDetailService
         private SubstanceService $substanceService,
         private ExchangeRateLookupService $exchangeRateLookup,
         private MaterialCompositionService $compositionService,
+        private FragranceProfileService $fragranceProfile,
     ) {}
 
     /**
-     * @return array{material: array<string, mixed>, properties: list<array<string, mixed>>, prices: list<array<string, mixed>>, composition: list<array<string, mixed>>, audit: list<array<string, mixed>>}
+     * @return array{material: array<string, mixed>, properties: list<array<string, mixed>>, prices: list<array<string, mixed>>, composition: list<array<string, mixed>>, fragrance: array<string, mixed>|null, audit: list<array<string, mixed>>}
      */
     public function detail(TradeMaterial $material): array
     {
@@ -35,6 +37,7 @@ final class MaterialDetailService
             'properties' => $properties,
             'prices' => $prices,
             'composition' => $this->compositionService->rows($material),
+            'fragrance' => $material->is_fragrance ? $this->fragranceProfile->profile($material) : null,
             'audit' => $this->audit($material),
         ];
     }

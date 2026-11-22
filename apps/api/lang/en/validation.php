@@ -27,6 +27,11 @@ return [
         'string' => 'The :attribute field must be at least :min characters.',
     ],
     'attributes' => [
+        'ifra_certificate_id' => 'IFRA certificate',
+        'certificate_number' => 'certificate number',
+        'ifra_amendment' => 'IFRA amendment',
+        'issuer' => 'issuer',
+        'issued_on' => 'issue date',
         'is_active' => 'status',
         'unit_cost' => 'unit cost',
         'mode' => 'pricing method',

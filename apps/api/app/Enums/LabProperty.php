@@ -16,6 +16,10 @@ enum LabProperty: string
     case Foam = 'foam';
     case Stability4w = 'stability_4w';
     case ActiveMatter = 'active_matter';
+    /* Fragrance process losses (L-04): % of the mass entering the stage, measured on a trial batch. */
+    case AgeingLoss = 'ageing_loss';
+    case ChillingLoss = 'chilling_loss';
+    case FiltrationLoss = 'filtration_loss';
 
     /** @return list<string> The units a value of this property may be stored in. */
     public function units(): array
