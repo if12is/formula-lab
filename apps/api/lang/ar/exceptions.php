@@ -70,4 +70,11 @@ return [
     'price_list_cross_tenant' => 'هذا السجل يتبع مستأجراً آخر.',
     'family_data_invalid' => 'المحرك رفض ملفات بيانات العائلات والقوالب: :details',
     'template_use_rejected' => 'اتعمل فحص القالب وفيه :count مشكلة. صحّحها وجرّب تاني.',
+    'cost_version_not_approved' => 'مينفعش تتعتمد تكلفة :formula: التركيبة ملهاش نسخة معتمدة.',
+    'cost_unit_cost_missing' => 'مينفعش تتعتمد تكلفة :formula: مفيش تكلفة وحدة متسجلة بمصدرها ودرجة ثقتها.',
+    'cost_unit_cost_is_estimate' => 'تكلفة وحدة :formula تقدير بس (L7)، فمينفعش تتعتمد.',
+    'cost_report_incomplete' => 'مينفعش تتعتمد التكلفة وفي تقرير التكلفة فجوات: :gaps.',
+    'publish_blocked' => 'ما اتنشرش. :reasons',
+    'publish_undecidable' => 'ما اتنشرش: قواعد النشر ما قدرتش تتحكم (:detail).',
+    'sanad_no_link' => 'مفيش جهاز Sanad مربوط ولا عنوان Sanad مباشر؛ اربط Sanad الأول.',
 ];

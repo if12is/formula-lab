@@ -12,6 +12,9 @@ return [
     */
     'reapproval_price_change_threshold_pct' => '5',
 
+    /* The actor written on a decision record while nobody is signed in (no accounts yet, U-01). */
+    'anonymous_actor' => 'unauthenticated',
+
     /* Where the shipped decision rule sets live. */
     'rule_sets_path' => base_path('../../packages/engine/data/decisions'),
 ];

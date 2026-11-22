@@ -19,6 +19,7 @@ export const navigation = [
             { id: 'materials', href: '/materials', icon: 'ph:cube', labelKey: 'nav.materials' },
             { id: 'families', href: '/families', icon: 'ph:tree-structure', labelKey: 'nav.families' },
             { id: 'templates', href: '/templates', icon: 'ph:files', labelKey: 'nav.templates' },
+            { id: 'packaging', href: '/packaging', icon: 'ph:package', labelKey: 'nav.packaging' },
             { id: 'calculators', href: '/calculators', icon: 'ph:calculator', labelKey: 'nav.calculators' },
         ],
     },

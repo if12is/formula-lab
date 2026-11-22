@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\ItemKind;
 use App\Enums\TradeMaterialStatus;
 use App\Models\Substance;
 use App\Models\TradeMaterial;
@@ -29,6 +30,12 @@ class TradeMaterialFactory extends Factory
     public function active(): static
     {
         return $this->state(['status' => TradeMaterialStatus::Active]);
+    }
+
+    /** A packaging component of the given kind (no substance); pass `spec` attributes to record its spec. */
+    public function packaging(ItemKind $kind = ItemKind::Container): static
+    {
+        return $this->state(['substance_id' => null, 'item_kind' => $kind, 'status' => TradeMaterialStatus::Active]);
     }
 
     public function mixture(): static

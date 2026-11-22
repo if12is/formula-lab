@@ -35,6 +35,12 @@ return [
         'id_prefix' => 'ob_',
     ],
 
+    /* The finished good published from a formula (contract 4.2). */
+    'finished_good' => [
+        // The selling unit suggested in the publish form; the person can change it.
+        'default_uom' => 'unit',
+    ],
+
     /* Price lists (contract section 8). */
     'price_lists' => [
         // Sanad refuses a request with more item rows than this (8.2); a list that needs more is refused here, never split.

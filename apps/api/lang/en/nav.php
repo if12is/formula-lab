@@ -12,6 +12,7 @@ return [
     'families' => 'Product families',
     'templates' => 'Formula templates',
     'materials' => 'Materials',
+    'packaging' => 'Packaging',
     'calculators' => 'Calculators',
     'compliance' => 'Compliance',
     'lab' => 'Lab',

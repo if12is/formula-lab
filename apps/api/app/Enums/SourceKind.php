@@ -10,6 +10,8 @@ enum SourceKind: string
     use HasOptions;
 
     case SupplierTds = 'supplier_tds';
+    /** A purchase invoice or supplier price document: the title is its number, the url its scan or Sanad link (I-08). */
+    case SupplierInvoice = 'supplier_invoice';
     case Coa = 'coa';
     case Standard = 'standard';
     case RegulatoryDb = 'regulatory_db';

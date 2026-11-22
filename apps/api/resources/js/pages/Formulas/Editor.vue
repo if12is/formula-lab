@@ -242,6 +242,8 @@ const percentValid = (line) => line.percent === '' || isDecimalString(line.perce
             <template v-if="!creating" #actions>
                 <Button v-if="history.length > 1" :href="historyHref" variant="secondary" icon="ph:git-diff">{{ t('formulas.compare.open') }}</Button>
                 <Button :href="path('formulas.versions.label', [formula.id, version.number])" variant="secondary" icon="ph:tag" data-testid="open-label">{{ t('formulas.label.open') }}</Button>
+                <Button :href="path('formulas.cost-report', formula.id)" variant="secondary" icon="ph:receipt" data-testid="open-cost-report">{{ t('cost_report.title') }}</Button>
+                <Button :href="path('formulas.publish', formula.id)" variant="secondary" icon="ph:paper-plane-tilt" data-testid="open-publish">{{ t('cost_report.publish') }}</Button>
                 <Button v-if="!editing" icon="ph:git-branch" @click="startedNewVersion = true">{{ t('formulas.editor.new_version') }}</Button>
             </template>
         </PageHeader>

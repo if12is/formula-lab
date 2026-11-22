@@ -55,6 +55,11 @@ class SanadLinkException extends BusinessRuleViolationException
         return new self(__('exceptions.sanad_kind_not_publishable', ['kind' => $kind]));
     }
 
+    public static function noLink(): self
+    {
+        return new self(__('exceptions.sanad_no_link'));
+    }
+
     public static function tenantRequired(): self
     {
         return new self(__('exceptions.sanad_tenant_required'));

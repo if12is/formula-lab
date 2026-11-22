@@ -15,6 +15,8 @@ Route::put('/settings/display-currency', [SettingsController::class, 'displayCur
 
 require __DIR__.'/formulation.php';
 require __DIR__.'/families.php';
+require __DIR__.'/packaging.php';
+require __DIR__.'/costing.php';
 require __DIR__.'/lab.php';
 require __DIR__.'/pricing.php';
 require __DIR__.'/compliance.php';

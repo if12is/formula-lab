@@ -12,6 +12,7 @@ return [
     'families' => 'عائلات المنتجات',
     'templates' => 'قوالب التركيبات',
     'materials' => 'الخامات',
+    'packaging' => 'التغليف',
     'calculators' => 'الحاسبات',
     'compliance' => 'المطابقة',
     'lab' => 'المعمل',

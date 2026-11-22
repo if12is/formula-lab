@@ -70,4 +70,11 @@ return [
     'price_list_cross_tenant' => 'This record belongs to another tenant.',
     'family_data_invalid' => 'The engine rejected the family and template data files: :details',
     'template_use_rejected' => 'The template was checked and :count problems were found. Fix them and try again.',
+    'cost_version_not_approved' => 'The cost of :formula cannot be approved: the formula has no approved version.',
+    'cost_unit_cost_missing' => 'The cost of :formula cannot be approved: no unit cost with its source and confidence is recorded.',
+    'cost_unit_cost_is_estimate' => 'The unit cost of :formula is only an estimate (L7), so it cannot be approved.',
+    'cost_report_incomplete' => 'The cost cannot be approved while the cost report has gaps: :gaps.',
+    'publish_blocked' => 'Not published. :reasons',
+    'publish_undecidable' => 'Not published: the publish rules could not be judged (:detail).',
+    'sanad_no_link' => 'There is no linked Sanad device and no direct Sanad address; link Sanad first.',
 ];

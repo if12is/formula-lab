@@ -9,7 +9,7 @@ const bar = (page: Page) => page.locator('nav.kit-topnav');
 
 // What config/navigation.js promises: [group label, its items], in Arabic.
 const GROUPS: Array<[string, string[]]> = [
-  ['التركيبات', ['التركيبات', 'الخامات', 'الحاسبات']],
+  ['التركيبات', ['التركيبات', 'الخامات', 'عائلات المنتجات', 'قوالب التركيبات', 'التغليف', 'الحاسبات']],
   ['الجودة', ['المطابقة', 'المعمل', 'بروتوكولات الاختبار']],
   ['التشغيل', ['قوائم الأسعار', 'الإنتاج']],
   ['النظام', ['الإعدادات', 'أسعار الصرف']],
@@ -65,10 +65,10 @@ test.describe('top navigation', () => {
       const menu = page.getByRole('menu');
       await expect(menu.getByRole('menuitem')).toHaveCount(items.length);
       for (const item of items) {
-        await expect(menu.getByRole('menuitem', { name: item })).toBeVisible();
+        await expect(menu.getByRole('menuitem', { name: item, exact: true })).toBeVisible();
       }
       if (label === 'التركيبات') {
-        await expect(menu.getByRole('menuitem', { name: 'التركيبات' })).toHaveAttribute('aria-current', 'page');
+        await expect(menu.getByRole('menuitem', { name: 'التركيبات', exact: true })).toHaveAttribute('aria-current', 'page');
       }
       await page.keyboard.press('Escape');
       await expect(trigger).toBeFocused();

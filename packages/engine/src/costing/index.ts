@@ -5,3 +5,4 @@ export * from './quality';
 export * from './unit-cost';
 export * from './exposure';
 export * from './sku-compare';
+export * from './cost-report';

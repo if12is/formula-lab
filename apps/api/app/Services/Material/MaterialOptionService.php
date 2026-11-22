@@ -29,6 +29,7 @@ final class MaterialOptionService
         $pattern = '%'.addcslashes($term, '\\%_').'%';
 
         $materials = TradeMaterial::query()
+            ->ingredients()
             ->with('substance')
             ->when($term !== '', fn ($query) => $query->where(fn ($group) => $group
                 ->where('trade_name', 'ilike', $pattern)

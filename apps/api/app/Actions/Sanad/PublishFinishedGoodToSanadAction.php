@@ -27,7 +27,7 @@ final class PublishFinishedGoodToSanadAction
     ) {}
 
     /**
-     * @param  array{uom: string, cost_price: string, sell_price?: string|null, sku?: string|null, name_en?: string|null}  $details
+     * @param  array{uom: string, cost_price: string, sell_price?: string|null, wholesale_price?: string|null, guide_price?: string|null, sku?: string|null, barcode?: string|null, name_en?: string|null}  $details
      *
      * @throws SanadLinkException When the unit is missing, a price is not a decimal string or the tenant does not match.
      * @throws InvalidTaxSettingException When no tax was chosen, or the chosen rate has no regime in force.
