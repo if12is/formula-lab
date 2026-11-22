@@ -3,12 +3,13 @@
  * the structure. Every rHLB and Davies group number is a sourced input; the engine returns bare values here, so each
  * is wrapped as a trace node over the leaves it came from (see trace.js).
  */
-import { blendEmulsifiers, daviesHLB, griffinHLB, requiredHLB } from '@fl/engine';
+import { IONICITIES, blendEmulsifiers, daviesHLB, emulsifierSystem, griffinHLB, requiredHLB } from '@fl/engine';
 import { EMPTY, decimalOrNull, isBlank, outcomeOf, row, toQty, typed } from './common';
 import { blankSourced, toSourced } from './sourced';
 import { leaf, node, sourcedLeaf } from './trace';
 
-export const MODES = ['required', 'blend', 'griffin', 'davies'];
+export const MODES = ['required', 'blend', 'system', 'griffin', 'davies'];
+export { IONICITIES };
 const SCOPE = 'hlb';
 
 export const blankOilLine = (key) => ({ key, material: null, mass: '', hlb: blankSourced('') });
@@ -17,7 +18,8 @@ export const blankGroup = (key) => ({ key, group: '', count: '1', h: blankSource
 export const blankHlb = (firstKey) => ({
     mode: MODES[0],
     required: { lines: [blankOilLine(firstKey)] },
-    blend: { target: '', low: blankSourced(''), high: blankSourced(''), lowMaterial: null, highMaterial: null, total: { value: '', unit: 'g' } },
+    // The HLB blend rule is for non-ionic emulsifiers, so that is what each one starts as; the formulator declares otherwise and the engine refuses it.
+    blend: { target: '', low: blankSourced(''), high: blankSourced(''), lowMaterial: null, highMaterial: null, lowIonicity: 'nonionic', highIonicity: 'nonionic', total: { value: '', unit: 'g' } },
     griffin: { hydrophilic: '', total: '' },
     davies: { groups: [blankGroup(firstKey)] },
 });
@@ -61,7 +63,7 @@ export function runBlend(state) {
     const lowId = state.lowMaterial?.label ?? 'low';
     const highId = state.highMaterial?.label ?? 'high';
     const total = toQty(state.total);
-    const result = blendEmulsifiers(typed(state.target), { materialId: lowId, hlb: toSourced(state.low) ?? { value: '' } }, { materialId: highId, hlb: toSourced(state.high) ?? { value: '' } }, total);
+    const result = blendEmulsifiers(typed(state.target), { materialId: lowId, hlb: toSourced(state.low) ?? { value: '' }, ionicity: state.lowIonicity }, { materialId: highId, hlb: toSourced(state.high) ?? { value: '' }, ionicity: state.highIonicity }, total);
 
     return outcomeOf(result, (blend) => {
         const inputs = [
@@ -76,6 +78,46 @@ export function runBlend(state) {
             row('mass_low', mass(lowId, blend.low.mass, blend.fractionLow), 3, { primary: true, params: { name: lowId } }),
             row('fraction_high', node('div', 'f_high = (HLB_t − HLB_low) / (HLB_high − HLB_low)', blend.fractionHigh, '', inputs), 4, { params: { name: highId } }),
             row('fraction_low', node('sub', 'f_low = 1 − f_high', blend.fractionLow, '', inputs), 4, { params: { name: lowId } }),
+        ];
+    }, SCOPE);
+}
+
+/** Oil phase to emulsifier blend (M-03): the required HLB of the oil lines, then the non-ionic pair that reaches it. */
+export function runSystem(state, fallbackOf) {
+    const oil = state.required.lines;
+    const blend = state.blend;
+
+    if (oil.every((line) => isBlank(line.mass) && isBlank(line.hlb.value)) && isBlank(blend.low.value) && isBlank(blend.high.value) && isBlank(blend.total.value)) {
+        return EMPTY;
+    }
+
+    const ids = names(oil, fallbackOf);
+    const lines = oil.map((line, index) => ({ materialId: ids[index], mass: typed(line.mass), phase: 'oil', requiredHLB: toSourced(line.hlb) }));
+    const lowId = blend.lowMaterial?.label ?? 'low';
+    const highId = blend.highMaterial?.label ?? 'high';
+    const total = toQty(blend.total);
+    const result = emulsifierSystem({
+        oilLines: lines,
+        low: { materialId: lowId, hlb: toSourced(blend.low) ?? { value: '' }, ionicity: blend.lowIonicity },
+        high: { materialId: highId, hlb: toSourced(blend.high) ?? { value: '' }, ionicity: blend.highIonicity },
+        totalMass: total,
+    });
+
+    return outcomeOf(result, (system) => {
+        const oilLeaves = lines.flatMap((line) => [
+            leaf(`${line.materialId} mass`, line.mass, 'g'),
+            sourcedLeaf(`${line.materialId} required HLB`, line.requiredHLB, 'HLB'),
+        ]);
+        const required = node('div', 'Required HLB = Σ(m × rHLB) / Σm', system.requiredHLB, 'HLB', oilLeaves);
+        const inputs = [required, sourcedLeaf(`${lowId} HLB`, toSourced(blend.low), 'HLB'), sourcedLeaf(`${highId} HLB`, toSourced(blend.high), 'HLB')];
+        const mass = (id, quantity, fraction) => node('mul', `${id} mass = M × f`, quantity.value.toFixed(), quantity.unit, [leaf('Emulsifier total (M)', total.value.toFixed(), total.unit), node('div', 'Fraction f from the HLB mixing rule', fraction, '', inputs)]);
+
+        return [
+            row('required_hlb', required, 2),
+            row('mass_high', mass(highId, system.blend.high.mass, system.blend.fractionHigh), 3, { primary: true, params: { name: highId } }),
+            row('mass_low', mass(lowId, system.blend.low.mass, system.blend.fractionLow), 3, { primary: true, params: { name: lowId } }),
+            row('fraction_high', node('div', 'f_high = (HLB_t − HLB_low) / (HLB_high − HLB_low)', system.blend.fractionHigh, '', inputs), 4, { params: { name: highId } }),
+            row('fraction_low', node('sub', 'f_low = 1 − f_high', system.blend.fractionLow, '', inputs), 4, { params: { name: lowId } }),
         ];
     }, SCOPE);
 }
@@ -109,6 +151,7 @@ export function runHlb(state, fallbackOf) {
     return {
         required: () => runRequired(state.required, fallbackOf),
         blend: () => runBlend(state.blend),
+        system: () => runSystem(state, fallbackOf),
         griffin: () => runGriffin(state.griffin),
         davies: () => runDavies(state.davies),
     }[state.mode]();

@@ -100,9 +100,9 @@
 99,L-08,L,agent,,todo,معطر جل وسيارة ومفارش
 100,L-09,L,agent,N-10,partial,فحص IFRA: نسبة العطر في المنتج ≤ حد شهادة العطر لفئة المنتج
 101,L-10,L,agent,I-01,todo,تكلفة عطر كاملة: زيت + كحول (landed) + فاقد + فارغ زجاج + بخاخ + علبة
-102,M-01,M,agent,,todo,محرر بالأطوار: مائي، زيتي، تبريد (cool-down) + درجات حرارة الإضافة
-103,M-02,M,agent,,todo,تصنيف وظيفي: humectant، emollient، occlusive، emulsifier، thickener، preservative، active، fragrance
-104,M-03,M,agent,F-08,todo,Required HLB لطور الزيت + مزج المستحلبات (للأنظمة غير الأيونية بس)
+102,M-01,M,agent,,done,محرر بالأطوار: مائي، زيتي، تبريد (cool-down) + درجات حرارة الإضافة
+103,M-02,M,agent,,done,تصنيف وظيفي: humectant، emollient، occlusive، emulsifier، thickener، preservative، active، fragrance
+104,M-03,M,agent,F-08,done,Required HLB لطور الزيت + مزج المستحلبات (للأنظمة غير الأيونية بس)
 105,M-04,M,agent,E-03,todo,قيود frame formulation حسب نوع المنتج (كريم، لوشن، جل، زبدة)
 106,M-05,M,agent,N-03,todo,حدود الحوافظ (CosIng Annex V) وأي active مقيد (Annex III)
 107,M-06,M,agent,,todo,Templates: كريم وش، لوشن جسم، بودي بتر، جل مرطب، كريم يد، مرطب شعر

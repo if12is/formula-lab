@@ -33,7 +33,9 @@ function choose(side, value) {
     );
 }
 
-const phaseText = (phase) => phase ?? t('common.no_data');
+const PHASES = ['water', 'oil', 'cool_down'];
+// A known phase reads by its name; one typed before phases were a fixed list is shown as it was typed.
+const phaseText = (phase) => (phase === null || phase === undefined ? t('common.no_data') : PHASES.includes(phase) ? t(`enums.formula_phase.${phase}`) : phase);
 const metaValue = (key, value) => {
     if (value === null || value === undefined) {
         return t('common.no_data');

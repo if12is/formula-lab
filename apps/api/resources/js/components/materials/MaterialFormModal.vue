@@ -11,7 +11,7 @@
 import { computed, ref, watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import { path } from '../../lib/routes';
-import { Alert, Button, FormField, Input, Modal, Select, Switch, toast } from '@kit';
+import { Alert, Button, FormField, Input, Modal, MultiSelect, Select, Switch, toast } from '@kit';
 import { useI18n } from '../../composables/useI18n';
 import { useSuggestions } from '../../composables/useSuggestions';
 import { normalizeDecimalText } from '../../lib/engine';
@@ -23,6 +23,8 @@ const props = defineProps({
     material: { type: Object, default: null },
     urls: { type: Object, required: true },
     statusOptions: { type: Array, default: () => [] },
+    /** The functional classes (M-02) to choose from; without them the field is not shown. */
+    functionalClassOptions: { type: Array, default: () => [] },
 });
 
 const open = defineModel('open', { type: Boolean, default: false });
@@ -34,6 +36,7 @@ const initial = () => ({
     trade_name: props.material?.trade_name ?? '',
     grade: props.material?.grade ?? '',
     function: props.material?.function ?? '',
+    functional_classes: props.material?.functional_classes ?? [],
     substance_id: props.material?.substance?.id ?? null,
     is_mixture: props.material?.is_mixture ?? false,
     status: props.material?.status ?? 'draft',
@@ -113,6 +116,10 @@ async function submitFromEditor() {
             <FormField :label="t('materials.fields.function')" :hint="t('materials.fields.function_hint')" :error="form.errors.function">
                 <Input v-model="form.function" maxlength="255" list="material-functions" @focus="load" />
                 <datalist id="material-functions"><option v-for="suggestion in suggestions" :key="suggestion" :value="suggestion" /></datalist>
+            </FormField>
+
+            <FormField v-if="functionalClassOptions.length" :label="t('materials.fields.functional_classes')" :hint="t('materials.fields.functional_classes_hint')" :error="form.errors.functional_classes" class="sm:col-span-2">
+                <MultiSelect v-model="form.functional_classes" :options="functionalClassOptions" :placeholder="t('materials.fields.functional_classes_placeholder')" :aria-label="t('materials.fields.functional_classes')" data-testid="functional-classes" />
             </FormField>
 
             <div class="sm:col-span-2">

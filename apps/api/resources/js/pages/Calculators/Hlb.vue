@@ -1,12 +1,12 @@
 <script setup>
 /**
- * HLB (F-08), four ways in one page: the required HLB of an oil phase, the split of two emulsifiers for a target HLB, and
- * Griffin's and Davies' HLB of a molecule. Every rHLB, emulsifier HLB and Davies group number is a sourced input: the engine
+ * HLB (F-08, M-03), five ways in one page: the required HLB of an oil phase, the split of two non-ionic emulsifiers for a target HLB,
+ * both in one step (the oil phase decides the target), and Griffin's and Davies' HLB of a molecule. Every rHLB, emulsifier HLB and Davies group number is a sourced input: the engine
  * embeds no table. The values are the engine's; this page only wraps each in a trace for the explain panel. A required HLB
  * the lab already tested on a formula carries a "tested on" tag (O-07), a record only: it changes nothing in the sum.
  */
 import { computed, reactive } from 'vue';
-import { FormField, Input, SegmentedControl } from '@kit';
+import { FormField, Input, SegmentedControl, Select } from '@kit';
 import CalculatorLayout from '../../components/calculators/CalculatorLayout.vue';
 import LineList from '../../components/calculators/LineList.vue';
 import MaterialPicker from '../../components/calculators/MaterialPicker.vue';
@@ -15,7 +15,7 @@ import QuantityInput from '../../components/form/QuantityInput.vue';
 import SourcedInput from '../../components/form/SourcedInput.vue';
 import TestedOnBadge from '../../components/lab/TestedOnBadge.vue';
 import { useI18n } from '../../composables/useI18n';
-import { MODES, blankGroup, blankHlb, blankOilLine, runHlb } from '../../lib/calculators/hlb';
+import { IONICITIES, MODES, blankGroup, blankHlb, blankOilLine, runHlb } from '../../lib/calculators/hlb';
 import { fillFromMaterial, sourcesOf } from '../../lib/calculators/sourced';
 import { tagsFor } from '../../lib/lab/testedOn';
 import { path } from '../../lib/routes';
@@ -53,6 +53,9 @@ const sources = computed(() => sourcesOf([
 ], hrefOf));
 
 const modeOptions = computed(() => MODES.map((mode) => ({ value: mode, label: t(`calculators.hlb.modes.${mode}`) })));
+const ionicityOptions = computed(() => IONICITIES.map((value) => ({ value, label: t(`calculators.hlb.ionicity.${value}`) })));
+const withOil = computed(() => state.mode === 'required' || state.mode === 'system');
+const withBlend = computed(() => state.mode === 'blend' || state.mode === 'system');
 const addOil = () => state.required.lines.push(blankOilLine(nextKey()));
 const removeOil = (key) => { state.required.lines = state.required.lines.filter((line) => line.key !== key); };
 const addGroup = () => state.davies.groups.push(blankGroup(nextKey()));
@@ -63,10 +66,10 @@ const pickHlb = (field, option) => fillFromMaterial(field, option, 'hlb');
 
 <template>
     <CalculatorLayout v-bind="$props" :outcome="outcome" :entities="entities" :sources="sources">
-        <SegmentedControl v-model="state.mode" :options="modeOptions" :aria-label="t('calculators.hlb.mode')" block />
+        <div class="overflow-x-auto"><SegmentedControl v-model="state.mode" :options="modeOptions" :aria-label="t('calculators.hlb.mode')" block /></div>
 
-        <template v-if="state.mode === 'required'">
-            <p class="text-label text-ink-3">{{ t('calculators.hlb.hints.required') }}</p>
+        <template v-if="withOil">
+            <p class="text-label text-ink-3">{{ t(state.mode === 'system' ? 'calculators.hlb.hints.system_oil' : 'calculators.hlb.hints.required') }}</p>
             <LineList :lines="state.required.lines" add-label-key="calculators.hlb.add_oil" remove-label-key="calculators.hlb.remove_oil" @add="addOil" @remove="removeOil">
                 <template #line="{ line, index }">
                     <div class="grid gap-3 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
@@ -79,23 +82,29 @@ const pickHlb = (field, option) => fillFromMaterial(field, option, 'hlb');
             </LineList>
         </template>
 
-        <template v-else-if="state.mode === 'blend'">
-            <p class="text-label text-ink-3">{{ t('calculators.hlb.hints.blend') }}</p>
-            <DecimalField v-model="state.blend.target" label-key="calculators.hlb.fields.target" />
+        <template v-if="withBlend">
+            <p class="text-label text-ink-3">{{ t(state.mode === 'system' ? 'calculators.hlb.hints.system_blend' : 'calculators.hlb.hints.blend') }}</p>
+            <DecimalField v-if="state.mode === 'blend'" v-model="state.blend.target" label-key="calculators.hlb.fields.target" />
             <MaterialPicker v-model="state.blend.lowMaterial" label-key="calculators.hlb.fields.low_material" @picked="(option) => pickHlb(state.blend.low, option)" />
             <SourcedInput v-model="state.blend.low" label-key="calculators.hlb.fields.low_hlb" unit-key="calculators.units.HLB" />
+            <FormField :label="t('calculators.hlb.fields.low_ionicity')" :hint="t('calculators.hlb.hints.ionicity')">
+                <Select v-model="state.blend.lowIonicity" :options="ionicityOptions" data-testid="low-ionicity" />
+            </FormField>
             <MaterialPicker v-model="state.blend.highMaterial" label-key="calculators.hlb.fields.high_material" @picked="(option) => pickHlb(state.blend.high, option)" />
             <SourcedInput v-model="state.blend.high" label-key="calculators.hlb.fields.high_hlb" unit-key="calculators.units.HLB" />
+            <FormField :label="t('calculators.hlb.fields.high_ionicity')" :hint="t('calculators.hlb.hints.ionicity')">
+                <Select v-model="state.blend.highIonicity" :options="ionicityOptions" data-testid="high-ionicity" />
+            </FormField>
             <QuantityInput v-model="state.blend.total" label-key="calculators.hlb.fields.total" :units="['g', 'kg']" />
         </template>
 
-        <template v-else-if="state.mode === 'griffin'">
+        <template v-if="state.mode === 'griffin'">
             <p class="text-label text-ink-3">{{ t('calculators.hlb.hints.griffin') }}</p>
             <DecimalField v-model="state.griffin.hydrophilic" label-key="calculators.hlb.fields.hydrophilic" hint-key="calculators.hlb.hints.griffin_unit" />
             <DecimalField v-model="state.griffin.total" label-key="calculators.hlb.fields.molar_total" />
         </template>
 
-        <template v-else>
+        <template v-else-if="state.mode === 'davies'">
             <p class="text-label text-ink-3">{{ t('calculators.hlb.hints.davies') }}</p>
             <LineList :lines="state.davies.groups" add-label-key="calculators.hlb.add_group" remove-label-key="calculators.hlb.remove_group" @add="addGroup" @remove="removeGroup">
                 <template #line="{ line, index }">

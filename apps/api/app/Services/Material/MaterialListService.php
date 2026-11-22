@@ -3,6 +3,7 @@
 namespace App\Services\Material;
 
 use App\Enums\Confidence;
+use App\Enums\FunctionalClass;
 use App\Enums\TradeMaterialStatus;
 use App\Http\Filters\ListQuery;
 use App\Models\Price;
@@ -24,6 +25,7 @@ final class MaterialListService
             ->search(['trade_name', 'grade', 'substance.inci', 'substance.cas'], 'materials.search_placeholder')
             ->select('status', TradeMaterialStatus::class, labelKey: 'materials.filters.status')
             ->select('function', optionsUrl: $functionOptionsUrl, labelKey: 'materials.filters.function')
+            ->select('functional_class', FunctionalClass::class, labelKey: 'materials.filters.functional_class', using: fn (Builder $query, string $class) => $query->whereJsonContains('trade_materials.functional_classes', $class))
             ->boolean('has_sanad_link', labelKey: 'materials.filters.has_sanad_link')
             ->select('worst_price_confidence', Confidence::class, labelKey: 'materials.filters.worst_price_confidence')
             ->boolean('is_mixture', labelKey: 'materials.filters.is_mixture')
@@ -34,6 +36,7 @@ final class MaterialListService
                 'trade_name' => $material->trade_name,
                 'grade' => $material->grade,
                 'function' => $material->function,
+                'functional_classes' => $material->functional_classes ?? [],
                 'status' => $material->status->value,
                 'is_mixture' => $material->is_mixture,
                 'has_sanad_link' => (bool) $material->getAttribute('has_sanad_link'),
@@ -65,6 +68,7 @@ final class MaterialListService
     private function listing(): Builder
     {
         $derived = TradeMaterial::query()
+            ->ingredients()
             ->select('trade_materials.*')
             ->selectRaw('(trade_materials.sanad_product_uuid is not null) as has_sanad_link')
             ->selectSub(

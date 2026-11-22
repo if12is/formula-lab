@@ -3,7 +3,7 @@
  * arithmetic on a formula or a price: every figure shown comes out of the engine (draftSummary, balanceQs,
  * calculate, resolveValue). This file only prepares what the engine takes and sorts what it gives back.
  */
-import { ENGINE_VERSION, balanceQs, calculate, convertFromEgp, convertMoney, draftSummary, inputLeaf, isDecimalString, materialUsdExposure, productCostBreakdown, qty, resolveValue, sourcedEgp, traced } from '@fl/engine';
+import { ENGINE_VERSION, balanceQs, calculate, convertFromEgp, convertMoney, draftSummary, inputLeaf, isDecimalString, materialUsdExposure, phaseSummary, productCostBreakdown, qty, resolveValue, sourcedEgp, traced, validatePhases } from '@fl/engine';
 
 /** Arabic-Indic and Persian digits, and the Arabic decimal separators, typed into a number field become plain ASCII text. */
 export function normalizeDecimalText(text) {
@@ -89,6 +89,38 @@ export function engineLines(lines) {
     }
 
     return inputs;
+}
+
+/**
+ * The phases of the draft (M-01) as the engine judges them: the sum of each phase (phaseSummary) and what validatePhases
+ * refuses. A q.s. line without a share is balanced first, like cost and compliance. `issues` is keyed by line key.
+ * Phases are optional: with no phase on any line there is nothing to show (`active` false) and nothing is refused.
+ */
+export function phaseCheck(lines) {
+    const balanced = engineLines(lines);
+    const used = lines.filter((line) => line.material_id || line.percent !== '');
+    const phased = used.map((line) => ({
+        materialId: engineId(line),
+        percentWW: balanced[lines.indexOf(line)].percentWW,
+        phase: line.phase || null,
+        additionTempC: line.addition_temp_c || null,
+    }));
+    const validation = validatePhases(phased);
+    const issues = {};
+
+    for (const issue of validation.ok ? [] : validation.errors) {
+        for (const owner of used.filter((line) => engineId(line) === issue.materialId)) {
+            (issues[owner.key] ??= []).push(issue);
+        }
+    }
+
+    return {
+        active: used.some((line) => line.phase),
+        summary: validation.ok ? validation.value : phaseSummary(phased),
+        issues,
+        formulaIssues: validation.ok ? [] : validation.errors.filter((issue) => issue.materialId === undefined),
+        ok: validation.ok,
+    };
 }
 
 /**

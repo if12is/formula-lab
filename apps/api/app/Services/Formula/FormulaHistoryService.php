@@ -56,6 +56,7 @@ final class FormulaHistoryService
             'percent_ww' => $canonical['percentWw'],
             'is_qs' => $canonical['isQs'],
             'phase' => $canonical['phase'],
+            'addition_temp_c' => $canonical['additionTempC'] ?? null,
         ];
 
         $added = array_map($line, $diff['added']);

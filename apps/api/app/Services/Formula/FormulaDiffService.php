@@ -81,7 +81,13 @@ final class FormulaDiffService
             'percent_ww' => $this->change($this->percent($a), $this->percent($b)),
             'is_qs' => $this->change($a->is_qs, $b->is_qs),
             'phase' => $this->change($a->phase, $b->phase),
+            'addition_temp_c' => $this->change($this->temperature($a), $this->temperature($b)),
         ]);
+    }
+
+    private function temperature(FormulaLine $line): ?string
+    {
+        return $line->addition_temp_c === null ? null : DecimalNormalizer::normalize($line->addition_temp_c);
     }
 
     private function percent(FormulaLine $line): ?string

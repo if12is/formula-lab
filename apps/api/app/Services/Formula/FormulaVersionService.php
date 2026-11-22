@@ -17,8 +17,8 @@ final class FormulaVersionService
     ) {}
 
     /**
-     * @param  list<array{trade_material_id: string, percent_ww?: string|int|null, is_qs?: bool, phase?: string|null}>  $lines
-     *                                                                                                                          Order defines line_no (1-based); percent_ww is null only for a q.s. line.
+     * @param  list<array{trade_material_id: string, percent_ww?: string|int|null, is_qs?: bool, phase?: string|null, addition_temp_c?: string|null}>  $lines
+     *                                                                                                                                                         Order defines line_no (1-based); percent_ww is null only for a q.s. line.
      * @param  FormulaVersion|null  $basedOn  The version the new one was edited from (its parent); the latest version when omitted.
      *
      * @throws InvalidFormulaVersionException When there are no lines, or a version after the first has no reason.

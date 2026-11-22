@@ -54,7 +54,7 @@ final class FormulaService
      * Creates the formula and its first (draft) version in one transaction.
      *
      * @param  array{code: string, name: string, product_type: string, tier?: string|null}  $meta
-     * @param  list<array{trade_material_id: string, percent_ww?: string|null, is_qs?: bool, phase?: string|null}>  $lines
+     * @param  list<array{trade_material_id: string, percent_ww?: string|null, is_qs?: bool, phase?: string|null, addition_temp_c?: string|null}>  $lines
      * @return array{formula: Formula, version: FormulaVersion}
      *
      * @throws InvalidFormulaVersionException When there are no lines.

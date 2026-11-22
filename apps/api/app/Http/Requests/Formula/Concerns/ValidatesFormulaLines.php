@@ -21,6 +21,8 @@ trait ValidatesFormulaLines
             'lines.*.percent_ww' => ['nullable', 'string', 'regex:/^\d{1,3}(\.\d{1,9})?$/'],
             'lines.*.is_qs' => ['boolean'],
             'lines.*.phase' => ['nullable', 'string', 'max:100'],
+            // Degrees Celsius, a plain decimal; whether it makes sense for the phase is the engine's check, not a database limit.
+            'lines.*.addition_temp_c' => ['nullable', 'string', 'regex:/^\d{1,3}(\.\d{1,2})?$/'],
         ];
     }
 
@@ -52,7 +54,7 @@ trait ValidatesFormulaLines
     /**
      * The validated lines in the shape of FormulaVersionService.
      *
-     * @return list<array{trade_material_id: string, percent_ww: string|null, is_qs: bool, phase: string|null}>
+     * @return list<array{trade_material_id: string, percent_ww: string|null, is_qs: bool, phase: string|null, addition_temp_c: string|null}>
      */
     public function lineData(): array
     {
@@ -61,6 +63,7 @@ trait ValidatesFormulaLines
             'percent_ww' => $line['percent_ww'] ?? null,
             'is_qs' => (bool) ($line['is_qs'] ?? false),
             'phase' => $line['phase'] ?? null,
+            'addition_temp_c' => $line['addition_temp_c'] ?? null,
         ], array_values($this->validated('lines')));
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Services\Formula;
 
 use App\Actions\Formula\RecordFormulaBalanceAction;
+use App\Enums\FormulaPhase;
 use App\Enums\FormulaStatus;
 use App\Enums\ProductTier;
 use App\Exceptions\Domain\InvalidFormulaVersionException;
@@ -97,6 +98,7 @@ final class FormulaEditorService
                 'percent_ww' => $line->percent_ww === null ? '' : $this->plain($line->percent_ww),
                 'is_qs' => $line->is_qs,
                 'phase' => $line->phase ?? '',
+                'addition_temp_c' => $line->addition_temp_c === null ? '' : $this->plain($line->addition_temp_c),
             ])->all(),
             'materials' => (object) $this->materialOptionService->forMaterials($materials),
         ];
@@ -105,7 +107,7 @@ final class FormulaEditorService
     /**
      * Saves the edited lines as the next version of the formula, with the reason and the q.s. balancing that led to it.
      *
-     * @param  list<array{trade_material_id: string, percent_ww?: string|null, is_qs?: bool, phase?: string|null}>  $lines
+     * @param  list<array{trade_material_id: string, percent_ww?: string|null, is_qs?: bool, phase?: string|null, addition_temp_c?: string|null}>  $lines
      * @param  list<array{material_id: string, before?: string|null, after: string}>  $balanceEvents
      *
      * @throws InvalidFormulaVersionException When a reason is missing or there are no lines.
@@ -154,6 +156,7 @@ final class FormulaEditorService
         return [
             'datasetVersion' => DatasetVersion::query()->latest('created_at')->value('id') ?? config('formula.unpublished_dataset_version'),
             'tierOptions' => ProductTier::options(),
+            'phaseOptions' => FormulaPhase::options(),
         ];
     }
 

@@ -64,6 +64,12 @@ return [
         'new_version_title' => 'New version based on version {version}',
         'new_version_description' => 'Change the lines and say why. Saving creates the next version; this one stays as it is.',
     ],
+    'phases' => [
+        'title' => 'Phases',
+        'description' => 'The sum of each phase as the engine adds it up: water, oil and cool-down. Hidden until a line has a phase.',
+        'lines' => '{count} lines',
+        'unphased' => 'No phase',
+    ],
     'lines' => [
         'title' => 'Lines',
         'description' => 'Each line is a material and its share in % w/w. A draft may be saved before it adds up to 100.',
@@ -79,6 +85,10 @@ return [
         'phase' => 'Phase',
         'phase_n' => 'Phase of line {line}',
         'phase_placeholder' => 'Phase (optional)',
+        'phase_none' => 'No phase',
+        'temp' => 'Addition temp.',
+        'temp_n' => 'Addition temperature of line {line}',
+        'temp_placeholder' => '°C',
         'remove_n' => 'Remove line {line}',
         'price' => 'Price',
         'no_price' => 'No price yet',
@@ -143,6 +153,7 @@ return [
         ],
         'line_fields' => [
             'percent_ww' => 'Share (% w/w)',
+            'addition_temp_c' => 'Addition temperature (°C)',
             'is_qs' => 'Balancing (q.s.)',
             'phase' => 'Phase',
         ],

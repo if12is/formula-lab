@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { SourcedScalar } from '../core/parse';
 import { qty } from '../core/quantity';
-import { blendEmulsifiers, daviesHLB, griffinHLB, HLB_SOURCES, requiredHLB, type HlbLine } from './hlb';
+import { blendEmulsifiers, daviesHLB, emulsifierSystem, griffinHLB, HLB_SOURCES, requiredHLB, type Emulsifier, type HlbLine } from './hlb';
 
 const sv = (value: string, confidence: SourcedScalar['confidence'] = 'L5_reference'): SourcedScalar => ({
   value,
@@ -145,5 +145,79 @@ describe('HLB_SOURCES', () => {
   it('documents the definitional constants', () => {
     expect(HLB_SOURCES.davies.constants).toEqual({ base: '7', perGroup: '0.475' });
     expect(HLB_SOURCES.griffin.constant).toBe('20');
+  });
+});
+
+describe('blendEmulsifiers: non-ionic pair 4.3 / 15.0 (hand-computed)', () => {
+  // Fictional HLB numbers for the arithmetic only: 4.3 (low) and 15.0 (high).
+  const low: Emulsifier = { materialId: 'low', hlb: sv('4.3'), ionicity: 'nonionic' };
+  const high: Emulsifier = { materialId: 'high', hlb: sv('15.0'), ionicity: 'nonionic' };
+  const split = (target: string, grams: string) => {
+    const r = blendEmulsifiers(target, low, high, qty(grams, 'g'));
+    if (!r.ok) {
+      throw new Error('expected ok');
+    }
+    return r.value;
+  };
+  it('target 10.0: f_high = 5.7 / 10.7 = 57/107, f_low = 5 / 10.7 = 50/107', () => {
+    const r = split('10.0', '107');
+    expect(r.fractionHigh.startsWith('0.5327102803738317757')).toBe(true);
+    expect(r.fractionLow.startsWith('0.4672897196261682242')).toBe(true);
+    // 107 g x 57/107 = 57 g and 107 g x 50/107 = 50 g.
+    expect(r.high.mass.value.toDecimalPlaces(12).toFixed()).toBe('57');
+    expect(r.low.mass.value.toDecimalPlaces(12).toFixed()).toBe('50');
+  });
+  it('target 12.0: f_high = 7.7 / 10.7 = 77/107 so 107 g splits into 77 g high + 30 g low', () => {
+    const r = split('12.0', '107');
+    expect(r.high.mass.value.toDecimalPlaces(12).toFixed()).toBe('77');
+    expect(r.low.mass.value.toDecimalPlaces(12).toFixed()).toBe('30');
+  });
+  it('target 9.65 is the exact midpoint of 4.3 and 15.0, so the split is 50 / 50', () => {
+    const r = split('9.65', '10');
+    expect(r.fractionHigh).toBe('0.5');
+    expect(r.high.mass.toJSON()).toEqual({ value: '5', unit: 'g' });
+  });
+  it('an ionic emulsifier is refused: the HLB mixing rule is for non-ionic systems', () => {
+    const r = blendEmulsifiers('10', { ...low, ionicity: 'anionic' }, high, qty('10', 'g'));
+    expect(!r.ok && r.missing).toEqual([{ materialId: 'low', property: 'ionicity', reason: 'hlb_blend_nonionic_only' }]);
+  });
+});
+
+describe('emulsifierSystem: oil phase -> required HLB -> non-ionic blend', () => {
+  const low: Emulsifier = { materialId: 'low', hlb: sv('4.3'), ionicity: 'nonionic' };
+  const high: Emulsifier = { materialId: 'high', hlb: sv('15.0'), ionicity: 'nonionic' };
+  const oil = (a: string, b: string): HlbLine[] => [
+    { materialId: 'oilA', mass: '20', phase: 'oil', requiredHLB: sv(a) },
+    { materialId: 'oilB', mass: '10', phase: 'oil', requiredHLB: sv(b) },
+    { materialId: 'water', mass: '500', phase: 'water' },
+  ];
+  it('rHLB (20 x 8 + 10 x 11) / 30 = 9, then f_high = (9 - 4.3) / 10.7 = 47/107; 107 g => 47 g high + 60 g low', () => {
+    const r = emulsifierSystem({ oilLines: oil('8', '11'), low, high, totalMass: qty('107', 'g') });
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.value.requiredHLB).toBe('9');
+      expect(r.value.blend.high.mass.value.toDecimalPlaces(12).toFixed()).toBe('47');
+      expect(r.value.blend.low.mass.value.toDecimalPlaces(12).toFixed()).toBe('60');
+    }
+  });
+  it('rHLB (20 x 10 + 10 x 10.9) / 30 = 10.3, so f_high = 6 / 10.7 = 60/107; 107 g => 60 g + 47 g', () => {
+    const r = emulsifierSystem({ oilLines: oil('10', '10.9'), low, high, totalMass: qty('107', 'g') });
+    expect(r.ok && r.value.requiredHLB).toBe('10.3');
+    expect(r.ok && r.value.blend.high.mass.value.toDecimalPlaces(12).toFixed()).toBe('60');
+  });
+  it('a missing rHLB is missing, never a default; the ionic and ionicity gaps are listed with it', () => {
+    const lines: HlbLine[] = [{ materialId: 'oilA', mass: '20', phase: 'oil' }];
+    const r = emulsifierSystem({ oilLines: lines, low: { materialId: 'low', hlb: sv('4.3') }, high, totalMass: qty('10', 'g') });
+    expect(!r.ok && r.missing.map((m) => `${m.materialId}:${m.reason}`)).toEqual(['low:ionicity_missing', 'oilA:missing_required_hlb']);
+  });
+  it('L7 rHLB is rejected by default; a required HLB outside the pair is reported as out of range', () => {
+    const l7 = emulsifierSystem({ oilLines: oil('8', '11').map((l) => (l.requiredHLB ? { ...l, requiredHLB: sv('8', 'L7_estimate') } : l)), low, high, totalMass: qty('10', 'g') });
+    expect(!l7.ok && l7.missing.some((m) => m.reason === 'confidence_L7_rejected_by_policy')).toBe(true);
+    const out = emulsifierSystem({ oilLines: oil('16', '16'), low, high, totalMass: qty('10', 'g') });
+    expect(!out.ok && out.missing[0]?.reason).toContain('target_out_of_range');
+  });
+  it('an ionic emulsifier stops the system', () => {
+    const r = emulsifierSystem({ oilLines: oil('8', '11'), low, high: { ...high, ionicity: 'cationic' }, totalMass: qty('10', 'g') });
+    expect(!r.ok && r.missing[0]?.reason).toBe('hlb_blend_nonionic_only');
   });
 });

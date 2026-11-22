@@ -16,6 +16,11 @@ export const FORMULA_MESSAGE_KEYS = {
   QS_MISSING: 'formula.qs_missing',
   QS_MULTIPLE: 'formula.qs_multiple',
   QS_NON_POSITIVE_BALANCE: 'formula.qs_balance_not_positive',
+  PHASE_UNKNOWN: 'formula.phase_unknown',
+  PHASE_MISSING: 'formula.phase_missing',
+  PHASE_TEMP_INVALID: 'formula.phase_temp_invalid',
+  PHASE_TEMP_WITHOUT_PHASE: 'formula.phase_temp_without_phase',
+  PHASE_SUM_NOT_100: 'formula.phase_sum_not_100',
 } as const;
 
 export type FormulaIssueCode = keyof typeof FORMULA_MESSAGE_KEYS;

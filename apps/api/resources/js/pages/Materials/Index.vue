@@ -17,6 +17,7 @@ import { useListQuery } from '../../composables/useListQuery';
 const props = defineProps({
     list: { type: Object, required: true },
     statusOptions: { type: Array, required: true },
+    functionalClassOptions: { type: Array, required: true },
     urls: { type: Object, required: true },
 });
 
@@ -28,6 +29,7 @@ const columns = computed(() => [
     { key: 'trade_name', label: t('materials.columns.trade_name'), sortable: true },
     { key: 'grade', label: t('materials.columns.grade'), hideBelow: 'md' },
     { key: 'function', label: t('materials.columns.function'), hideBelow: 'md' },
+    { key: 'functional_classes', label: t('materials.columns.functional_classes'), hideBelow: 'lg' },
     { key: 'status', label: t('materials.columns.status') },
     { key: 'worst_price_confidence', label: t('materials.columns.price_confidence'), hideBelow: 'lg' },
     { key: 'has_sanad_link', label: t('materials.columns.sanad'), hideBelow: 'lg' },
@@ -71,6 +73,12 @@ const substanceLine = (row) => [row.substance?.inci ?? row.substance?.name_en, r
                 </template>
                 <template #cell-grade="{ row }">{{ row.grade ?? t('common.no_data') }}</template>
                 <template #cell-function="{ row }">{{ row.function ?? t('common.no_data') }}</template>
+                <template #cell-functional_classes="{ row }">
+                    <span v-if="row.functional_classes.length" class="flex flex-wrap gap-1">
+                        <Badge v-for="item in row.functional_classes" :key="item" tone="neutral" size="sm">{{ t(`enums.functional_class.${item}`) }}</Badge>
+                    </span>
+                    <template v-else>{{ t('common.no_data') }}</template>
+                </template>
                 <template #cell-status="{ row }"><StatusBadge kind="trade_material_status" :status="row.status" /></template>
                 <template #cell-worst_price_confidence="{ row }">
                     <ConfidenceBadge v-if="row.worst_price_confidence" :confidence="row.worst_price_confidence" />
@@ -103,6 +111,6 @@ const substanceLine = (row) => [row.substance?.inci ?? row.substance?.name_en, r
             />
         </div>
 
-        <MaterialFormModal v-model:open="creating" mode="create" :urls="urls" :status-options="statusOptions" />
+        <MaterialFormModal v-model:open="creating" mode="create" :urls="urls" :status-options="statusOptions" :functional-class-options="functionalClassOptions" />
     </div>
 </template>

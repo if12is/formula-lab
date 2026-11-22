@@ -87,9 +87,19 @@ export function requiredHLB(lines: readonly HlbLine[], policy: HlbPolicy = {}): 
   return ok({ value: weighted.div(total).toFixed() }, warnings);
 }
 
+/**
+ * The ionic character of an emulsifier. The HLB mixing rule is a non-ionic system: an ionic emulsifier
+ * (anionic, cationic, amphoteric) is refused, not blended with an HLB number it does not follow (M-03; M-08 adds the
+ * separate cationic and surfactant paths).
+ */
+export const IONICITIES = ['nonionic', 'anionic', 'cationic', 'amphoteric', 'other'] as const;
+export type Ionicity = (typeof IONICITIES)[number];
+
 export interface Emulsifier {
   materialId: string;
   hlb: SourcedScalar;
+  /** Declared by the formulator. Optional in `blendEmulsifiers` (kept for earlier callers) but refused when it is not 'nonionic'. */
+  ionicity?: Ionicity;
 }
 
 export interface BlendResult {
@@ -121,6 +131,11 @@ export function blendEmulsifiers(
   }
   if (totalMass.dimension !== 'mass' || totalMass.value.lte(0)) {
     gaps.push(bad('totalMass', 'must_be_positive_mass'));
+  }
+  for (const e of [low, high]) {
+    if (e.ionicity !== undefined && e.ionicity !== 'nonionic') {
+      gaps.push(bad('ionicity', 'hlb_blend_nonionic_only', e.materialId));
+    }
   }
   if (gaps.length > 0 || t === null || lo === null || hi === null) {
     return missing(gaps);
@@ -186,3 +201,44 @@ export function daviesHLB(groups: readonly DaviesGroup[]): Result<{ value: strin
   return ok({ value: new D(7).plus(sum).minus(new D('0.475').mul(n)).toFixed() });
 }
 
+
+export interface EmulsifierSystemInput {
+  /** The oil-phase lines, each with its sourced required HLB. Lines of other phases are ignored by `requiredHLB`. */
+  oilLines: readonly HlbLine[];
+  /** The two non-ionic emulsifiers; both must declare `ionicity: 'nonionic'` here. */
+  low: Emulsifier;
+  high: Emulsifier;
+  /** The total emulsifier mass to split between them (the formulator's choice, never derived). */
+  totalMass: Quantity;
+}
+
+export interface EmulsifierSystem {
+  requiredHLB: string;
+  blend: BlendResult;
+}
+
+/**
+ * Oil phase to emulsifier blend in one step: the required HLB of the oil phase (mass-weighted mean of the sourced
+ * rHLB values), then the split of two non-ionic emulsifiers that reaches it. Every rHLB and emulsifier HLB is a sourced
+ * input (L7 estimates refused by the policy); a missing or ionic one is reported, never replaced by a table value.
+ */
+export function emulsifierSystem(input: EmulsifierSystemInput, policy: HlbPolicy = {}): Result<EmulsifierSystem> {
+  const gaps: MissingData[] = [];
+  for (const e of [input.low, input.high]) {
+    if (e.ionicity === undefined) {
+      gaps.push(bad('ionicity', 'ionicity_missing', e.materialId));
+    }
+  }
+  const required = requiredHLB(input.oilLines, policy);
+  if (!required.ok) {
+    gaps.push(...required.missing);
+  }
+  if (gaps.length > 0 || !required.ok) {
+    return missing(gaps, required.warnings);
+  }
+  const blend = blendEmulsifiers(required.value.value, input.low, input.high, input.totalMass);
+  if (!blend.ok) {
+    return missing(blend.missing, [...required.warnings, ...blend.warnings]);
+  }
+  return ok({ requiredHLB: required.value.value, blend: blend.value }, [...required.warnings, ...blend.warnings]);
+}

@@ -2,7 +2,7 @@
 /**
  * The formula editor, for a new formula, a draft being edited, and an approved or older version shown read-only.
  *
- * Lines (material, % w/w, phase) sit under a pinned totals bar that always shows what the engine says: the sum and its
+ * Lines (material, % w/w, phase, addition temperature) sit under a pinned totals bar that always shows what the engine says: the sum and its
  * deviation from 100 (draftSummary), the material cost per kg (calculate) and the q.s. balancing (balanceQs). The browser
  * computes nothing itself. Saving never edits a version: it writes the next one, with a required reason.
  *
@@ -18,6 +18,7 @@ import EntitySelect from '../../components/form/EntitySelect.vue';
 import DisplayCurrencyLine from '../../components/currency/DisplayCurrencyLine.vue';
 import CompliancePanel from '../../components/compliance/CompliancePanel.vue';
 import TaxPanel from '../../components/pricing/TaxPanel.vue';
+import PhasePanel from '../../components/formulas/PhasePanel.vue';
 import WorkflowPanel from '../../components/formulas/WorkflowPanel.vue';
 import ConfidenceBadge from '../../components/materials/ConfidenceBadge.vue';
 import MaterialFormModal from '../../components/materials/MaterialFormModal.vue';
@@ -42,6 +43,8 @@ const props = defineProps({
     workflow: { type: Object, default: null },
     datasetVersion: { type: String, required: true },
     tierOptions: { type: Array, required: true },
+    /** The process phases a line can be in (water, oil, cool-down). */
+    phaseOptions: { type: Array, required: true },
     urls: { type: Object, required: true },
 });
 
@@ -77,6 +80,15 @@ const balanceErrors = ref([]);
 const tried = ref(false);
 
 const tierOptions = computed(() => [{ value: 'none', label: t('formulas.tier_none') }, ...props.tierOptions]);
+// A phase typed before phases were a fixed list stays visible and selectable, so editing an old version loses nothing.
+const phaseChoices = (line) => [
+    { value: 'none', label: t('formulas.lines.phase_none') },
+    ...props.phaseOptions,
+    ...(line.phase && !props.phaseOptions.some((option) => option.value === line.phase) ? [{ value: line.phase, label: line.phase }] : []),
+];
+const setPhase = (line, value) => { line.phase = value === 'none' ? '' : value; };
+const temperatureInput = (line, value) => { line.addition_temp_c = normalizeDecimalText(value); };
+const phaseProblem = (line) => (draft.phases.value.issues[line.key] ?? [])[0] ?? null;
 const qsOptions = computed(() => draft.lines.value
     .filter((line) => line.material_id)
     .map((line) => ({ value: line.key, label: draft.labelOf(line.material_id) })));
@@ -198,6 +210,7 @@ function submit() {
             percent_ww: line.percent === '' ? null : line.percent,
             is_qs: line.is_qs,
             phase: line.phase === '' ? null : line.phase,
+            addition_temp_c: line.addition_temp_c === '' ? null : line.addition_temp_c,
         })),
     });
 
@@ -272,10 +285,11 @@ const percentValid = (line) => line.percent === '' || isDecimalString(line.perce
 
                 <p v-if="editing" class="mb-3 text-label text-ink-3">{{ t('formulas.lines.description') }}</p>
 
-                <div class="hidden grid-cols-[minmax(0,2fr)_9rem_8rem_2.5rem] gap-3 px-3 pb-2 text-label font-semibold text-ink-3 md:grid" aria-hidden="true">
+                <div class="hidden grid-cols-[minmax(0,2fr)_9rem_11rem_8rem_2.5rem] gap-3 px-3 pb-2 text-label font-semibold text-ink-3 md:grid" aria-hidden="true">
                     <span>{{ t('formulas.lines.material') }}</span>
                     <span>{{ t('formulas.lines.percent') }}</span>
                     <span>{{ t('formulas.lines.phase') }}</span>
+                    <span>{{ t('formulas.lines.temp') }}</span>
                     <span />
                 </div>
 
@@ -284,7 +298,7 @@ const percentValid = (line) => line.percent === '' || isDecimalString(line.perce
                         v-for="(line, index) in draft.lines.value"
                         :key="line.key"
                         data-testid="line"
-                        class="grid gap-3 rounded-lg border border-line p-3 md:grid-cols-[minmax(0,2fr)_9rem_8rem_2.5rem] md:items-start"
+                        class="grid gap-3 rounded-lg border border-line p-3 md:grid-cols-[minmax(0,2fr)_9rem_11rem_8rem_2.5rem] md:items-start"
                     >
                         <div class="flex min-w-0 flex-col gap-1">
                             <EntitySelect
@@ -331,13 +345,33 @@ const percentValid = (line) => line.percent === '' || isDecimalString(line.perce
                             :invalid="!percentValid(line) || Boolean(fieldError(index, 'percent_ww')) || lineProblems(line).some((issue) => issue.code !== 'DUPLICATE_MATERIAL')"
                             @update:model-value="(value) => percentInput(line, value)"
                         />
-                        <Input
-                            v-model="line.phase"
-                            :placeholder="t('formulas.lines.phase_placeholder')"
-                            :aria-label="t('formulas.lines.phase_n', { line: index + 1 })"
-                            maxlength="100"
-                            :readonly="!editing"
-                        />
+                        <div class="flex min-w-0 flex-col gap-1">
+                            <Select
+                                :model-value="line.phase || 'none'"
+                                :options="phaseChoices(line)"
+                                :aria-label="t('formulas.lines.phase_n', { line: index + 1 })"
+                                :disabled="!editing"
+                                data-testid="line-phase"
+                                @update:model-value="(value) => setPhase(line, value)"
+                            />
+                            <FieldError v-if="phaseProblem(line) && phaseProblem(line).code !== 'PHASE_TEMP_INVALID'" as="p" size="sm">{{ issueText(phaseProblem(line)) }}</FieldError>
+                        </div>
+                        <div class="flex min-w-0 flex-col gap-1">
+                            <Input
+                                :model-value="line.addition_temp_c"
+                                :placeholder="t('formulas.lines.temp_placeholder')"
+                                :aria-label="t('formulas.lines.temp_n', { line: index + 1 })"
+                                inputmode="decimal"
+                                ltr
+                                suffix="°C"
+                                :readonly="!editing"
+                                :invalid="phaseProblem(line)?.code === 'PHASE_TEMP_INVALID' || Boolean(fieldError(index, 'addition_temp_c'))"
+                                data-testid="line-temp"
+                                @update:model-value="(value) => temperatureInput(line, value)"
+                            />
+                            <FieldError v-if="phaseProblem(line)?.code === 'PHASE_TEMP_INVALID'" as="p" size="sm">{{ issueText(phaseProblem(line)) }}</FieldError>
+                            <FieldError v-else-if="fieldError(index, 'addition_temp_c')" as="p" size="sm">{{ fieldError(index, 'addition_temp_c') }}</FieldError>
+                        </div>
                         <IconButton
                             v-if="editing"
                             icon="ph:trash"
@@ -350,6 +384,8 @@ const percentValid = (line) => line.percent === '' || isDecimalString(line.perce
                 </ol>
                 <FieldError v-if="form.errors.lines" as="p" size="sm" class="mt-2">{{ form.errors.lines }}</FieldError>
             </Card>
+
+            <PhasePanel :check="draft.phases.value" :phase-options="phaseOptions" />
 
             <Card v-if="editing" :title="t('formulas.qs.title')" :description="t('formulas.qs.description')">
                 <p v-if="qsOptions.length === 0" class="text-label text-ink-3">{{ t('formulas.qs.empty') }}</p>

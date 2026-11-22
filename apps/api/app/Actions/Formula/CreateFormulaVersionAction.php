@@ -18,8 +18,8 @@ final class CreateFormulaVersionAction
     ) {}
 
     /**
-     * @param  list<array{trade_material_id: string, percent_ww?: string|int|null, is_qs?: bool, phase?: string|null}>  $lines
-     *                                                                                                                          Order defines line_no (1-based); percent_ww is null only for a q.s. line.
+     * @param  list<array{trade_material_id: string, percent_ww?: string|int|null, is_qs?: bool, phase?: string|null, addition_temp_c?: string|null}>  $lines
+     *                                                                                                                                                         Order defines line_no (1-based); percent_ww is null only for a q.s. line.
      *
      * @throws \InvalidArgumentException When a percentage is not a plain decimal string (floats are rejected).
      * @throws QueryException When the database refuses a row (unknown material, missing percentage, duplicate number).
@@ -35,6 +35,7 @@ final class CreateFormulaVersionAction
                     'percent_ww' => $line['percent_ww'] ?? null,
                     'is_qs' => $line['is_qs'] ?? false,
                     'phase' => $line['phase'] ?? null,
+                    'addition_temp_c' => $line['addition_temp_c'] ?? null,
                 ]);
             }
 

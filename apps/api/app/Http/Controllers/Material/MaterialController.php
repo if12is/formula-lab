@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Material;
 
 use App\Enums\Confidence;
+use App\Enums\FunctionalClass;
 use App\Enums\SourceKind;
 use App\Enums\TradeMaterialStatus;
 use App\Http\Controllers\Controller;
@@ -39,6 +40,7 @@ class MaterialController extends Controller
         return Inertia::render('Materials/Index', [
             'list' => $this->materialListService->list($request, route('materials.functions', [], false)),
             'statusOptions' => TradeMaterialStatus::options(),
+            'functionalClassOptions' => FunctionalClass::options(),
             'urls' => $this->lookupUrls(),
         ]);
     }
@@ -58,6 +60,7 @@ class MaterialController extends Controller
             ...$this->materialDetailService->detail($material),
             'tab' => in_array($tab, self::TABS, true) ? $tab : self::TABS[0],
             'statusOptions' => TradeMaterialStatus::options(),
+            'functionalClassOptions' => FunctionalClass::options(),
             'confidenceOptions' => Confidence::options(),
             'currencyOptions' => Currencies::options(),
             'sourceKindOptions' => SourceKind::selectableOptions(),

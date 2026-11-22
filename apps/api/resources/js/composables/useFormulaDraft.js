@@ -1,5 +1,5 @@
 import { computed, reactive, ref } from 'vue';
-import { balanceLines, costLines, summarizeLines } from '../lib/engine';
+import { balanceLines, costLines, phaseCheck, summarizeLines } from '../lib/engine';
 
 /**
  * The editable state of a formula in the editor: its lines, the materials they use (with the price quotes the
@@ -11,9 +11,9 @@ import { balanceLines, costLines, summarizeLines } from '../lib/engine';
  */
 export function useFormulaDraft({ lines: initialLines, materials: initialMaterials, datasetVersion }) {
     let sequence = 0;
-    const blankLine = () => ({ key: `line-${(sequence += 1)}`, material_id: null, percent: '', is_qs: false, phase: '' });
+    const blankLine = () => ({ key: `line-${(sequence += 1)}`, material_id: null, percent: '', is_qs: false, phase: '', addition_temp_c: '' });
     const fromServer = (serverLines) => {
-        const loaded = serverLines.map((line) => ({ ...blankLine(), material_id: line.trade_material_id, percent: line.percent_ww, is_qs: line.is_qs, phase: line.phase }));
+        const loaded = serverLines.map((line) => ({ ...blankLine(), material_id: line.trade_material_id, percent: line.percent_ww, is_qs: line.is_qs, phase: line.phase ?? '', addition_temp_c: line.addition_temp_c ?? '' }));
 
         return loaded.length ? loaded : [blankLine()];
     };
@@ -34,6 +34,7 @@ export function useFormulaDraft({ lines: initialLines, materials: initialMateria
     }
 
     const summary = computed(() => summarizeLines(lines.value));
+    const phases = computed(() => phaseCheck(lines.value));
     const cost = computed(() => costLines(lines.value, materials, datasetVersion));
     const qsLine = computed(() => lines.value.find((line) => line.is_qs) ?? null);
 
@@ -93,5 +94,5 @@ export function useFormulaDraft({ lines: initialLines, materials: initialMateria
     /** Only the events whose result is still what the q.s. line carries. */
     const currentBalanceEvents = () => balanceEvents.value.filter((event) => lines.value.some((line) => line.is_qs && line.material_id === event.material_id && line.percent === event.after));
 
-    return { lines, materials, summary, cost, qsLine, labelOf, addLine, removeLine, remember, useMaterial, setQs, balance, currentBalanceEvents, reset };
+    return { lines, materials, summary, phases, cost, qsLine, labelOf, addLine, removeLine, remember, useMaterial, setQs, balance, currentBalanceEvents, reset };
 }

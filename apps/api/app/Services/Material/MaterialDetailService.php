@@ -50,6 +50,7 @@ final class MaterialDetailService
             'trade_name' => $material->trade_name,
             'grade' => $material->grade,
             'function' => $material->function,
+            'functional_classes' => $material->functional_classes ?? [],
             'status' => $material->status->value,
             'is_mixture' => $material->is_mixture,
             'composition_complete' => $material->composition_complete,
