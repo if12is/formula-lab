@@ -8,6 +8,7 @@ use App\Models\Formula;
 use App\Models\FormulaVersion;
 use App\Models\LabTrial;
 use App\Support\DTOs\LabCoverage;
+use App\Support\Families\FamilyData;
 
 /**
  * What a formula version's lab results cover (the lab side of the approval rule AFV-06: no required measurement missing).
@@ -15,12 +16,33 @@ use App\Support\DTOs\LabCoverage;
  */
 final class LabCoverageService
 {
-    /** @return list<string> The measurement keys the formula's product type needs before approval. */
+    public function __construct(private FamilyData $familyData) {}
+
+    /**
+     * The measurement keys the formula's product type needs before approval. The owner's explicit per-type set in config wins;
+     * then the formula's registry family (K-01), limited to the properties the lab can record (a family may also name ones it cannot
+     * yet, such as bulk density: those are shown on the family page, not demanded here); then the default set.
+     *
+     * @return list<string>
+     */
     public function requiredFor(Formula $formula): array
     {
         $byType = (array) config('lab.required_measurements.by_product_type', []);
 
-        return array_values((array) ($byType[$formula->product_type] ?? config('lab.required_measurements.default', [])));
+        if (isset($byType[$formula->product_type])) {
+            return array_values((array) $byType[$formula->product_type]);
+        }
+
+        $family = $formula->productFamily;
+
+        if ($family !== null) {
+            return array_values(array_unique(array_filter(array_map(
+                fn (string $id): ?string => $this->familyData->labPropertyOf($id),
+                $family->measured_properties,
+            ))));
+        }
+
+        return array_values((array) config('lab.required_measurements.default', []));
     }
 
     /** The best completed trial (the one missing the fewest required measurements, the newest on a tie) decides. */

@@ -9,6 +9,8 @@ return [
     ],
     'dashboard' => 'Dashboard',
     'formulas' => 'Formulas',
+    'families' => 'Product families',
+    'templates' => 'Formula templates',
     'materials' => 'Materials',
     'calculators' => 'Calculators',
     'compliance' => 'Compliance',

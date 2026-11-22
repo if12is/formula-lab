@@ -18,7 +18,7 @@ class Formula extends Model
     /** @use HasFactory<FormulaFactory> */
     use HasFactory, HasUuids;
 
-    protected $fillable = ['tenant_id', 'code', 'name', 'product_type', 'tier', 'ifra_category', 'tax_mode', 'tax_rate_pct', 'sanad_product_uuid', 'unit_cost', 'unit_cost_source_id', 'unit_cost_confidence'];
+    protected $fillable = ['tenant_id', 'code', 'name', 'product_type', 'product_family_id', 'formula_template_id', 'tier', 'ifra_category', 'tax_mode', 'tax_rate_pct', 'sanad_product_uuid', 'unit_cost', 'unit_cost_source_id', 'unit_cost_confidence'];
 
     /** @return array<string, string> */
     protected function casts(): array
@@ -35,6 +35,18 @@ class Formula extends Model
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);
+    }
+
+    /** @return BelongsTo<ProductFamily, $this> The registry family of the product (K-01); null for a formula typed with a free product type. */
+    public function productFamily(): BelongsTo
+    {
+        return $this->belongsTo(ProductFamily::class);
+    }
+
+    /** @return BelongsTo<FormulaTemplate, $this> The template it was started from (K-09), if any. */
+    public function formulaTemplate(): BelongsTo
+    {
+        return $this->belongsTo(FormulaTemplate::class);
     }
 
     /** @return HasMany<FormulaVersion, $this> */

@@ -68,4 +68,6 @@ return [
     'price_list_customer_already_assigned' => 'العميل :customer مربوط بالفعل بالقائمة «:list»؛ العميل في سند يتبع قائمة واحدة فقط.',
     'price_list_customer_unavailable' => 'العميل :customer غير نشط أو مؤرشف في سند ولا يمكن ربطه بقائمة.',
     'price_list_cross_tenant' => 'هذا السجل يتبع مستأجراً آخر.',
+    'family_data_invalid' => 'المحرك رفض ملفات بيانات العائلات والقوالب: :details',
+    'template_use_rejected' => 'اتعمل فحص القالب وفيه :count مشكلة. صحّحها وجرّب تاني.',
 ];

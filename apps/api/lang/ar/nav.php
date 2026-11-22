@@ -9,6 +9,8 @@ return [
     ],
     'dashboard' => 'لوحة التحكم',
     'formulas' => 'التركيبات',
+    'families' => 'عائلات المنتجات',
+    'templates' => 'قوالب التركيبات',
     'materials' => 'الخامات',
     'calculators' => 'الحاسبات',
     'compliance' => 'المطابقة',

@@ -1,0 +1,855 @@
+{
+  "id": "formula-templates",
+  "version": "0.1.0",
+  "status": "draft",
+  "templates": [
+    {
+      "code": "dish_liquid_basic",
+      "familyCode": "dish_liquid",
+      "name": {
+        "ar": "سائل أطباق (هيكل أساسي)",
+        "en": "Dish liquid (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "water",
+          "role": "water",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "anionic_surfactant",
+          "role": "anionic_surfactant",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "amphoteric_surfactant",
+          "role": "amphoteric_surfactant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "electrolyte",
+          "role": "electrolyte",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "ph_adjuster",
+          "role": "ph_adjuster",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "preservative",
+          "role": "preservative",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "colorant",
+          "role": "colorant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
+    },
+    {
+      "code": "laundry_powder_basic",
+      "familyCode": "laundry_powder",
+      "name": {
+        "ar": "مسحوق غسيل (هيكل أساسي)",
+        "en": "Laundry powder (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "anionic_surfactant",
+          "role": "anionic_surfactant",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "nonionic_surfactant",
+          "role": "nonionic_surfactant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "builder",
+          "role": "builder",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "filler",
+          "role": "filler",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "colorant",
+          "role": "colorant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
+    },
+    {
+      "code": "laundry_liquid_basic",
+      "familyCode": "laundry_liquid",
+      "name": {
+        "ar": "سائل غسيل ملابس (هيكل أساسي)",
+        "en": "Laundry liquid (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "water",
+          "role": "water",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "anionic_surfactant",
+          "role": "anionic_surfactant",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "nonionic_surfactant",
+          "role": "nonionic_surfactant",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "enzyme",
+          "role": "enzyme",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "ph_adjuster",
+          "role": "ph_adjuster",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "preservative",
+          "role": "preservative",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "colorant",
+          "role": "colorant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
+    },
+    {
+      "code": "floor_cleaner_basic",
+      "familyCode": "floor_cleaner",
+      "name": {
+        "ar": "منظف أرضيات (هيكل أساسي)",
+        "en": "Floor cleaner (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "water",
+          "role": "water",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "nonionic_surfactant",
+          "role": "nonionic_surfactant",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "anionic_surfactant",
+          "role": "anionic_surfactant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "solvent",
+          "role": "solvent",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "ph_adjuster",
+          "role": "ph_adjuster",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "preservative",
+          "role": "preservative",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "colorant",
+          "role": "colorant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
+    },
+    {
+      "code": "glass_cleaner_basic",
+      "familyCode": "glass_cleaner",
+      "name": {
+        "ar": "منظف زجاج (هيكل أساسي)",
+        "en": "Glass cleaner (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "water",
+          "role": "water",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "solvent",
+          "role": "solvent",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "nonionic_surfactant",
+          "role": "nonionic_surfactant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "ph_adjuster",
+          "role": "ph_adjuster",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "colorant",
+          "role": "colorant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
+    },
+    {
+      "code": "bathroom_cleaner_basic",
+      "familyCode": "bathroom_cleaner",
+      "name": {
+        "ar": "منظف حمامات (هيكل أساسي)",
+        "en": "Bathroom cleaner (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "water",
+          "role": "water",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "acid",
+          "role": "acid",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "nonionic_surfactant",
+          "role": "nonionic_surfactant",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "anionic_surfactant",
+          "role": "anionic_surfactant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "thickener",
+          "role": "thickener",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "colorant",
+          "role": "colorant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
+    },
+    {
+      "code": "degreaser_basic",
+      "familyCode": "degreaser",
+      "name": {
+        "ar": "مزيل دهون (هيكل أساسي)",
+        "en": "Degreaser (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "water",
+          "role": "water",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "alkali",
+          "role": "alkali",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "solvent",
+          "role": "solvent",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "nonionic_surfactant",
+          "role": "nonionic_surfactant",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "chelating_agent",
+          "role": "chelating_agent",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "colorant",
+          "role": "colorant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
+    },
+    {
+      "code": "shampoo_basic",
+      "familyCode": "shampoo",
+      "name": {
+        "ar": "شامبو (هيكل أساسي)",
+        "en": "Shampoo (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "water",
+          "role": "water",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "anionic_surfactant",
+          "role": "anionic_surfactant",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "amphoteric_surfactant",
+          "role": "amphoteric_surfactant",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "electrolyte",
+          "role": "electrolyte",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "ph_adjuster",
+          "role": "ph_adjuster",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "preservative",
+          "role": "preservative",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "chelating_agent",
+          "role": "chelating_agent",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "colorant",
+          "role": "colorant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
+    },
+    {
+      "code": "conditioner_basic",
+      "familyCode": "conditioner",
+      "name": {
+        "ar": "بلسم (هيكل أساسي)",
+        "en": "Conditioner (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "water",
+          "role": "water",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "cationic_conditioning_agent",
+          "role": "cationic_conditioning_agent",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "thickener",
+          "role": "thickener",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "ph_adjuster",
+          "role": "ph_adjuster",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "preservative",
+          "role": "preservative",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "colorant",
+          "role": "colorant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
+    },
+    {
+      "code": "hand_soap_basic",
+      "familyCode": "hand_soap",
+      "name": {
+        "ar": "صابون يد سائل (هيكل أساسي)",
+        "en": "Liquid hand soap (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "water",
+          "role": "water",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "anionic_surfactant",
+          "role": "anionic_surfactant",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "amphoteric_surfactant",
+          "role": "amphoteric_surfactant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "electrolyte",
+          "role": "electrolyte",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "humectant",
+          "role": "humectant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "ph_adjuster",
+          "role": "ph_adjuster",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "preservative",
+          "role": "preservative",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "colorant",
+          "role": "colorant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
+    },
+    {
+      "code": "shower_gel_basic",
+      "familyCode": "shower_gel",
+      "name": {
+        "ar": "شاور جل (هيكل أساسي)",
+        "en": "Shower gel (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "water",
+          "role": "water",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "anionic_surfactant",
+          "role": "anionic_surfactant",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "amphoteric_surfactant",
+          "role": "amphoteric_surfactant",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "electrolyte",
+          "role": "electrolyte",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "humectant",
+          "role": "humectant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "ph_adjuster",
+          "role": "ph_adjuster",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "preservative",
+          "role": "preservative",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "colorant",
+          "role": "colorant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
+    },
+    {
+      "code": "bar_soap_basic",
+      "familyCode": "bar_soap",
+      "name": {
+        "ar": "صابون بار (هيكل أساسي)",
+        "en": "Bar soap (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "fatty_oil",
+          "role": "fatty_oil",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "alkali",
+          "role": "alkali",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "water",
+          "role": "water",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "colorant",
+          "role": "colorant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
+    },
+    {
+      "code": "face_wash_basic",
+      "familyCode": "face_wash",
+      "name": {
+        "ar": "غسول وجه (هيكل أساسي)",
+        "en": "Face wash (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "water",
+          "role": "water",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "anionic_surfactant",
+          "role": "anionic_surfactant",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "amphoteric_surfactant",
+          "role": "amphoteric_surfactant",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "humectant",
+          "role": "humectant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "thickener",
+          "role": "thickener",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "ph_adjuster",
+          "role": "ph_adjuster",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "preservative",
+          "role": "preservative",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
+    }
+  ]
+}

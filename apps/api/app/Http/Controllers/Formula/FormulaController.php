@@ -10,6 +10,7 @@ use App\Http\Requests\Formula\UpdateFormulaIfraCategoryRequest;
 use App\Http\Requests\Formula\UpdateFormulaTaxRequest;
 use App\Http\Requests\Formula\UpdateFormulaUnitCostRequest;
 use App\Models\Formula;
+use App\Services\Family\FamilyOptionService;
 use App\Services\Formula\FormulaEditorService;
 use App\Services\Formula\FormulaListService;
 use App\Services\Formula\FormulaService;
@@ -25,6 +26,7 @@ class FormulaController extends Controller
         private FormulaListService $formulaListService,
         private FormulaEditorService $formulaEditorService,
         private FormulaService $formulaService,
+        private FamilyOptionService $familyOptionService,
     ) {}
 
     public function index(Request $request): InertiaResponse
@@ -38,6 +40,7 @@ class FormulaController extends Controller
     {
         return Inertia::render('Formulas/Editor', [
             ...$this->formulaEditorService->blank(),
+            'families' => $this->familyOptionService->options(),
             'urls' => $this->editorUrls(),
         ]);
     }

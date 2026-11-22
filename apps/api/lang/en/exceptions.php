@@ -68,4 +68,6 @@ return [
     'price_list_customer_already_assigned' => 'The customer :customer is already on the list ":list"; a Sanad customer follows one list only.',
     'price_list_customer_unavailable' => 'The customer :customer is inactive or archived in Sanad and cannot be put on a list.',
     'price_list_cross_tenant' => 'This record belongs to another tenant.',
+    'family_data_invalid' => 'The engine rejected the family and template data files: :details',
+    'template_use_rejected' => 'The template was checked and :count problems were found. Fix them and try again.',
 ];

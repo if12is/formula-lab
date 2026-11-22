@@ -1,0 +1,440 @@
+{
+  "id": "product-families",
+  "version": "0.1.0",
+  "status": "draft",
+  "sources": [
+    {
+      "id": "plan-00-research-05",
+      "title": "plan/00-research/05-product-specialties.md (project research, not a regulation)",
+      "confidence": "L7_estimate",
+      "retrievedAt": "2026-11-22"
+    }
+  ],
+  "vocabulary": {
+    "regulators": [
+      "EOS",
+      "EDA"
+    ],
+    "groups": [
+      "detergents",
+      "personal_care"
+    ],
+    "calculations": [
+      {
+        "id": "active_matter",
+        "status": "available",
+        "calculatorKey": null
+      },
+      {
+        "id": "dilution",
+        "status": "available",
+        "calculatorKey": "dilution"
+      },
+      {
+        "id": "neutralization",
+        "status": "available",
+        "calculatorKey": "neutralization"
+      },
+      {
+        "id": "hlb",
+        "status": "available",
+        "calculatorKey": "hlb"
+      },
+      {
+        "id": "saponification",
+        "status": "available",
+        "calculatorKey": "saponification"
+      },
+      {
+        "id": "litre_kilo",
+        "status": "available",
+        "calculatorKey": "litre-kilo"
+      },
+      {
+        "id": "fragrance",
+        "status": "available",
+        "calculatorKey": "fragrance"
+      },
+      {
+        "id": "salt_curve",
+        "status": "available",
+        "calculatorKey": null
+      },
+      {
+        "id": "ph_titration",
+        "status": "available",
+        "calculatorKey": null
+      },
+      {
+        "id": "builders_fillers_moisture",
+        "status": "planned",
+        "calculatorKey": null
+      },
+      {
+        "id": "enzyme_activity",
+        "status": "planned",
+        "calculatorKey": null
+      },
+      {
+        "id": "solvent_evaporation",
+        "status": "planned",
+        "calculatorKey": null
+      }
+    ],
+    "measuredProperties": [
+      {
+        "id": "ph",
+        "labProperty": "ph"
+      },
+      {
+        "id": "density",
+        "labProperty": "density"
+      },
+      {
+        "id": "viscosity",
+        "labProperty": "viscosity"
+      },
+      {
+        "id": "cloud_point",
+        "labProperty": "cloud_point"
+      },
+      {
+        "id": "foam",
+        "labProperty": "foam"
+      },
+      {
+        "id": "stability_4w",
+        "labProperty": "stability_4w"
+      },
+      {
+        "id": "active_matter",
+        "labProperty": "active_matter"
+      },
+      {
+        "id": "bulk_density",
+        "labProperty": null
+      },
+      {
+        "id": "solubility",
+        "labProperty": null
+      },
+      {
+        "id": "corrosion",
+        "labProperty": null
+      }
+    ],
+    "roles": [
+      "water",
+      "anionic_surfactant",
+      "nonionic_surfactant",
+      "amphoteric_surfactant",
+      "cationic_conditioning_agent",
+      "electrolyte",
+      "thickener",
+      "humectant",
+      "ph_adjuster",
+      "acid",
+      "alkali",
+      "preservative",
+      "chelating_agent",
+      "solvent",
+      "builder",
+      "filler",
+      "enzyme",
+      "fatty_oil",
+      "fragrance",
+      "colorant"
+    ]
+  },
+  "families": [
+    {
+      "code": "dish_liquid",
+      "group": "detergents",
+      "name": {
+        "ar": "سائل أطباق",
+        "en": "Dish liquid"
+      },
+      "regulator": "EOS",
+      "ifraCategory": "10A",
+      "requiredCalculations": [
+        "active_matter",
+        "neutralization",
+        "salt_curve",
+        "litre_kilo"
+      ],
+      "measuredProperties": [
+        "viscosity",
+        "ph",
+        "cloud_point"
+      ],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending"
+    },
+    {
+      "code": "laundry_powder",
+      "group": "detergents",
+      "name": {
+        "ar": "مسحوق غسيل",
+        "en": "Laundry powder"
+      },
+      "regulator": "EOS",
+      "ifraCategory": "10A",
+      "requiredCalculations": [
+        "active_matter",
+        "builders_fillers_moisture"
+      ],
+      "measuredProperties": [
+        "bulk_density",
+        "solubility"
+      ],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending"
+    },
+    {
+      "code": "laundry_liquid",
+      "group": "detergents",
+      "name": {
+        "ar": "سائل غسيل ملابس",
+        "en": "Laundry liquid"
+      },
+      "regulator": "EOS",
+      "ifraCategory": "10A",
+      "requiredCalculations": [
+        "active_matter",
+        "enzyme_activity"
+      ],
+      "measuredProperties": [
+        "viscosity",
+        "stability_4w"
+      ],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending"
+    },
+    {
+      "code": "floor_cleaner",
+      "group": "detergents",
+      "name": {
+        "ar": "منظف أرضيات",
+        "en": "Floor cleaner"
+      },
+      "regulator": "EOS",
+      "ifraCategory": "10A",
+      "requiredCalculations": [
+        "dilution",
+        "fragrance"
+      ],
+      "measuredProperties": [
+        "ph"
+      ],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending"
+    },
+    {
+      "code": "glass_cleaner",
+      "group": "detergents",
+      "name": {
+        "ar": "منظف زجاج",
+        "en": "Glass cleaner"
+      },
+      "regulator": "EOS",
+      "ifraCategory": "10B",
+      "requiredCalculations": [
+        "solvent_evaporation"
+      ],
+      "measuredProperties": [],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending",
+      "notes": "ifra_10b_if_sprayed"
+    },
+    {
+      "code": "bathroom_cleaner",
+      "group": "detergents",
+      "name": {
+        "ar": "منظف حمامات",
+        "en": "Bathroom cleaner"
+      },
+      "regulator": "EOS",
+      "ifraCategory": "10A",
+      "requiredCalculations": [
+        "neutralization"
+      ],
+      "measuredProperties": [
+        "ph",
+        "corrosion"
+      ],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending"
+    },
+    {
+      "code": "degreaser",
+      "group": "detergents",
+      "name": {
+        "ar": "مزيل دهون",
+        "en": "Degreaser"
+      },
+      "regulator": "EOS",
+      "ifraCategory": "10A",
+      "requiredCalculations": [
+        "neutralization"
+      ],
+      "measuredProperties": [
+        "ph",
+        "corrosion"
+      ],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending"
+    },
+    {
+      "code": "shampoo",
+      "group": "personal_care",
+      "name": {
+        "ar": "شامبو",
+        "en": "Shampoo"
+      },
+      "regulator": "EDA",
+      "ifraCategory": "9",
+      "requiredCalculations": [
+        "active_matter",
+        "dilution",
+        "ph_titration"
+      ],
+      "measuredProperties": [
+        "ph"
+      ],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending",
+      "notes": "ifra_9_usually"
+    },
+    {
+      "code": "conditioner",
+      "group": "personal_care",
+      "name": {
+        "ar": "بلسم",
+        "en": "Conditioner"
+      },
+      "regulator": "EDA",
+      "ifraCategory": "9",
+      "requiredCalculations": [
+        "active_matter",
+        "dilution",
+        "hlb",
+        "ph_titration"
+      ],
+      "measuredProperties": [
+        "ph"
+      ],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending",
+      "notes": "ifra_9_usually"
+    },
+    {
+      "code": "hand_soap",
+      "group": "personal_care",
+      "name": {
+        "ar": "صابون يد سائل",
+        "en": "Liquid hand soap"
+      },
+      "regulator": "EDA",
+      "ifraCategory": "9",
+      "requiredCalculations": [
+        "active_matter",
+        "dilution",
+        "ph_titration"
+      ],
+      "measuredProperties": [
+        "ph"
+      ],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending",
+      "notes": "ifra_9_usually"
+    },
+    {
+      "code": "shower_gel",
+      "group": "personal_care",
+      "name": {
+        "ar": "شاور جل",
+        "en": "Shower gel"
+      },
+      "regulator": "EDA",
+      "ifraCategory": "9",
+      "requiredCalculations": [
+        "active_matter",
+        "dilution",
+        "ph_titration"
+      ],
+      "measuredProperties": [
+        "ph"
+      ],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending",
+      "notes": "ifra_9_usually"
+    },
+    {
+      "code": "bar_soap",
+      "group": "personal_care",
+      "name": {
+        "ar": "صابون بار",
+        "en": "Bar soap"
+      },
+      "regulator": "EDA",
+      "ifraCategory": "9",
+      "requiredCalculations": [
+        "saponification",
+        "ph_titration"
+      ],
+      "measuredProperties": [
+        "ph"
+      ],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending",
+      "notes": "ifra_9_usually"
+    },
+    {
+      "code": "face_wash",
+      "group": "personal_care",
+      "name": {
+        "ar": "غسول وجه",
+        "en": "Face wash"
+      },
+      "regulator": "EDA",
+      "ifraCategory": "9",
+      "requiredCalculations": [
+        "active_matter",
+        "dilution",
+        "ph_titration"
+      ],
+      "measuredProperties": [
+        "ph"
+      ],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending",
+      "notes": "ifra_9_usually"
+    }
+  ]
+}
