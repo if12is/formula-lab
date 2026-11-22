@@ -4,10 +4,12 @@ namespace App\Services\Costing;
 
 use App\Actions\Costing\RecordFormulaPublicationAction;
 use App\Actions\Sanad\PublishFinishedGoodToSanadAction;
+use App\Exceptions\Domain\DecisionOverrideException;
 use App\Exceptions\Domain\FinishedGoodPublishBlockedException;
 use App\Exceptions\Domain\InvalidTaxSettingException;
 use App\Exceptions\Domain\SanadIntegrationException;
 use App\Exceptions\Domain\SanadLinkException;
+use App\Models\DecisionOverride;
 use App\Models\Formula;
 use App\Models\FormulaCostApproval;
 use App\Models\FormulaPublication;
@@ -15,21 +17,27 @@ use App\Models\PriceListItem;
 use App\Models\SanadDevice;
 use App\Models\TradeMaterial;
 use App\Models\User;
+use App\Services\Decisions\DecisionOverrideService;
 use App\Services\Tax\TaxRegimeService;
 use App\Support\DecimalNormalizer;
 use App\Support\Engine\EngineRunner;
+use Illuminate\Support\Facades\DB;
 
 /**
  * G-09: publishes a formula's finished good to Sanad, only when the owner-approved `publish-to-sanad` decision rule set allows it
  * (the cost is approved and still in force, the price inputs are complete, no material price moved past the configured threshold).
  * The rules are the engine's (scripts/publish-decision.ts); this class fills the context from the app's records, shows the answer in
  * words and pushes through the existing PublishFinishedGoodToSanadAction. The cost price sent is the APPROVED unit cost, never a
- * number typed in the publish form.
+ * number typed in the publish form. A blocked decision can be overridden (Y-04) by an authorized, signed person with a written reason:
+ * the override is recorded and then allows the push of exactly that decision (same inputs), and the publication keeps its record.
  */
 final class FinishedGoodPublishService
 {
     /** Details that must be present for the price waterfall to be complete; the tax setting is checked from the formula. */
     private const REQUIRED_DETAILS = ['sell_price'];
+
+    /** The decision kind on records and overrides. */
+    public const DECISION_KIND = 'publish-to-sanad';
 
     public function __construct(
         private readonly EngineRunner $engine,
@@ -38,6 +46,7 @@ final class FinishedGoodPublishService
         private readonly TaxRegimeService $tax,
         private readonly PublishFinishedGoodToSanadAction $publishFinishedGood,
         private readonly RecordFormulaPublicationAction $recordPublication,
+        private readonly DecisionOverrideService $overrides,
     ) {}
 
     /**
@@ -62,6 +71,7 @@ final class FinishedGoodPublishService
             'inForce' => $approval !== null,
             'tax' => ['set' => $formula->tax_mode !== null, 'label' => $this->taxLabel($formula)],
             'decision' => $decision,
+            'override' => $this->overridePanel($formula, $decision, $user),
             'priceLists' => $this->priceLists($formula),
             'history' => $previous->map(fn (FormulaPublication $publication): array => [
                 'id' => $publication->getKey(),
@@ -91,8 +101,12 @@ final class FinishedGoodPublishService
         if ($decision['state'] === 'undecidable') {
             throw FinishedGoodPublishBlockedException::undecidable($decision['detail']);
         }
+        $override = null;
         if ($decision['state'] === 'blocked') {
-            throw new FinishedGoodPublishBlockedException($decision['reasons']);
+            $override = $this->overrides->activeFor(self::DECISION_KIND, (string) $formula->getKey(), $decision['decision_hash']);
+            if ($override === null) {
+                throw new FinishedGoodPublishBlockedException($decision['reasons']);
+            }
         }
 
         $approval = $this->approvals->current($formula);
@@ -105,7 +119,59 @@ final class FinishedGoodPublishService
         $sent = [...$details, 'cost_price' => DecimalNormalizer::normalize($approval->unit_cost)];
         $result = ($this->publishFinishedGood)($formula, $sent, $device);
 
-        return ($this->recordPublication)($formula, $approval, $result, $sent, $decision['record'], $user?->getKey());
+        return ($this->recordPublication)($formula, $approval, $result, $sent, $override?->record ?? $decision['record'], $user?->getKey(), $override?->getKey());
+    }
+
+    /**
+     * Y-04: overrides the blocked publish decision of the details as they are. The person must be signed in with an allowed role and
+     * type their password again; the reason is written; the engine builds the record keeping every failed rule; both are stored.
+     * It overrides exactly this decision: if the inputs change, the decision changes and needs its own override.
+     *
+     * @param  array<string, mixed>  $details
+     *
+     * @throws DecisionOverrideException When the person may not sign, the password is wrong, or the decision is not blocked.
+     */
+    public function overrideBlocked(Formula $formula, array $details, ?User $user, string $reason, string $password): DecisionOverride
+    {
+        $signature = $this->overrides->sign($user, $password);
+
+        return DB::transaction(function () use ($formula, $details, $user, $reason, $signature): DecisionOverride {
+            $decision = $this->decide($formula, $details, $user);
+            if ($decision['state'] === 'undecidable') {
+                throw DecisionOverrideException::undecidable();
+            }
+            if ($decision['state'] !== 'blocked') {
+                throw DecisionOverrideException::notBlocked();
+            }
+            $overridden = $this->decide($formula, $details, $user, [...$signature, 'reason' => $reason]);
+
+            return $this->overrides->record((string) $formula->tenant_id, self::DECISION_KIND, (string) $formula->getKey(), $signature, $reason, $overridden['record']);
+        });
+    }
+
+    /**
+     * What the decision card needs to offer and show the override.
+     *
+     * @param  array<string, mixed>  $decision
+     * @return array<string, mixed>
+     */
+    private function overridePanel(Formula $formula, array $decision, ?User $user): array
+    {
+        $active = $decision['state'] === 'blocked' ? $this->overrides->activeFor(self::DECISION_KIND, (string) $formula->getKey(), $decision['decision_hash']) : null;
+        $availability = $this->overrides->availability($user);
+
+        return [
+            'available' => $decision['state'] === 'blocked' && $availability['available'],
+            'why' => $availability['why'] === null ? null : __($availability['why']),
+            'url' => route('formulas.publish.override', $formula->getKey(), false),
+            'active' => $active === null ? null : [
+                'by' => $active->signer?->name,
+                'role' => $active->role,
+                'reason' => $active->reason,
+                'at' => $active->signed_at->toIso8601String(),
+                'signature_ref' => $active->getKey(),
+            ],
+        ];
     }
 
     /**
@@ -113,9 +179,10 @@ final class FinishedGoodPublishService
      * could not judge, e.g. a price that cannot be compared).
      *
      * @param  array<string, mixed>  $details
+     * @param  array{by: string, role: string, signatureRef: string, reason: string}|null  $override  Builds the record as an override of a blocked decision.
      * @return array<string, mixed>
      */
-    public function decide(Formula $formula, array $details, ?User $user): array
+    public function decide(Formula $formula, array $details, ?User $user, ?array $override = null): array
     {
         $approval = $this->approvals->current($formula);
         $answer = $this->engine->run('publish-decision', [
@@ -129,6 +196,7 @@ final class FinishedGoodPublishService
                 'current' => $approval === null ? null : $this->currentPrices($approval),
                 'thresholdPct' => config('decisions.reapproval_price_change_threshold_pct'),
             ], fn (mixed $part): bool => $part !== null),
+            ...($override === null ? [] : ['override' => $override]),
         ]);
 
         if (($answer['ok'] ?? false) !== true) {

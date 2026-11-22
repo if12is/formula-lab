@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Formula;
 
 use App\Exceptions\Domain\BusinessRuleViolationException;
+use App\Exceptions\Domain\DecisionOverrideException;
 use App\Exceptions\Domain\FinishedGoodPublishBlockedException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Costing\PublishFinishedGoodRequest;
+use App\Http\Requests\Decisions\OverrideFinishedGoodDecisionRequest;
 use App\Models\Formula;
 use App\Services\Costing\FinishedGoodPublishService;
 use Illuminate\Http\RedirectResponse;
@@ -34,5 +36,17 @@ class FormulaPublishController extends Controller
         }
 
         return back()->with('success', __('sanad_publish.published_'.$publication->mode));
+    }
+
+    /** Y-04: a signed, reasoned override of the blocked publish decision; the publish itself is a separate, normal step. */
+    public function override(OverrideFinishedGoodDecisionRequest $request, Formula $formula): RedirectResponse
+    {
+        try {
+            $this->publishService->overrideBlocked($formula, $request->details(), $request->user(), $request->reason(), $request->password());
+        } catch (DecisionOverrideException $exception) {
+            return back()->withErrors([$exception->field => $exception->getMessage()]);
+        }
+
+        return back()->with('success', __('decision_ui.override.recorded'));
     }
 }

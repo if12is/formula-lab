@@ -12,6 +12,7 @@ return [
         'engine_missing_data' => 'بيانات ناقصة في الحساب: :missingProperties.',
         'compliance_not_pass' => 'نتيجة المطابقة :overall وليست نجاحاً (غير المعروف يمنع الاعتماد).',
         'critical_confidence_below_l2' => 'ثقة بيانات خامة حرجة أقل من المستوى الثاني: :materialIds.',
+        'no_completed_trial' => 'مفيش تجربة معمل للنسخة دي اتكمّلت لسه.',
         'lab_results_missing' => 'نتائج معملية مطلوبة ناقصة: :missingProperties.',
         'open_deviations' => 'توجد انحرافات مفتوحة: :deviationIds.',
     ],

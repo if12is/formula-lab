@@ -4,12 +4,15 @@ namespace App\Providers;
 
 use App\Models\Substance;
 use App\Models\TradeMaterial;
+use App\Models\User;
 use App\Services\Currency\Providers\ExchangeRateProvider;
+use App\Services\Decisions\OverrideAuthorizer;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\Grammars\PostgresGrammar;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Fluent;
 use Illuminate\Support\ServiceProvider;
@@ -32,6 +35,9 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->registerExactDecimalColumn();
         $this->registerSanadRateLimiter();
+
+        // Y-04: who may override a blocked decision (replaced by a real permission when RBAC lands, U-01).
+        Gate::define('decisions.override', fn (User $user): bool => app(OverrideAuthorizer::class)->allows($user));
 
         // Stable, DB-visible names for polymorphic references (property_values.entity_type).
         Relation::morphMap([

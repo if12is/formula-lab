@@ -5,7 +5,8 @@
  * change are the engine's. The timestamp comes from the caller (the engine never reads a clock).
  *
  * stdin : JSON `{ "subjectRef", "actor", "at", "cost": { approved, approvedUnitCost? }, "priceWaterfall": { missingProperties: [] },
- *                 "repricing": { approved?: { "<materialId>": "<EGP/kg>" }, current?: {...}, thresholdPct? } }`
+ *                 "repricing": { approved?: {...}, current?: {...}, thresholdPct? },
+ *                 "override"?: { by, role, reason, signatureRef } }` (Y-04: an override of a BLOCKED decision; the record keeps the failed list)
  * stdout: JSON `{ ok: true, decision, failed, passed, ruleSet: { id, version, hash }, maxChangePct, changesPct, record }`
  *         or `{ ok: false, missing }` when the decision could not be judged (a price that cannot be compared, a bad input)
  * Run   : node --experimental-transform-types --import ./scripts/node-ts/register.mjs scripts/publish-decision.ts
@@ -33,6 +34,7 @@ interface Input {
   cost: { approved: boolean; approvedUnitCost?: string };
   priceWaterfall: { missingProperties: string[] };
   repricing: { approved?: Record<string, string>; current?: Record<string, string>; thresholdPct?: string };
+  override?: { by: string; role: string; reason: string; signatureRef: string };
 }
 
 let input: Input;
@@ -82,7 +84,7 @@ if (!evaluated.ok) {
   fail(evaluated.missing);
 }
 const result = evaluated.value;
-const record = buildDecisionRecord({ kind: 'publish-to-sanad', subjectRef: input.subjectRef, ruleSet, context, result, actor: input.actor, at: input.at });
+const record = buildDecisionRecord({ kind: 'publish-to-sanad', subjectRef: input.subjectRef, ruleSet, context, result, actor: input.actor, at: input.at, ...(input.override === undefined ? {} : { override: input.override }) });
 if (!record.ok) {
   fail(record.missing);
 }

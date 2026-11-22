@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Concerns\Auditable;
 use App\Enums\FormulaStatus;
 use App\Exceptions\Domain\ImmutableRecordException;
 use App\Support\CanonicalJson;
@@ -16,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class FormulaVersion extends Model
 {
     /** @use HasFactory<FormulaVersionFactory> */
-    use HasFactory, HasUuids;
+    use Auditable, HasFactory, HasUuids;
 
     public const UPDATED_AT = null;
 

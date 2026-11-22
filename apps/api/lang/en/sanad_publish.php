@@ -49,10 +49,6 @@ return [
         'description' => 'The owner-approved publish rules, judged by the engine. Nothing is sent while one of them fails.',
         'allowed' => 'All the rules pass. The product can be published.',
         'blocked' => 'The product cannot be published yet.',
-        'undecidable' => 'The rules could not be judged: {detail}',
-        'remedy' => 'What to do',
-        'rule_set' => 'Rules {id}, version {version}',
-        'hash' => 'Decision hash',
         'max_change' => 'Largest material price change since the approval: {change}% (limit {limit}%).',
     ],
     'price_lists' => [

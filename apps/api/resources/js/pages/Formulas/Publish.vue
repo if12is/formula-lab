@@ -3,11 +3,12 @@
  * Publishing a formula's finished good to Sanad (G-09). The button works only when the owner-approved publish rules pass (an
  * approved cost still in force, the price inputs complete, no material price moved past the limit); otherwise the page says which
  * rule fails and what to do. The cost price sent is the approved unit cost, shown here, never typed. The rules and their answer are
- * the engine's; this page only shows them. Wholesale prices per merchant live in price lists, linked below.
+ * the engine's; this page only shows them (through the shared DecisionCard, which also offers the signed override of a blocked decision). Wholesale prices per merchant live in price lists, linked below.
  */
 import { computed, onBeforeUnmount, watch } from 'vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
 import { Alert, Badge, Button, Card, DataTable, DescriptionList, EmptyState, FormField, Input, PageHeader } from '@kit';
+import DecisionCard from '../../components/decisions/DecisionCard.vue';
 import DecimalField from '../../components/form/DecimalField.vue';
 import ConfidenceBadge from '../../components/materials/ConfidenceBadge.vue';
 import Num from '../../components/Num.vue';
@@ -24,6 +25,7 @@ const props = defineProps({
     inForce: { type: Boolean, required: true },
     tax: { type: Object, required: true },
     decision: { type: Object, required: true },
+    override: { type: Object, required: true },
     priceLists: { type: Array, required: true },
     history: { type: Array, required: true },
 });
@@ -48,7 +50,8 @@ const columns = computed(() => [
     { key: 'cost_price', label: t('sanad_publish.history.cost'), hideBelow: 'md' },
     { key: 'sell_price', label: t('sanad_publish.history.sell') },
 ]);
-const allowed = computed(() => props.decision.state === 'allowed');
+// An override signed for exactly this decision lets it go ahead; the server checks it again.
+const canPublish = computed(() => props.decision.state === 'allowed' || (props.decision.state === 'blocked' && props.override.active !== null));
 const published = computed(() => props.formula.sanad_product_uuid !== null);
 
 // The decision judges the selling price typed here, so it is asked again (the server decides, nothing is judged in the browser) a moment after typing stops.
@@ -128,23 +131,23 @@ function publish() {
                 </form>
             </Card>
 
-            <Card :title="t('sanad_publish.decision.title')" :description="t('sanad_publish.decision.description')" data-testid="publish-decision" :data-state="decision.state">
-                <div class="flex flex-col gap-3">
-                    <Alert v-if="decision.state === 'undecidable'" tone="danger" icon="ph:warning">{{ t('sanad_publish.decision.undecidable', { detail: decision.detail }) }}</Alert>
-                    <template v-else>
-                        <Alert :tone="allowed ? 'success' : 'warning'" :icon="allowed ? 'ph:check-circle' : 'ph:warning'">{{ allowed ? t('sanad_publish.decision.allowed') : t('sanad_publish.decision.blocked') }}</Alert>
-                        <ul v-if="decision.reasons.length" class="flex flex-col gap-3" data-testid="decision-reasons">
-                            <li v-for="reason in decision.reasons" :key="reason.rule" class="flex flex-col gap-1 rounded-lg border border-line p-3" :data-rule="reason.rule">
-                                <span class="flex items-center gap-2"><Badge tone="danger" size="sm" mono>{{ reason.rule }}</Badge><span class="text-ink">{{ reason.message }}</span></span>
-                                <span class="text-label text-ink-3">{{ t('sanad_publish.decision.remedy') }}: {{ reason.remedy }}</span>
-                            </li>
-                        </ul>
-                        <p v-if="approval" class="text-label text-ink-3">{{ t('sanad_publish.decision.max_change', { change: decision.max_change_pct, limit: decision.threshold_pct }) }}</p>
-                        <p class="text-label text-ink-3">{{ t('sanad_publish.decision.rule_set', { id: decision.rule_set.id, version: decision.rule_set.version }) }} · {{ t('sanad_publish.decision.hash') }}: <bdi dir="ltr" class="font-mono">{{ decision.decision_hash.slice(0, 16) }}</bdi></p>
-                    </template>
-                    <Button icon="ph:paper-plane-tilt" class="self-start" :disabled="!allowed" :loading="form.processing" data-testid="publish-submit" @click="publish">{{ published ? t('sanad_publish.actions.publish_again') : t('sanad_publish.actions.publish') }}</Button>
-                </div>
-            </Card>
+            <DecisionCard
+                :decision="decision"
+                :override="override"
+                :override-data="{ sell_price: normalizeDecimalText(form.sell_price) }"
+                :title="t('sanad_publish.decision.title')"
+                :description="t('sanad_publish.decision.description')"
+                :allowed-text="t('sanad_publish.decision.allowed')"
+                :blocked-text="t('sanad_publish.decision.blocked')"
+                data-testid="publish-decision"
+            >
+                <template #extra>
+                    <p v-if="approval && decision.state !== 'undecidable'" class="text-label text-ink-3">{{ t('sanad_publish.decision.max_change', { change: decision.max_change_pct, limit: decision.threshold_pct }) }}</p>
+                </template>
+                <template #actions>
+                    <Button icon="ph:paper-plane-tilt" class="self-start" :disabled="!canPublish" :loading="form.processing" data-testid="publish-submit" @click="publish">{{ published ? t('sanad_publish.actions.publish_again') : t('sanad_publish.actions.publish') }}</Button>
+                </template>
+            </DecisionCard>
 
             <Card :title="t('sanad_publish.price_lists.title')" :description="t('sanad_publish.price_lists.description')" data-testid="publish-price-lists">
                 <ul v-if="priceLists.length" class="flex flex-col gap-2">

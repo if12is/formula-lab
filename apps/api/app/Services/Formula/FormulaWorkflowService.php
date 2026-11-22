@@ -12,6 +12,7 @@ use App\Models\LabTrial;
 use App\Models\User;
 use App\Services\Lab\LabCoverageService;
 use App\Services\Lab\TestedValueService;
+use App\Support\DTOs\LabCoverage;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -71,6 +72,28 @@ final class FormulaWorkflowService
     }
 
     /**
+     * The approval conditions this screen can judge today, in the shape of the shared decision card (Y-08). Only the lab condition
+     * (AFV-06) is wired to the server; the other approve-formula-version rules are not yet (see HUMAN-TODO).
+     *
+     * @return array{state: string, reasons: list<array{rule: string, message: string, remedy: string}>}
+     */
+    private function decision(LabCoverage $coverage): array
+    {
+        $reasons = [];
+        if ($coverage->missing !== []) {
+            $reasons[] = [
+                'rule' => 'AFV-06',
+                'message' => __('decisions.afv.lab_results_missing', ['missingProperties' => implode(__('lab.list_separator'), $this->coverage->labels($coverage->missing))]),
+                'remedy' => __('decisions.remedy.record_lab_results'),
+            ];
+        } elseif ($coverage->completedTrials === 0) {
+            $reasons[] = ['rule' => 'AFV-06', 'message' => __('decisions.afv.no_completed_trial'), 'remedy' => __('decisions.remedy.record_lab_results')];
+        }
+
+        return ['state' => $reasons === [] ? 'allowed' : 'blocked', 'reasons' => $reasons];
+    }
+
+    /**
      * What the workflow panel of the editor shows for one version: status, allowed moves, signatures, lab coverage and trials.
      *
      * @return array<string, mixed>
@@ -85,6 +108,7 @@ final class FormulaWorkflowService
             'next' => array_map(fn (FormulaStatus $status): string => $status->value, $version->status->allowedNext()),
             'hash' => $version->hash,
             'coverage' => $coverage->toArray(),
+            'decision' => $this->decision($coverage),
             'signatures' => $version->transitions->map(fn (FormulaVersionTransition $row): array => [
                 'id' => $row->getKey(),
                 'from' => $row->from_status->value,

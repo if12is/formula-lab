@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Casts\DecimalString;
+use App\Concerns\Auditable;
 use App\Enums\Confidence;
 use App\Enums\ProductTier;
 use App\Enums\TaxMode;
@@ -16,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Formula extends Model
 {
     /** @use HasFactory<FormulaFactory> */
-    use HasFactory, HasUuids;
+    use Auditable, HasFactory, HasUuids;
 
     protected $fillable = ['tenant_id', 'code', 'name', 'product_type', 'product_family_id', 'formula_template_id', 'tier', 'ifra_category', 'claims', 'tax_mode', 'tax_rate_pct', 'sanad_product_uuid', 'unit_cost', 'unit_cost_source_id', 'unit_cost_confidence'];
 

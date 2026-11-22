@@ -20,10 +20,15 @@ export const E2E_PRICING_RULES = JSON.stringify({
   },
 });
 
+/** TEST-FIXTURE role allowed to override a blocked decision in the e2e run. */
+export const E2E_OVERRIDE_ROLE = 'quality_manager';
+
 /** Environment for every artisan process and for the server: the process env wins over apps/api/.env. */
 export const e2eServerEnv = (): Record<string, string> => ({
   DB_DATABASE: E2E_DATABASE,
   PRICING_RULES: E2E_PRICING_RULES,
+  // Y-04 TEST-FIXTURE role: the owner has not named the roles that may override a blocked decision yet (HUMAN-TODO).
+  DECISIONS_OVERRIDE_ROLES: E2E_OVERRIDE_ROLE,
 });
 
 /** Demo seeders every run starts from (each is idempotent and the specs still call the ones they need). */

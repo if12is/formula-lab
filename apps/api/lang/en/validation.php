@@ -104,6 +104,7 @@ return [
         'lines.*.phase' => 'phase',
         'lines.*.addition_temp_c' => 'addition temperature',
         'reason' => 'reason',
+        'password' => 'password',
         'balance_events.*.after' => 'balanced percentage',
         'from' => 'first version',
         'to' => 'second version',

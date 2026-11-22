@@ -104,6 +104,7 @@ return [
         'lines.*.phase' => 'الطور',
         'lines.*.addition_temp_c' => 'حرارة الإضافة',
         'reason' => 'السبب',
+        'password' => 'كلمة السر',
         'balance_events.*.after' => 'نسبة الموازنة',
         'from' => 'النسخة الأولى',
         'to' => 'النسخة الثانية',

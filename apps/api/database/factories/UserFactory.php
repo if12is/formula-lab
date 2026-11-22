@@ -42,4 +42,10 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+
+    /** A user holding the given role (what the decision override rule checks). */
+    public function withRole(string $role): static
+    {
+        return $this->state(fn (array $attributes) => ['role' => $role]);
+    }
 }

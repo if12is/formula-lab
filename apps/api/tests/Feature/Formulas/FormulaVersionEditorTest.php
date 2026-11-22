@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Formulas;
 
+use App\Enums\AuditAction;
 use App\Enums\FormulaStatus;
 use App\Models\AuditLog;
 use App\Models\Formula;
@@ -189,7 +190,7 @@ class FormulaVersionEditorTest extends TestCase
         $note = __('formulas.balance_note', ['material' => 'Water', 'before' => '—', 'after' => '88']);
         $this->assertSame("More foam [{$note}]", $v2->reason);
 
-        $entry = AuditLog::query()->where('table_name', 'formula_versions')->where('record_id', $v2->id)->firstOrFail();
+        $entry = AuditLog::query()->where('table_name', 'formula_versions')->where('record_id', $v2->id)->where('action', AuditAction::Update)->firstOrFail();
         $this->assertEquals([['material' => 'Water', 'before' => null, 'after' => '88']], $entry->after['balance_events']);
         $this->assertSame($note, $entry->reason);
     }

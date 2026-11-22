@@ -10,6 +10,7 @@ import { useForm } from '@inertiajs/vue3';
 import { Alert, Badge, Button, Card, CopyButton, Modal, FormField, Textarea, Timeline } from '@kit';
 import { useDateTime } from '../../composables/useDateTime';
 import { useI18n } from '../../composables/useI18n';
+import DecisionCard from '../decisions/DecisionCard.vue';
 import CoveragePanel from '../lab/CoveragePanel.vue';
 import StatusBadge from '../StatusBadge.vue';
 
@@ -71,7 +72,15 @@ const items = computed(() => props.workflow.signatures.map((row) => ({
 
             <Alert v-if="workflow.status === 'approved'" tone="success" icon="ph:lock-simple" :title="t('formulas.workflow.approved_title')">{{ t('formulas.workflow.approved_description') }}</Alert>
             <Alert v-else-if="workflow.status === 'rejected'" tone="danger" icon="ph:x-circle" :title="t('formulas.workflow.rejected_title')">{{ t('formulas.workflow.rejected_description') }}</Alert>
-            <Alert v-else-if="blocked" tone="warning" icon="ph:warning" :title="t('formulas.workflow.blocked_title')" data-testid="workflow-blocked">{{ t('lab.coverage.description') }}</Alert>
+
+            <DecisionCard
+                v-if="blocked"
+                :decision="workflow.decision"
+                :title="t('formulas.workflow.blocked_title')"
+                :description="t('lab.coverage.description')"
+                :blocked-text="t('formulas.workflow.blocked_verdict')"
+                data-testid="workflow-blocked"
+            />
 
             <CoveragePanel v-if="showCoverage" :coverage="workflow.coverage" />
 

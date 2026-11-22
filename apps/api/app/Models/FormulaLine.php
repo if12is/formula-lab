@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Casts\DecimalString;
+use App\Concerns\Auditable;
 use App\Enums\FormulaStatus;
 use App\Exceptions\Domain\ImmutableRecordException;
 use App\Support\DecimalNormalizer;
@@ -15,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class FormulaLine extends Model
 {
     /** @use HasFactory<FormulaLineFactory> */
-    use HasFactory, HasUuids;
+    use Auditable, HasFactory, HasUuids;
 
     public $timestamps = false;
 

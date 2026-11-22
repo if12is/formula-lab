@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Concerns\Auditable;
 use App\Enums\LabProperty;
 use Database\Factories\LabProtocolFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 class LabProtocol extends Model
 {
     /** @use HasFactory<LabProtocolFactory> */
-    use HasFactory, HasUuids;
+    use Auditable, HasFactory, HasUuids;
 
     protected $fillable = ['code', 'property', 'unit', 'instrument', 'steps', 'position'];
 

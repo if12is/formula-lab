@@ -14,4 +14,5 @@ Route::prefix('formulas/{formula}')->name('formulas.')->whereUuid('formula')->gr
     Route::post('cost-approvals', [FormulaCostReportController::class, 'approve'])->name('cost-approvals.store');
     Route::get('publish', [FormulaPublishController::class, 'show'])->name('publish');
     Route::post('publish', [FormulaPublishController::class, 'store'])->name('publish.store');
+    Route::post('publish/override', [FormulaPublishController::class, 'override'])->name('publish.override');
 });

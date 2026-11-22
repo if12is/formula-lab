@@ -12,6 +12,7 @@ return [
         'engine_missing_data' => 'Data is missing in the calculation: :missingProperties.',
         'compliance_not_pass' => 'The compliance result is :overall, not a pass (unknown blocks approval).',
         'critical_confidence_below_l2' => 'A critical material has data below confidence level 2: :materialIds.',
+        'no_completed_trial' => 'No lab trial of this version is completed yet.',
         'lab_results_missing' => 'Required lab results are missing: :missingProperties.',
         'open_deviations' => 'There are open deviations: :deviationIds.',
     ],

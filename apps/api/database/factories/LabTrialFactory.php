@@ -14,8 +14,8 @@ class LabTrialFactory extends Factory
     public function definition(): array
     {
         return [
-            'tenant_id' => fn (array $attributes): string => FormulaVersion::query()->with('formula')->findOrFail($attributes['formula_version_id'])->formula->tenant_id,
             'formula_version_id' => FormulaVersion::factory(),
+            'tenant_id' => fn (array $attributes): string => FormulaVersion::query()->with('formula')->findOrFail($attributes['formula_version_id'])->formula->tenant_id,
             'code' => 'T-'.fake()->unique()->numerify('####'),
             'status' => LabTrialStatus::InProgress,
             'batch_size' => '500',

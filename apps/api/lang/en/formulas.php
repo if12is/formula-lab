@@ -215,6 +215,7 @@ return [
         'reason_hint' => 'Required. Say what failed so the next version can fix it.',
         'confirm' => 'Sign and continue',
         'record_trial' => 'Record a lab trial',
+        'blocked_verdict' => 'This version cannot be approved yet: these conditions fail.',
         'blocked_title' => 'Approval is blocked until the lab results are complete',
         'approved_title' => 'Approved and signed',
         'approved_description' => 'This version and its lines are immutable. Start a new version to change anything.',

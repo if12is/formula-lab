@@ -18,7 +18,7 @@ class FormulaPublication extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'tenant_id', 'formula_id', 'cost_approval_id', 'sanad_product_uuid', 'mode', 'outbox_id', 'details', 'decision', 'decision_hash', 'published_by', 'published_at',
+        'tenant_id', 'formula_id', 'cost_approval_id', 'sanad_product_uuid', 'mode', 'outbox_id', 'details', 'decision', 'decision_hash', 'decision_override_id', 'published_by', 'published_at',
     ];
 
     protected static function booted(): void
