@@ -24,6 +24,9 @@ return [
     /* The scripts that may be run, by name, relative to package_path. */
     'scripts' => [
         'validate-rule-set' => 'scripts/validate-rule-set.ts',
+        'tier-solve' => '../optimizer/scripts/tier-solve.ts',
+        'price-ladder' => 'scripts/price-ladder.ts',
+        'dashboard-kpis' => 'scripts/dashboard-kpis.ts',
         'tested-values' => 'scripts/tested-values.ts',
         'price-list-lines' => 'scripts/price-list-lines.ts',
         'cost-report' => 'scripts/cost-report.ts',
@@ -32,5 +35,8 @@ return [
         'check-template' => 'scripts/check-template.ts',
         'production' => 'scripts/production.ts',
         'check-packaging-compat' => 'scripts/check-packaging-compat.ts',
+        'assistant' => 'scripts/assistant.ts',
+        // The optimizer package's own script (P-02): paths are relative to package_path.
+        'optimize-tier' => '../optimizer/scripts/optimize.ts',
     ],
 ];

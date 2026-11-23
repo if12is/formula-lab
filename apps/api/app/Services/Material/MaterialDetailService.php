@@ -112,8 +112,8 @@ final class MaterialDetailService
             ->all();
     }
 
-    /** @return list<array<string, mixed>> */
-    private function prices(TradeMaterial $material): array
+    /** @return list<array<string, mixed>> Every price quote of the material, newest first, with its source, confidence and dated exchange rate. */
+    public function prices(TradeMaterial $material): array
     {
         $prices = Price::query()
             ->with('source')

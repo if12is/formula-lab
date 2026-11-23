@@ -1,15 +1,17 @@
 [
  {
   "name": "get_material",
-  "description": "Fetch a trade material with its sourced properties and latest dated price.",
+  "description": "Fetch trade materials by name, INCI or CAS (query) or by id (materialId) with their sourced properties and dated price quotes. Each value carries its source and confidence level (L1 best to L7 estimate). A material with no price is reported in missing.",
   "input_schema": {
    "type": "object",
    "properties": {
     "query": {
-     "type": "string"
+     "type": "string",
+     "description": "Part of the trade name, grade, INCI or CAS."
     },
     "materialId": {
-     "type": "string"
+     "type": "string",
+     "description": "The id of one trade material."
     }
    },
    "additionalProperties": false
@@ -17,15 +19,17 @@
  },
  {
   "name": "calculate_formula",
-  "description": "Deterministic engine: mass balance, cost, batch, active matter, density conversion. Returns results with trace and missing data.",
+  "description": "Deterministic engine: the material cost per kg of a saved formula version (formulaVersionId) or of a what-if list of lines (materialId and percentWW as decimal strings). Returns each line cost with the price quote used (source, confidence, date), the total, and whatever is missing (a material with no usable price is reported, never costed as zero). Give either formulaVersionId or lines.",
   "input_schema": {
    "type": "object",
    "properties": {
     "formulaVersionId": {
-     "type": "string"
+     "type": "string",
+     "description": "The id of a saved formula version."
     },
     "lines": {
      "type": "array",
+     "description": "A what-if formula, percent w/w per material as decimal strings.",
      "items": {
       "type": "object",
       "properties": {
@@ -39,35 +43,8 @@
       "required": [
        "materialId",
        "percentWW"
-      ]
-     }
-    },
-    "batch": {
-     "type": "object",
-     "properties": {
-      "size": {
-       "type": "string"
-      },
-      "unit": {
-       "enum": [
-        "kg",
-        "L"
-       ]
-      },
-      "wastagePct": {
-       "type": "string"
-      },
-      "packSize": {
-       "type": "string"
-      },
-      "packUnit": {
-       "enum": [
-        "kg",
-        "L",
-        "mL",
-        "g"
-       ]
-      }
+      ],
+      "additionalProperties": false
      }
     }
    },
@@ -76,14 +53,16 @@
  },
  {
   "name": "optimize_tier",
-  "description": "Least-cost LP (HiGHS) for a product type and tier under compliance and tier constraints. Deterministic. Returns draft formula or infeasibility explanation.",
+  "description": "Least-cost LP (HiGHS) for a product type and tier (economy, mid, premium) from the stored tier profile and the listed available materials. Deterministic. Returns a DRAFT formula with cost per kg and the binding constraints, or why it is infeasible, or what is missing (profile, prices, active matter). The formula stays draft until it is tested in the lab.",
   "input_schema": {
    "type": "object",
    "properties": {
     "productType": {
-     "type": "string"
+     "type": "string",
+     "description": "A product family code."
     },
     "tier": {
+     "type": "string",
      "enum": [
       "economy",
       "mid",
@@ -91,20 +70,23 @@
      ]
     },
     "targetRetailPriceEGP": {
-     "type": "string"
+     "type": "string",
+     "description": "The retail price the user wants, a decimal string, per `per`."
     },
     "per": {
+     "type": "string",
      "enum": [
       "L",
       "kg",
-      "unit"
+      "pack"
      ]
     },
     "availableMaterialIds": {
      "type": "array",
      "items": {
       "type": "string"
-     }
+     },
+     "description": "Ids of the trade materials the optimizer may use."
     }
    },
    "required": [
@@ -116,14 +98,16 @@
  },
  {
   "name": "check_compliance",
-  "description": "Run ES / CosIng / IFRA rules. Returns PASS/FAIL/UNKNOWN per rule.",
+  "description": "Run the compliance rules (ES, CosIng, IFRA) over a saved formula version. Returns PASS, FAIL or UNKNOWN per rule with the value, the limit and the rule source; UNKNOWN means data is missing (see missing), it is never a pass.",
   "input_schema": {
    "type": "object",
    "properties": {
     "formulaVersionId": {
-     "type": "string"
+     "type": "string",
+     "description": "The id of a saved formula version."
     },
     "market": {
+     "type": "string",
      "enum": [
       "EG"
      ]
@@ -212,12 +196,13 @@
  },
  {
   "name": "convert_units",
-  "description": "Mass/volume/currency conversion with explicit density or dated FX.",
+  "description": "Convert a value between units: kg/g/mg, L/mL, %v/v to %w/w for ethanol (OIML R 22 table), mass to volume (needs materialId with a sourced density, or densityGml given by the user), and EGP to or from another currency (needs fxDate, YYYY-MM-DD). Units are written exactly: kg, g, mg, L, mL, %v/v, %w/w, EGP, USD.",
   "input_schema": {
    "type": "object",
    "properties": {
     "value": {
-     "type": "string"
+     "type": "string",
+     "description": "A decimal string."
     },
     "from": {
      "type": "string"
@@ -225,17 +210,46 @@
     "to": {
      "type": "string"
     },
+    "materialId": {
+     "type": "string",
+     "description": "Its sourced density is used for mass and volume conversion."
+    },
     "densityGml": {
-     "type": "string"
+     "type": "string",
+     "description": "A density in g/mL given by the user, when no material is named."
     },
     "fxDate": {
-     "type": "string"
+     "type": "string",
+     "description": "YYYY-MM-DD, the day of the exchange rate for a currency conversion."
     }
    },
    "required": [
     "value",
     "from",
     "to"
+   ],
+   "additionalProperties": false
+  }
+ },
+ {
+  "name": "explain_result",
+  "description": "Explain how far an earlier tool answer of this conversation turn can be trusted: its sources, their confidence levels (L1 best, L7 estimate), the weakest level, values below L2 and what is missing. Call it after another tool when the user asks why or how sure.",
+  "input_schema": {
+   "type": "object",
+   "properties": {
+    "tool": {
+     "type": "string",
+     "enum": [
+      "get_material",
+      "calculate_formula",
+      "optimize_tier",
+      "check_compliance",
+      "convert_units"
+     ]
+    }
+   },
+   "required": [
+    "tool"
    ],
    "additionalProperties": false
   }

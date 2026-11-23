@@ -5,7 +5,6 @@ namespace App\Actions\Template;
 use App\Exceptions\Domain\EngineException;
 use App\Exceptions\Domain\TemplateUseRejectedException;
 use App\Models\FormulaTemplate;
-use App\Models\RuleSet;
 use App\Models\TradeMaterial;
 use App\Services\Material\MaterialCompositionService;
 use App\Support\Compliance\RuleSetAssembler;
@@ -55,7 +54,7 @@ final class CheckTemplateUseAction
                 array_keys($compositions),
                 $compositions,
             )),
-            'ruleSets' => $this->ruleSetsFor($family->code),
+            'ruleSets' => $this->assembler->forProductType($family->code),
             // The family's IFRA category and rinse-off nature are unverified research, so they are not given to the rules:
             // a rule that needs them stays UNKNOWN instead of being decided on a guess.
             'context' => ['productType' => $family->code],
@@ -80,17 +79,5 @@ final class CheckTemplateUseAction
             'confidence' => $template->confidence->value,
             'lines' => $template->lines,
         ];
-    }
-
-    /** @return list<array<string, mixed>> Every rule set with a rule scoped to the family's code, assembled as the engine reads it. */
-    private function ruleSetsFor(string $familyCode): array
-    {
-        return RuleSet::query()
-            ->whereHas('rules', fn ($rules) => $rules->where('active', true)->whereRaw("jsonb_exists(rule -> 'scope' -> 'productTypes', ?)", [$familyCode]))
-            ->with('rules')
-            ->orderBy('code')
-            ->get()
-            ->map(fn (RuleSet $ruleSet): array => $this->assembler->assemble($ruleSet))
-            ->all();
     }
 }

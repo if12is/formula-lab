@@ -105,4 +105,11 @@ return [
     'production_deviation_needs_numbers' => 'Write the planned and the actual number together, or leave both empty.',
     'production_calculation_incomplete' => 'The numbers could not be judged: :gaps',
     'production_alkali_not_applicable' => 'The batch has no alkali or material that can be recomputed with lot values.',
+    'assistant_not_configured' => 'The assistant is off: the service key is not set on the server.',
+    'assistant_unreachable' => 'The assistant service cannot be reached right now. Try again shortly.',
+    'assistant_provider_error' => 'The assistant service answered with an error (:status, :type).',
+    'assistant_invalid_answer' => 'The assistant service answered with something that cannot be read.',
+    'assistant_tool_rounds_exceeded' => 'The assistant went over the limit of :limit tool calls for one question.',
+    'assistant_unknown_tool' => 'The tool :tool is not known.',
+    'assistant_invalid_tool_input' => 'The input of the tool :tool is not valid: :detail',
 ];

@@ -32,7 +32,24 @@ final class CostReportEngineService
     public function run(FormulaVersion $version): array
     {
         $version->loadMissing('lines.tradeMaterial.substance');
-        $materials = $version->lines->mapWithKeys(fn (FormulaLine $line): array => [$line->trade_material_id => $line->tradeMaterial])->all();
+
+        return $this->forLines($version->lines->all());
+    }
+
+    /**
+     * The same report for lines that are not (yet) a saved version, such as a what-if the assistant asks about.
+     *
+     * @param  list<FormulaLine>  $lines  Lines with their trade material loaded.
+     * @return array{
+     *     report: array<string, mixed>,
+     *     materials: array<string, TradeMaterial>,
+     *     quotes: array<string, list<array<string, mixed>>>
+     * }
+     */
+    public function forLines(array $lines): array
+    {
+        $lines = collect($lines);
+        $materials = $lines->mapWithKeys(fn (FormulaLine $line): array => [$line->trade_material_id => $line->tradeMaterial])->all();
         $options = $this->materialOptions->forMaterials(collect($materials));
 
         $quotes = [];
@@ -67,7 +84,7 @@ final class CostReportEngineService
 
         $report = $this->engine->run('cost-report', [
             'datasetVersion' => DatasetVersion::query()->latest('created_at')->value('id') ?? config('formula.unpublished_dataset_version'),
-            'lines' => $version->lines->map(fn (FormulaLine $line): array => array_filter([
+            'lines' => $lines->map(fn (FormulaLine $line): array => array_filter([
                 'materialId' => $line->trade_material_id,
                 'percentWW' => $line->percent_ww === null ? null : DecimalNormalizer::normalize($line->percent_ww),
                 'qs' => $line->is_qs ?: null,

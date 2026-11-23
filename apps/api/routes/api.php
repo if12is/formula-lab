@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Sanad\SanadAbility;
+use App\Http\Controllers\Api\Assistant\AssistantController;
 use App\Http\Controllers\Api\Sanad\ChangesController;
 use App\Http\Controllers\Api\Sanad\OutboxController;
 use Illuminate\Support\Facades\Route;
@@ -18,4 +19,9 @@ Route::prefix('sanad/v1')->name('sanad.')->middleware('throttle:sanad')->group(f
     Route::post('outbox/ack', [OutboxController::class, 'ack'])
         ->middleware(['sanad.device:'.SanadAbility::OutboxAck->value, 'idempotent'])
         ->name('outbox.ack');
+});
+
+// The Claude Haiku formulation assistant (phase P). No sign-in exists yet (U-01), so the guard is the rate limit; the model key stays on the server.
+Route::prefix('assistant')->name('assistant.')->middleware('throttle:assistant')->group(function () {
+    Route::post('ask', [AssistantController::class, 'ask'])->name('ask');
 });

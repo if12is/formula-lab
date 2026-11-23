@@ -94,6 +94,7 @@ return [
         'sanad_purchase_lines' => 'Sanad integration cache',
         'sanad_devices' => 'Sanad integration link',
         'sanad_outbox' => 'Sanad integration queue',
+        'assistant_requests' => 'usage log of the assistant (tokens, cost, status); holds no formula, question or reply',
         'migrations' => 'framework',
     ],
 ];

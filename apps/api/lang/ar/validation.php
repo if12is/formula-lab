@@ -27,6 +27,10 @@ return [
         'string' => 'يجب أن يكون حقل :attribute على الأقل :min حرفاً.',
     ],
     'attributes' => [
+        'question' => 'سؤالك',
+        'history' => 'المحادثة السابقة',
+        'history.*.role' => 'الدور',
+        'history.*.text' => 'نص الرسالة',
         'scale_resolution_g' => 'دقة الميزان',
         'units_count' => 'عدد الوحدات',
         'planned_on' => 'التاريخ المخطط',

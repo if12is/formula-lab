@@ -105,4 +105,11 @@ return [
     'production_deviation_needs_numbers' => 'اكتب المخطط والفعلي معاً، أو اتركهما فارغين.',
     'production_calculation_incomplete' => 'تعذر الحكم على الأرقام: :gaps',
     'production_alkali_not_applicable' => 'الدفعة لا تحوي قلوياً أو مادة يمكن إعادة حسابها بقيم اللوط.',
+    'assistant_not_configured' => 'المساعد غير مفعّل: مفتاح الخدمة غير مضبوط على الخادم.',
+    'assistant_unreachable' => 'تعذر الوصول إلى خدمة المساعد الآن. حاول بعد قليل.',
+    'assistant_provider_error' => 'ردّت خدمة المساعد بخطأ (:status، :type).',
+    'assistant_invalid_answer' => 'ردّت خدمة المساعد بشكل غير مفهوم.',
+    'assistant_tool_rounds_exceeded' => 'تجاوز المساعد حدّ :limit استدعاءات للأدوات في سؤال واحد.',
+    'assistant_unknown_tool' => 'الأداة :tool غير معروفة.',
+    'assistant_invalid_tool_input' => 'مدخلات الأداة :tool غير صحيحة: :detail',
 ];

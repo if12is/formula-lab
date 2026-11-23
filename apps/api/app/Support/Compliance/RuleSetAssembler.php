@@ -39,4 +39,20 @@ final class RuleSetAssembler
             ? $ruleSet->rules->where('active', true)
             : $ruleSet->rules()->where('active', true)->get();
     }
+
+    /**
+     * Every rule set with an active rule scoped to the product type (a family code), assembled as the engine reads it.
+     *
+     * @return list<array{id: string, version: string, status: string, rules: list<array<string, mixed>>}>
+     */
+    public function forProductType(string $productType): array
+    {
+        return RuleSet::query()
+            ->whereHas('rules', fn ($rules) => $rules->where('active', true)->whereRaw("jsonb_exists(rule -> 'scope' -> 'productTypes', ?)", [$productType]))
+            ->with('rules')
+            ->orderBy('code')
+            ->get()
+            ->map(fn (RuleSet $ruleSet): array => $this->assemble($ruleSet))
+            ->all();
+    }
 }

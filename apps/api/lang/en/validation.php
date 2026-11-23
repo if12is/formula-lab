@@ -27,6 +27,10 @@ return [
         'string' => 'The :attribute field must be at least :min characters.',
     ],
     'attributes' => [
+        'question' => 'question',
+        'history' => 'earlier messages',
+        'history.*.role' => 'role',
+        'history.*.text' => 'message text',
         'scale_resolution_g' => 'balance resolution',
         'units_count' => 'units',
         'planned_on' => 'planned date',
