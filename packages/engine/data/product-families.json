@@ -18,7 +18,9 @@
     "groups": [
       "detergents",
       "personal_care",
-      "disinfectants"
+      "disinfectants",
+      "air_care",
+      "skincare"
     ],
     "calculations": [
       {
@@ -90,6 +92,26 @@
         "id": "alcohol_dilution",
         "status": "available",
         "calculatorKey": null
+      },
+      {
+        "id": "aerosol_fill",
+        "status": "available",
+        "calculatorKey": "fragrance"
+      },
+      {
+        "id": "candle_load",
+        "status": "available",
+        "calculatorKey": "fragrance"
+      },
+      {
+        "id": "phase_balance",
+        "status": "available",
+        "calculatorKey": null
+      },
+      {
+        "id": "preservative_limit",
+        "status": "planned",
+        "calculatorKey": null
       }
     ],
     "measuredProperties": [
@@ -136,6 +158,18 @@
       {
         "id": "alcohol_strength",
         "labProperty": null
+      },
+      {
+        "id": "centrifuge_separation",
+        "labProperty": "centrifuge_separation"
+      },
+      {
+        "id": "thermal_cycle_separation",
+        "labProperty": "thermal_cycle_separation"
+      },
+      {
+        "id": "preservative_challenge",
+        "labProperty": null
       }
     ],
     "roles": [
@@ -160,7 +194,14 @@
       "fragrance",
       "colorant",
       "alcohol_active",
-      "quaternary_active"
+      "quaternary_active",
+      "propellant",
+      "gelling_agent",
+      "wax",
+      "emollient",
+      "occlusive",
+      "emulsifier",
+      "skin_active"
     ]
   },
   "families": [
@@ -533,6 +574,391 @@
       "sourceId": "plan-00-research-05",
       "confidence": "L7_estimate",
       "verification": "pending"
+    },
+    {
+      "code": "room_spray",
+      "group": "air_care",
+      "name": {
+        "ar": "معطر جو رشاش",
+        "en": "Room spray"
+      },
+      "regulator": "EOS",
+      "ifraCategory": "10B",
+      "requiredCalculations": [
+        "fragrance",
+        "alcohol_dilution"
+      ],
+      "measuredProperties": [],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending"
+    },
+    {
+      "code": "aerosol_air_freshener",
+      "group": "air_care",
+      "name": {
+        "ar": "معطر جو إيروسول",
+        "en": "Aerosol air freshener"
+      },
+      "regulator": "EOS",
+      "ifraCategory": "10B",
+      "requiredCalculations": [
+        "fragrance",
+        "aerosol_fill"
+      ],
+      "measuredProperties": [],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending",
+      "notes": "aerosol_filling_line"
+    },
+    {
+      "code": "reed_diffuser",
+      "group": "air_care",
+      "name": {
+        "ar": "ريد ديفيوزر / زيت فواحة",
+        "en": "Reed diffuser / fragrance oil"
+      },
+      "regulator": "EOS",
+      "ifraCategory": "10A",
+      "requiredCalculations": [
+        "fragrance"
+      ],
+      "measuredProperties": [],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending"
+    },
+    {
+      "code": "candle_wax_melt",
+      "group": "air_care",
+      "name": {
+        "ar": "شموع وواكس ميلت",
+        "en": "Candle and wax melt"
+      },
+      "regulator": "EOS",
+      "ifraCategory": "12",
+      "requiredCalculations": [
+        "fragrance",
+        "candle_load"
+      ],
+      "measuredProperties": [],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending"
+    },
+    {
+      "code": "gel_air_freshener",
+      "group": "air_care",
+      "name": {
+        "ar": "معطر جل",
+        "en": "Gel air freshener"
+      },
+      "regulator": "EOS",
+      "ifraCategory": null,
+      "requiredCalculations": [
+        "fragrance"
+      ],
+      "measuredProperties": [],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending",
+      "notes": "ifra_12_or_by_type"
+    },
+    {
+      "code": "car_air_freshener",
+      "group": "air_care",
+      "name": {
+        "ar": "معطر سيارة",
+        "en": "Car air freshener"
+      },
+      "regulator": "EOS",
+      "ifraCategory": null,
+      "requiredCalculations": [
+        "fragrance"
+      ],
+      "measuredProperties": [],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending",
+      "notes": "ifra_12_or_by_type"
+    },
+    {
+      "code": "fabric_air_freshener",
+      "group": "air_care",
+      "name": {
+        "ar": "معطر مفارش ومنسوجات",
+        "en": "Fabric and linen freshener"
+      },
+      "regulator": "EOS",
+      "ifraCategory": "10B",
+      "requiredCalculations": [
+        "fragrance"
+      ],
+      "measuredProperties": [],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending"
+    },
+    {
+      "code": "lotion",
+      "group": "skincare",
+      "name": {
+        "ar": "لوشن",
+        "en": "Lotion"
+      },
+      "regulator": "EDA",
+      "ifraCategory": "5A",
+      "requiredCalculations": [
+        "phase_balance",
+        "hlb",
+        "preservative_limit"
+      ],
+      "measuredProperties": [
+        "ph",
+        "viscosity",
+        "stability_4w",
+        "centrifuge_separation",
+        "thermal_cycle_separation"
+      ],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending",
+      "notes": "ifra_5a_body_5b_face"
+    },
+    {
+      "code": "cream",
+      "group": "skincare",
+      "name": {
+        "ar": "كريم",
+        "en": "Cream"
+      },
+      "regulator": "EDA",
+      "ifraCategory": null,
+      "requiredCalculations": [
+        "phase_balance",
+        "hlb",
+        "preservative_limit"
+      ],
+      "measuredProperties": [
+        "ph",
+        "viscosity",
+        "stability_4w",
+        "centrifuge_separation",
+        "thermal_cycle_separation"
+      ],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending"
+    },
+    {
+      "code": "face_cream",
+      "group": "skincare",
+      "name": {
+        "ar": "كريم وش",
+        "en": "Face cream"
+      },
+      "regulator": "EDA",
+      "ifraCategory": "5B",
+      "requiredCalculations": [
+        "phase_balance",
+        "hlb",
+        "preservative_limit"
+      ],
+      "measuredProperties": [
+        "ph",
+        "viscosity",
+        "stability_4w",
+        "centrifuge_separation",
+        "thermal_cycle_separation"
+      ],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending",
+      "notes": "ifra_5a_body_5b_face"
+    },
+    {
+      "code": "body_butter",
+      "group": "skincare",
+      "name": {
+        "ar": "بودي بتر",
+        "en": "Body butter"
+      },
+      "regulator": "EDA",
+      "ifraCategory": "5A",
+      "requiredCalculations": [
+        "phase_balance",
+        "hlb",
+        "preservative_limit"
+      ],
+      "measuredProperties": [
+        "ph",
+        "viscosity",
+        "stability_4w",
+        "centrifuge_separation",
+        "thermal_cycle_separation"
+      ],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending",
+      "notes": "ifra_5a_body_5b_face"
+    },
+    {
+      "code": "moisturising_gel",
+      "group": "skincare",
+      "name": {
+        "ar": "جل مرطب",
+        "en": "Moisturising gel"
+      },
+      "regulator": "EDA",
+      "ifraCategory": null,
+      "requiredCalculations": [
+        "phase_balance",
+        "hlb",
+        "preservative_limit"
+      ],
+      "measuredProperties": [
+        "ph",
+        "viscosity",
+        "stability_4w",
+        "centrifuge_separation",
+        "thermal_cycle_separation"
+      ],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending"
+    },
+    {
+      "code": "hand_cream",
+      "group": "skincare",
+      "name": {
+        "ar": "كريم يد",
+        "en": "Hand cream"
+      },
+      "regulator": "EDA",
+      "ifraCategory": null,
+      "requiredCalculations": [
+        "phase_balance",
+        "hlb",
+        "preservative_limit"
+      ],
+      "measuredProperties": [
+        "ph",
+        "viscosity",
+        "stability_4w",
+        "centrifuge_separation",
+        "thermal_cycle_separation"
+      ],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending"
+    },
+    {
+      "code": "hair_moisturiser",
+      "group": "skincare",
+      "name": {
+        "ar": "مرطب شعر",
+        "en": "Hair moisturiser"
+      },
+      "regulator": "EDA",
+      "ifraCategory": null,
+      "requiredCalculations": [
+        "phase_balance",
+        "hlb",
+        "preservative_limit"
+      ],
+      "measuredProperties": [
+        "ph",
+        "viscosity",
+        "stability_4w",
+        "centrifuge_separation",
+        "thermal_cycle_separation"
+      ],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending"
+    },
+    {
+      "code": "sunscreen",
+      "group": "skincare",
+      "name": {
+        "ar": "واقي شمس",
+        "en": "Sunscreen"
+      },
+      "regulator": "EDA",
+      "ifraCategory": null,
+      "requiredCalculations": [],
+      "measuredProperties": [],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending",
+      "notes": "skincare_not_in_research"
+    },
+    {
+      "code": "mask",
+      "group": "skincare",
+      "name": {
+        "ar": "ماسك",
+        "en": "Mask"
+      },
+      "regulator": "EDA",
+      "ifraCategory": null,
+      "requiredCalculations": [],
+      "measuredProperties": [],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending",
+      "notes": "skincare_not_in_research"
+    },
+    {
+      "code": "cleansing_cream",
+      "group": "skincare",
+      "name": {
+        "ar": "كريم تنظيف",
+        "en": "Cleansing cream"
+      },
+      "regulator": "EDA",
+      "ifraCategory": null,
+      "requiredCalculations": [],
+      "measuredProperties": [],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending",
+      "notes": "skincare_not_in_research"
+    },
+    {
+      "code": "cleansing_foam",
+      "group": "skincare",
+      "name": {
+        "ar": "رغوة تنظيف",
+        "en": "Cleansing foam"
+      },
+      "regulator": "EDA",
+      "ifraCategory": null,
+      "requiredCalculations": [],
+      "measuredProperties": [],
+      "taxRegime": null,
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "verification": "pending",
+      "notes": "skincare_not_in_research"
     }
   ]
 }

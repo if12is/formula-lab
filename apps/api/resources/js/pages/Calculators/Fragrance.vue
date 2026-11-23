@@ -1,6 +1,7 @@
 <script setup>
 /**
- * Fragrance and air care (S-14, L-04, L-05, L-10), five ways in one page: a fine-fragrance batch (oil, fixative, ethanol at a
+ * Fragrance and air care (S-14, L-04 to L-08, L-10), eight ways in one page (aerosol, reed / gel / car blends and candles are the
+ * air-care ones, see their field components): a fine-fragrance batch (oil, fixative, ethanol at a
  * target %v/v, water; by mass, or by volume through the measured product density), the full cost of a bottle of that perfume
  * (oil, alcohol, process loss, bottle, sprayer, box; the recipe is the batch's own), a water-based room spray (solubilizer
  * ratio from a TDS or a trial, clarity measured), a dilution of ethanol by the OIML R 22 mass balance with its contraction,
@@ -13,6 +14,9 @@ import CalculatorLayout from '../../components/calculators/CalculatorLayout.vue'
 import DecimalField from '../../components/form/DecimalField.vue';
 import FineRecipeFields from '../../components/calculators/FineRecipeFields.vue';
 import PerfumeCostFields from '../../components/calculators/PerfumeCostFields.vue';
+import AerosolFields from '../../components/calculators/AerosolFields.vue';
+import AirCareBlendFields from '../../components/calculators/AirCareBlendFields.vue';
+import CandleFields from '../../components/calculators/CandleFields.vue';
 import RoomSprayFields from '../../components/calculators/RoomSprayFields.vue';
 import QuantityInput from '../../components/form/QuantityInput.vue';
 import SourcedInput from '../../components/form/SourcedInput.vue';
@@ -32,7 +36,7 @@ const state = reactive(blankFragrance());
 const outcome = computed(() => runFragrance(state));
 const costFields = computed(() => [...PRICE_ITEMS.map((item) => state.cost.prices[item]), ...LOSS_STAGES.map((stage) => state.cost.loss[stage]), state.cost.fill, ...PACKAGING_SLOTS.flatMap((slot) => [state.cost.packaging[slot].price, state.cost.packaging[slot].reject])]);
 const sources = computed(() => ({
-    ...sourcesOf([state.fine.alcohol, state.fine.productDensity, state.fine.ifra, state.alcohol.source, state.ifra.limit, state.room.ratio, state.room.clarity, state.room.ifra, ...costFields.value], () => null),
+    ...sourcesOf([state.fine.alcohol, state.fine.productDensity, state.fine.ifra, state.alcohol.source, state.ifra.limit, state.room.ratio, state.room.clarity, state.room.ifra, state.aerosol.ratio, state.aerosol.maxFill, state.aerosol.ifra, state.blend.dose, state.blend.ifra, state.candle.maxLoad, state.candle.ifra, ...costFields.value], () => null),
     // A loss filled from a lab trial links to that trial.
     ...Object.fromEntries(LOSS_STAGES.filter((stage) => state.cost.loss[stage].href).map((stage) => [state.cost.loss[stage].sourceId, { title: state.cost.loss[stage].sourceTitle, href: state.cost.loss[stage].href }])),
 }));
@@ -76,6 +80,12 @@ function changeBatchBy(section, by) {
 
         <RoomSprayFields v-else-if="state.mode === 'room_spray'" v-model="state.room" />
 
+        <AerosolFields v-else-if="state.mode === 'aerosol'" v-model="state.aerosol" />
+
+        <AirCareBlendFields v-else-if="state.mode === 'blend'" v-model="state.blend" />
+
+        <CandleFields v-else-if="state.mode === 'candle'" v-model="state.candle" />
+
         <template v-else-if="state.mode === 'alcohol'">
             <p class="text-label text-ink-3">{{ t('calculators.fragrance.hints.alcohol') }}</p>
             <SourcedInput v-model="state.alcohol.source" label-key="calculators.fragrance.fields.alcohol_source" hint-key="calculators.fragrance.hints.alcohol_source" :units="ALCOHOL_UNITS" />
@@ -98,6 +108,9 @@ function changeBatchBy(section, by) {
         <template #notes>
             <Alert v-if="state.mode === 'fine'" tone="info" icon="ph:info" :title="t('calculators.fragrance.indicator_title')" data-testid="indicator-note">
                 {{ t('calculators.fragrance.indicator_note') }}
+            </Alert>
+            <Alert v-else-if="state.mode === 'aerosol'" tone="warning" icon="ph:warning" :title="t('calculators.fragrance.aerosol.filling_line_title')" data-testid="filling-line-note">
+                {{ t('calculators.fragrance.aerosol.filling_line_note') }}
             </Alert>
         </template>
     </CalculatorLayout>

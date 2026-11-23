@@ -37,6 +37,8 @@ return [
         'detergents' => 'المنظفات',
         'personal_care' => 'العناية الشخصية',
         'disinfectants' => 'المطهرات',
+        'air_care' => 'المعطرات',
+        'skincare' => 'العناية بالبشرة',
     ],
     'regulators' => [
         'EOS' => 'الهيئة المصرية العامة للمواصفات والجودة (EOS)',
@@ -75,6 +77,10 @@ return [
     'notes' => [
         'ifra_10b_if_sprayed' => 'فئة IFRA 10B بتنطبق لو المنتج رشاش.',
         'ifra_9_usually' => 'فئة IFRA 9 (يُشطف) في أغلب الحالات.',
+        'aerosol_filling_line' => 'يحتاج خط تعبئة مضغوطاً وشروط أمان.',
+        'ifra_12_or_by_type' => 'فئة IFRA 12 أو فئة أخرى حسب نوع المنتج: لا توجد فئة واحدة محددة.',
+        'ifra_5a_body_5b_face' => 'IFRA 5A لمنتجات الجسم التي تبقى على الجلد و5B للوجه كما يذكر البحث؛ باقي منتجات البشرة غير مذكورة.',
+        'skincare_not_in_research' => 'البحث لا يذكر حسابات أو قياسات أو فئة IFRA لهذا النوع من المنتجات؛ يملؤها الكيميائي.',
     ],
     'calculations' => [
         'active_matter' => 'المادة الفعالة',
@@ -91,6 +97,10 @@ return [
         'solvent_evaporation' => 'المذيبات والتبخر',
         'disinfectant_active' => 'تركيز المادة المطهرة الفعالة (إيثانول %v/v أو كواترنري %w/w)',
         'alcohol_dilution' => 'تخفيف الكحول (OIML R 22)',
+        'aerosol_fill' => 'تعبئة الإيروسول (نسبة المركّز إلى الغاز ووزن الغاز)',
+        'candle_load' => 'حمل عطر الشمع (% من وزن الشمع)',
+        'phase_balance' => 'توازن الأطوار (مائي، زيتي، تبريد)',
+        'preservative_limit' => 'حد الحافظ',
     ],
     'measured' => [
         'ph' => 'pH',
@@ -104,6 +114,9 @@ return [
         'solubility' => 'الذوبان',
         'corrosion' => 'التآكل',
         'alcohol_strength' => 'تركيز الكحول (% بالحجم)',
+        'centrifuge_separation' => 'الانفصال بعد الطرد المركزي',
+        'thermal_cycle_separation' => 'الانفصال بعد دورات الحرارة',
+        'preservative_challenge' => 'اختبار تحدي الحافظ',
     ],
     'roles' => [
         'water' => 'ماء',
@@ -128,6 +141,13 @@ return [
         'colorant' => 'ملوّن',
         'alcohol_active' => 'كحول (مادة مطهرة فعالة)',
         'quaternary_active' => 'كواترنري أمونيوم (مادة مطهرة فعالة)',
+        'propellant' => 'الغاز الدافع (للإيروسول)',
+        'gelling_agent' => 'مادة التجليل',
+        'wax' => 'شمع',
+        'emollient' => 'مطرٍّ (Emollient)',
+        'occlusive' => 'مانع للفقد (Occlusive)',
+        'emulsifier' => 'مستحلب',
+        'skin_active' => 'مكوّن فعّال للبشرة',
     ],
     /*
     | صياغة مفاتيح أسباب المحرك `families.<name>`: اللي بيرجّعه فحص السجل والقوالب واستخدام القالب.

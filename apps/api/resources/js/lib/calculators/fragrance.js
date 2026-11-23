@@ -1,12 +1,20 @@
 /**
  * Fine fragrance batch (L-02), alcohol dilution by the OIML mass balance (L-03), the IFRA check against a certificate limit,
- * a water-based room spray (L-05) and the full perfume cost with its process losses (L-04, L-10).
+ * a water-based room spray (L-05), an aerosol (L-06), reed diffuser, oil, gel and car blends (L-07, L-08), candles and wax
+ * (L-07) and the full perfume cost with its process losses (L-04, L-10).
  */
-import { checkIfraLimit, diluteEthanol, fineFragrance, inputLeaf, perfumeCost, roomSpray } from '@fl/engine';
+import { aerosol, airCareBlend, candle, checkIfraLimit, diluteEthanol, fineFragrance, inputLeaf, perfumeCost, roomSpray } from '@fl/engine';
 import { EMPTY, decimalOrNull, isBlank, outcomeOf, row, toQty, typed, warningOf } from './common';
 import { blankSourced, toSourced } from './sourced';
 
-export const MODES = ['fine', 'cost', 'room_spray', 'alcohol', 'ifra'];
+export const MODES = ['fine', 'cost', 'room_spray', 'aerosol', 'blend', 'candle', 'alcohol', 'ifra'];
+/** What each air-care blend is made of besides the oil: the carrier that takes the remainder and an optional sourced dose. */
+export const BLEND_TYPES = {
+    reed_diffuser: { carrier: 'solvent', dose: null },
+    oil_burner: { carrier: 'solvent', dose: null },
+    gel: { carrier: 'water', dose: 'gelAgent' },
+    car: { carrier: 'solvent', dose: null },
+};
 export const RATIO_BASES = ['tds', 'trial'];
 export const CLARITY_OBSERVATIONS = ['clear', 'hazy', 'separated'];
 export const LOSS_STAGES = ['ageing', 'chilling', 'filtration'];
@@ -45,6 +53,29 @@ export const blankFragrance = () => ({
         batch: { value: '', unit: 'g' },
         observation: '',
         clarity: blankSourced(''),
+        ifra: blankSourced('%w/w'),
+    },
+    aerosol: {
+        oilPct: '',
+        ratio: blankSourced(''),
+        ratioBasis: '',
+        fill: { value: '', unit: 'g' },
+        cans: '',
+        maxFill: blankSourced('g'),
+        ifra: blankSourced('%w/w'),
+    },
+    blend: {
+        type: Object.keys(BLEND_TYPES)[0],
+        oilPct: '',
+        otherPct: '',
+        dose: blankSourced('%w/w'),
+        batch: { value: '', unit: 'g' },
+        ifra: blankSourced('%w/w'),
+    },
+    candle: {
+        loadPct: '',
+        wax: { value: '', unit: 'g' },
+        maxLoad: blankSourced('%w/w'),
         ifra: blankSourced('%w/w'),
     },
     /* The recipe of the cost is the fine-fragrance one (state.fine); these are the prices, losses, fill and packaging on top of it. */
@@ -178,6 +209,85 @@ export function runRoomSpray(state) {
     ], SCOPE);
 }
 
+export function runAerosol(state) {
+    if (isBlank(state.oilPct) && isBlank(state.fill.value) && isBlank(state.ratio.value)) {
+        return EMPTY;
+    }
+
+    const result = aerosol({
+        fragranceOilPctOfConcentrate: typed(state.oilPct),
+        propellantRatio: toSourced(state.ratio),
+        ratioBasis: state.ratioBasis || undefined,
+        netFillMass: toQty(state.fill),
+        ...(isBlank(state.cans) ? {} : { cans: typed(state.cans) }),
+        ...(state.maxFill.value === '' ? {} : { maxFillMassG: toSourced(state.maxFill, { withUnit: true }) }),
+        ...(state.ifra.value === '' ? {} : { ifraLimitPct: toSourced(state.ifra) }),
+        policy: {},
+    });
+
+    return outcomeOf(result, (can) => [
+        row('propellant_mass', can.propellantMassPerCan, 3, { primary: true }),
+        row('concentrate_mass', can.concentrateMassPerCan, 3, { primary: true }),
+        row('oil_mass', can.oilMassPerCan, 3),
+        row('concentrate_pct', can.concentrateSharePct, 3, { group: 'gas' }),
+        row('propellant_pct', can.propellantSharePct, 3, { group: 'gas' }),
+        row('oil_pct_product', can.oilPctOfProduct, 3, { group: 'gas' }),
+        ...(can.batch ? [row('run_concentrate', can.batch.concentrateMass, 3, { group: 'run' }), row('run_propellant', can.batch.propellantMass, 3, { group: 'run' })] : []),
+        row('fill_status', null, undefined, { kind: 'status', status: can.fillCheck.status, missing: can.fillCheck.missing, primary: true, group: 'checks' }),
+        ...(can.fillCheck.limit ? [row('fill_limit', can.fillCheck.limit, 3, { group: 'checks' }), row('fill_margin', can.fillCheck.margin, 3, { group: 'checks' })] : []),
+        ...ifraRows(can.ifra, ''),
+    ], SCOPE);
+}
+
+export function runBlend(state) {
+    if (isBlank(state.oilPct) && isBlank(state.batch.value)) {
+        return EMPTY;
+    }
+
+    const { carrier, dose } = BLEND_TYPES[state.type];
+    const result = airCareBlend({
+        fragranceOilPct: typed(state.oilPct),
+        ...(isBlank(state.otherPct) ? {} : { otherPct: typed(state.otherPct) }),
+        doses: dose ? [{ key: dose, pct: toSourced(state.dose) }] : [],
+        batchMass: toQty(state.batch),
+        ...(state.ifra.value === '' ? {} : { ifraLimitPct: toSourced(state.ifra) }),
+        policy: {},
+    });
+
+    return outcomeOf(result, (blend) => [
+        row('oil_mass', blend.fragranceOil.mass, 3),
+        ...blend.doses.map((part) => row(`dose_${part.key}_mass`, part.mass, 3)),
+        row(`carrier_${carrier}_mass`, blend.remainder.mass, 3, { primary: true }),
+        row('total_mass', blend.totalMass, 3),
+        ...blend.doses.map((part) => row(`dose_${part.key}_pct`, part.pct, 3, { group: 'shares' })),
+        row(`carrier_${carrier}_pct`, blend.remainder.pct, 3, { group: 'shares' }),
+        ...ifraRows(blend.ifra, ''),
+    ], SCOPE);
+}
+
+export function runCandle(state) {
+    if (isBlank(state.loadPct) && isBlank(state.wax.value)) {
+        return EMPTY;
+    }
+
+    const result = candle({
+        loadPctOfWax: typed(state.loadPct),
+        waxMass: toQty(state.wax),
+        ...(state.maxLoad.value === '' ? {} : { waxMaxLoadPct: toSourced(state.maxLoad) }),
+        ...(state.ifra.value === '' ? {} : { ifraLimitPct: toSourced(state.ifra) }),
+        policy: {},
+    });
+
+    return outcomeOf(result, (wax) => [
+        row('fragrance_mass', wax.fragranceMass, 3, { primary: true }),
+        row('finished_mass', wax.finishedMass, 3),
+        row('candle_pct', wax.fragrancePctOfCandle, 3),
+        row('load_status', null, undefined, { kind: 'status', status: wax.loadCheck.status, missing: wax.loadCheck.missing, primary: true, group: 'checks' }),
+        ...(wax.loadCheck.limit ? [row('load_limit', wax.loadCheck.limit, 3, { group: 'checks' }), row('load_margin', wax.loadCheck.margin, 3, { group: 'checks' })] : []),
+        ...ifraRows(wax.ifra, ''),
+    ], SCOPE);
+}
+
 /** One packaging slot: the price of one piece and its reject %; the piece count is 1 (the engine says so on the line). */
 const slotOf = (slot) => ({ price: toSourced(slot.price, { withUnit: true }), rejectPct: toSourced(slot.reject) });
 
@@ -228,6 +338,9 @@ export function runFragrance(state) {
         fine: () => runFine(state.fine),
         cost: () => runCost(state),
         room_spray: () => runRoomSpray(state.room),
+        aerosol: () => runAerosol(state.aerosol),
+        blend: () => runBlend(state.blend),
+        candle: () => runCandle(state.candle),
         alcohol: () => runAlcohol(state.alcohol),
         ifra: () => runIfra(state.ifra),
     }[state.mode]();

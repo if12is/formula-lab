@@ -1056,6 +1056,679 @@
           "optional": true
         }
       ]
+    },
+    {
+      "code": "room_spray_basic",
+      "familyCode": "room_spray",
+      "name": {
+        "ar": "معطر جو رشاش (هيكل أساسي)",
+        "en": "Room spray (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "water",
+          "role": "water",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "nonionic_surfactant",
+          "role": "nonionic_surfactant",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "preservative",
+          "role": "preservative",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "colorant",
+          "role": "colorant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
+    },
+    {
+      "code": "aerosol_air_freshener_basic",
+      "familyCode": "aerosol_air_freshener",
+      "name": {
+        "ar": "معطر جو إيروسول (هيكل أساسي)",
+        "en": "Aerosol air freshener (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "solvent",
+          "role": "solvent",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "propellant",
+          "role": "propellant",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "code": "reed_diffuser_basic",
+      "familyCode": "reed_diffuser",
+      "name": {
+        "ar": "ريد ديفيوزر / زيت فواحة (هيكل أساسي)",
+        "en": "Reed diffuser / fragrance oil (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "solvent",
+          "role": "solvent",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "colorant",
+          "role": "colorant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
+    },
+    {
+      "code": "candle_wax_melt_basic",
+      "familyCode": "candle_wax_melt",
+      "name": {
+        "ar": "شموع وواكس ميلت (هيكل أساسي)",
+        "en": "Candle and wax melt (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "wax",
+          "role": "wax",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "colorant",
+          "role": "colorant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
+    },
+    {
+      "code": "gel_air_freshener_basic",
+      "familyCode": "gel_air_freshener",
+      "name": {
+        "ar": "معطر جل (هيكل أساسي)",
+        "en": "Gel air freshener (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "water",
+          "role": "water",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "gelling_agent",
+          "role": "gelling_agent",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "preservative",
+          "role": "preservative",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "colorant",
+          "role": "colorant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
+    },
+    {
+      "code": "car_air_freshener_basic",
+      "familyCode": "car_air_freshener",
+      "name": {
+        "ar": "معطر سيارة (هيكل أساسي)",
+        "en": "Car air freshener (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "solvent",
+          "role": "solvent",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "colorant",
+          "role": "colorant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
+    },
+    {
+      "code": "fabric_air_freshener_basic",
+      "familyCode": "fabric_air_freshener",
+      "name": {
+        "ar": "معطر مفارش ومنسوجات (هيكل أساسي)",
+        "en": "Fabric and linen freshener (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "water",
+          "role": "water",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "nonionic_surfactant",
+          "role": "nonionic_surfactant",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "preservative",
+          "role": "preservative",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "code": "body_lotion_basic",
+      "familyCode": "lotion",
+      "name": {
+        "ar": "لوشن جسم (هيكل أساسي)",
+        "en": "Body lotion (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "water",
+          "role": "water",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "emollient",
+          "role": "emollient",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "emulsifier",
+          "role": "emulsifier",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "humectant",
+          "role": "humectant",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "thickener",
+          "role": "thickener",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "preservative",
+          "role": "preservative",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
+    },
+    {
+      "code": "face_cream_basic",
+      "familyCode": "face_cream",
+      "name": {
+        "ar": "كريم وش (هيكل أساسي)",
+        "en": "Face cream (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "water",
+          "role": "water",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "emollient",
+          "role": "emollient",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "occlusive",
+          "role": "occlusive",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "emulsifier",
+          "role": "emulsifier",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "humectant",
+          "role": "humectant",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "thickener",
+          "role": "thickener",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "preservative",
+          "role": "preservative",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "skin_active",
+          "role": "skin_active",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
+    },
+    {
+      "code": "body_butter_basic",
+      "familyCode": "body_butter",
+      "name": {
+        "ar": "بودي بتر (هيكل أساسي)",
+        "en": "Body butter (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "emollient",
+          "role": "emollient",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "occlusive",
+          "role": "occlusive",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "emulsifier",
+          "role": "emulsifier",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "water",
+          "role": "water",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "humectant",
+          "role": "humectant",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "preservative",
+          "role": "preservative",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
+    },
+    {
+      "code": "moisturising_gel_basic",
+      "familyCode": "moisturising_gel",
+      "name": {
+        "ar": "جل مرطب (هيكل أساسي)",
+        "en": "Moisturising gel (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "water",
+          "role": "water",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "humectant",
+          "role": "humectant",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "thickener",
+          "role": "thickener",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "ph_adjuster",
+          "role": "ph_adjuster",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "preservative",
+          "role": "preservative",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "skin_active",
+          "role": "skin_active",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
+    },
+    {
+      "code": "hand_cream_basic",
+      "familyCode": "hand_cream",
+      "name": {
+        "ar": "كريم يد (هيكل أساسي)",
+        "en": "Hand cream (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "water",
+          "role": "water",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "emollient",
+          "role": "emollient",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "occlusive",
+          "role": "occlusive",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "emulsifier",
+          "role": "emulsifier",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "humectant",
+          "role": "humectant",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "thickener",
+          "role": "thickener",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "preservative",
+          "role": "preservative",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
+    },
+    {
+      "code": "hair_moisturiser_basic",
+      "familyCode": "hair_moisturiser",
+      "name": {
+        "ar": "مرطب شعر (هيكل أساسي)",
+        "en": "Hair moisturiser (basic structure)"
+      },
+      "verification": "theoretical",
+      "sourceId": "plan-00-research-05",
+      "confidence": "L7_estimate",
+      "lines": [
+        {
+          "key": "water",
+          "role": "water",
+          "percentWW": null,
+          "qs": true,
+          "optional": false
+        },
+        {
+          "key": "cationic_conditioning_agent",
+          "role": "cationic_conditioning_agent",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "emollient",
+          "role": "emollient",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "emulsifier",
+          "role": "emulsifier",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "humectant",
+          "role": "humectant",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "thickener",
+          "role": "thickener",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        },
+        {
+          "key": "preservative",
+          "role": "preservative",
+          "percentWW": null,
+          "qs": false,
+          "optional": false
+        },
+        {
+          "key": "fragrance",
+          "role": "fragrance",
+          "percentWW": null,
+          "qs": false,
+          "optional": true
+        }
+      ]
     }
   ]
 }

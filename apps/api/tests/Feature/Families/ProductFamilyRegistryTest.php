@@ -22,17 +22,34 @@ class ProductFamilyRegistryTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_the_seeder_loads_the_seventeen_families_and_their_templates_and_is_idempotent(): void
+    public function test_the_seeder_loads_every_family_and_its_template_and_is_idempotent(): void
     {
         $this->seed(ProductFamilySeeder::class);
         $this->seed(ProductFamilySeeder::class);
 
-        $this->assertSame(17, ProductFamily::query()->count());
-        $this->assertSame(17, FormulaTemplate::query()->count());
+        $this->assertSame(35, ProductFamily::query()->count());
+        $this->assertSame(30, FormulaTemplate::query()->count());
         $this->assertSame(
-            ['dish_liquid', 'laundry_powder', 'laundry_liquid', 'floor_cleaner', 'glass_cleaner', 'bathroom_cleaner', 'degreaser', 'fabric_softener', 'laundry_fragrance', 'shampoo', 'conditioner', 'hand_soap', 'shower_gel', 'bar_soap', 'face_wash', 'alcohol_disinfectant', 'quat_disinfectant'],
+            ['dish_liquid', 'laundry_powder', 'laundry_liquid', 'floor_cleaner', 'glass_cleaner', 'bathroom_cleaner', 'degreaser', 'fabric_softener', 'laundry_fragrance', 'shampoo', 'conditioner', 'hand_soap', 'shower_gel', 'bar_soap', 'face_wash', 'alcohol_disinfectant', 'quat_disinfectant', 'room_spray', 'aerosol_air_freshener', 'reed_diffuser', 'candle_wax_melt', 'gel_air_freshener', 'car_air_freshener', 'fabric_air_freshener', 'lotion', 'cream', 'face_cream', 'body_butter', 'moisturising_gel', 'hand_cream', 'hair_moisturiser', 'sunscreen', 'mask', 'cleansing_cream', 'cleansing_foam'],
             ProductFamily::query()->orderBy('position')->pluck('code')->all(),
         );
+    }
+
+    public function test_the_air_care_families_state_what_the_research_states_and_nothing_more(): void
+    {
+        $this->seed(ProductFamilySeeder::class);
+        $family = fn (string $code): ProductFamily => ProductFamily::query()->where('code', $code)->sole();
+
+        $this->assertSame('10A', $family('reed_diffuser')->ifra_category);
+        $this->assertSame('12', $family('candle_wax_melt')->ifra_category);
+        $this->assertSame('10B', $family('aerosol_air_freshener')->ifra_category);
+        $this->assertSame(['fragrance', 'aerosol_fill'], $family('aerosol_air_freshener')->required_calculations);
+        $this->assertSame('aerosol_filling_line', $family('aerosol_air_freshener')->notes_key);
+        foreach (['gel_air_freshener', 'car_air_freshener'] as $code) {
+            $this->assertNull($family($code)->ifra_category, "{$code}: the research says 12 or by type, so none is stated");
+            $this->assertSame('ifra_12_or_by_type', $family($code)->notes_key);
+        }
+        $this->assertSame(7, ProductFamily::query()->where('group', 'air_care')->count());
     }
 
     public function test_regulators_are_the_ones_the_research_names_and_nothing_else_is_stated(): void
@@ -40,7 +57,7 @@ class ProductFamilyRegistryTest extends TestCase
         $this->seed(ProductFamilySeeder::class);
 
         foreach (ProductFamily::query()->get() as $family) {
-            $this->assertSame($family->group === 'detergents' ? Regulator::Eos : Regulator::Eda, $family->regulator, $family->code);
+            $this->assertSame(in_array($family->group, ['detergents', 'air_care'], true) ? Regulator::Eos : Regulator::Eda, $family->regulator, $family->code);
             $this->assertNull($family->tax_regime, "{$family->code} has a tax regime nobody stated");
             $this->assertSame(DataVerification::Pending, $family->verification, "{$family->code} claims a check nobody made");
         }

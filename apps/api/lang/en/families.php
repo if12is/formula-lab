@@ -37,6 +37,8 @@ return [
         'detergents' => 'Detergents',
         'personal_care' => 'Personal care',
         'disinfectants' => 'Disinfectants',
+        'air_care' => 'Air care',
+        'skincare' => 'Skincare',
     ],
     'regulators' => [
         'EOS' => 'Egyptian Organization for Standardization and Quality (EOS)',
@@ -75,6 +77,10 @@ return [
     'notes' => [
         'ifra_10b_if_sprayed' => 'IFRA 10B applies when the product is sprayed.',
         'ifra_9_usually' => 'IFRA 9 (rinse-off) in most cases.',
+        'aerosol_filling_line' => 'Needs a pressurised filling line and safety conditions.',
+        'ifra_12_or_by_type' => 'IFRA 12 or another category by the type of product: no single category is stated.',
+        'ifra_5a_body_5b_face' => 'IFRA 5A for body leave-on products and 5B for the face, as the research states; other skin products are not named.',
+        'skincare_not_in_research' => 'The research names no calculation, measurement or IFRA category for this product type; a chemist fills them in.',
     ],
     'calculations' => [
         'active_matter' => 'Active matter',
@@ -91,6 +97,10 @@ return [
         'solvent_evaporation' => 'Solvents and evaporation',
         'disinfectant_active' => 'Disinfecting active concentration (ethanol %v/v or quaternary ammonium %w/w)',
         'alcohol_dilution' => 'Alcohol dilution (OIML R 22)',
+        'aerosol_fill' => 'Aerosol fill (concentrate to propellant ratio and gas mass)',
+        'candle_load' => 'Candle fragrance load (% of wax weight)',
+        'phase_balance' => 'Phase balance (water, oil, cool-down)',
+        'preservative_limit' => 'Preservative limit',
     ],
     'measured' => [
         'ph' => 'pH',
@@ -104,6 +114,9 @@ return [
         'solubility' => 'Solubility',
         'corrosion' => 'Corrosion',
         'alcohol_strength' => 'Alcohol strength (% by volume)',
+        'centrifuge_separation' => 'Separation after the centrifuge',
+        'thermal_cycle_separation' => 'Separation after thermal cycles',
+        'preservative_challenge' => 'Preservative challenge test',
     ],
     'roles' => [
         'water' => 'Water',
@@ -128,6 +141,13 @@ return [
         'colorant' => 'Colorant',
         'alcohol_active' => 'Alcohol (disinfecting active)',
         'quaternary_active' => 'Quaternary ammonium (disinfecting active)',
+        'propellant' => 'Propellant (aerosol gas)',
+        'gelling_agent' => 'Gelling agent',
+        'wax' => 'Wax',
+        'emollient' => 'Emollient',
+        'occlusive' => 'Occlusive',
+        'emulsifier' => 'Emulsifier',
+        'skin_active' => 'Active ingredient',
     ],
     /*
     | Words of the engine's reason keys `families.<name>`: what the registry and template validators and a template use report.
