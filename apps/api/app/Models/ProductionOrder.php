@@ -21,7 +21,7 @@ class ProductionOrder extends Model
 
     protected $fillable = [
         'tenant_id', 'code', 'batch_number', 'formula_version_id', 'formula_hash', 'snapshot', 'batch_size', 'batch_unit', 'scale_resolution_g', 'units_count',
-        'planned_on', 'expiry_date', 'branch_code', 'status', 'approved_by', 'approved_at', 'sent_at', 'sanad_outbox_id', 'notes', 'created_by',
+        'planned_on', 'expiry_date', 'branch_code', 'status', 'approved_by', 'approved_at', 'sent_at', 'sanad_outbox_id', 'sanad_sync', 'notes', 'created_by',
     ];
 
     /** @return array<string, string> */
@@ -30,6 +30,7 @@ class ProductionOrder extends Model
         return [
             'status' => ProductionOrderStatus::class,
             'snapshot' => 'array',
+            'sanad_sync' => 'array',
             'batch_size' => DecimalString::class,
             'scale_resolution_g' => DecimalString::class,
             'units_count' => DecimalString::class,

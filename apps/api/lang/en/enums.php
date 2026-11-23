@@ -180,6 +180,17 @@ return [
         'rule' => 'Margin rule',
         'override' => 'Agreed price',
     ],
+    'sanad_delivery_status' => [
+        'not_sent' => 'Not sent',
+        'queued' => 'Waiting for Sanad',
+        'retrying' => 'Queued again after a refusal',
+        'applied' => 'Done by Sanad',
+        'confirmed' => 'Sanad confirmed the consumption and the receipt',
+        'partial' => 'Materials consumed, finished good not received',
+        'failed' => 'Refused by Sanad',
+        'needs_review' => 'Needs a person to look',
+        'conflict' => 'Conflict with Sanad',
+    ],
     'price_list_sync_status' => [
         'draft' => 'Not published',
         'pending' => 'Waiting for Sanad',

@@ -27,6 +27,8 @@ const TONES = {
     // The EDA notification file (N-08): an undefined document list is a warning, never a pass.
     eda_item_status: { missing: 'warning', attached: 'success', not_applicable: 'neutral' },
     eda_readiness: { out_of_scope: 'neutral', items_not_sourced: 'warning', incomplete: 'info', ready: 'success' },
+    // What Sanad answered for a message (finished good publish, production order stock effect); a stock state that needs a person is a warning, never a pass.
+    sanad_delivery_status: { not_sent: 'neutral', queued: 'info', retrying: 'warning', applied: 'success', confirmed: 'success', partial: 'warning', failed: 'danger', needs_review: 'danger', conflict: 'warning' },
     price_list_sync_status: { draft: 'neutral', pending: 'info', applied: 'success', failed: 'danger', conflict: 'warning' },
 };
 

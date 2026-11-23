@@ -38,7 +38,7 @@ final class PublishPriceListToSanadAction
         if ($device !== null && $device->tenant_id !== $list->tenant_id) {
             throw PriceListException::crossTenant();
         }
-        if ($device === null && ! $this->lanConfigured()) {
+        if ($device === null && ! $this->client->isConfigured()) {
             throw PriceListException::noSanadLink();
         }
 
@@ -96,10 +96,5 @@ final class PublishPriceListToSanadAction
             'published_items' => $payload->itemUuids,
             'published_customers' => $payload->customerUuids,
         ])->save();
-    }
-
-    private function lanConfigured(): bool
-    {
-        return (string) config('sanad.client.base_url') !== '' && (string) config('sanad.client.token') !== '';
     }
 }

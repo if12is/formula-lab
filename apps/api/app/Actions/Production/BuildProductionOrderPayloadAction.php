@@ -2,6 +2,7 @@
 
 namespace App\Actions\Production;
 
+use App\Integrations\Sanad\SanadClient;
 use App\Models\ProductionOrder;
 use App\Models\SanadDevice;
 use App\Models\TradeMaterial;
@@ -20,6 +21,7 @@ final class BuildProductionOrderPayloadAction
     public function __construct(
         private readonly ProductionEngine $engine,
         private readonly CostApprovalService $approvals,
+        private readonly SanadClient $sanad,
     ) {}
 
     /** @return array{payload: array<string, mixed>|null, blockers: list<string>, device: SanadDevice|null} */
@@ -31,7 +33,7 @@ final class BuildProductionOrderPayloadAction
         $blockers = [];
 
         $device = SanadDevice::query()->where('tenant_id', $order->tenant_id)->orderBy('created_at')->first();
-        if ($device === null) {
+        if ($device === null && ! $this->sanad->isConfigured()) {
             $blockers[] = __('production.blockers.no_device');
         }
         if ($formula->sanad_product_uuid === null) {

@@ -4,23 +4,28 @@ namespace App\Services\Costing;
 
 use App\Actions\Costing\RecordFormulaPublicationAction;
 use App\Actions\Sanad\PublishFinishedGoodToSanadAction;
+use App\Enums\Sanad\SanadDeliveryStatus;
 use App\Exceptions\Domain\DecisionOverrideException;
 use App\Exceptions\Domain\FinishedGoodPublishBlockedException;
 use App\Exceptions\Domain\InvalidTaxSettingException;
 use App\Exceptions\Domain\SanadIntegrationException;
 use App\Exceptions\Domain\SanadLinkException;
+use App\Integrations\Sanad\SanadClient;
 use App\Models\DecisionOverride;
 use App\Models\Formula;
 use App\Models\FormulaCostApproval;
 use App\Models\FormulaPublication;
 use App\Models\PriceListItem;
 use App\Models\SanadDevice;
+use App\Models\SanadOutbox;
 use App\Models\TradeMaterial;
 use App\Models\User;
 use App\Services\Decisions\DecisionOverrideService;
 use App\Services\Tax\TaxRegimeService;
 use App\Support\DecimalNormalizer;
 use App\Support\Engine\EngineRunner;
+use App\Support\Sanad\SanadDelivery;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -47,6 +52,7 @@ final class FinishedGoodPublishService
         private readonly PublishFinishedGoodToSanadAction $publishFinishedGood,
         private readonly RecordFormulaPublicationAction $recordPublication,
         private readonly DecisionOverrideService $overrides,
+        private readonly SanadClient $sanad,
     ) {}
 
     /**
@@ -59,6 +65,7 @@ final class FinishedGoodPublishService
     public function panel(Formula $formula, ?User $user, array $draft = []): array
     {
         $previous = FormulaPublication::query()->where('formula_id', $formula->getKey())->orderByDesc('published_at')->orderByDesc('id')->get();
+        $outbox = SanadOutbox::query()->whereIn('id', $previous->pluck('outbox_id')->filter())->get()->keyBy('id');
         $last = $previous->first();
         $details = $this->formDefaults($formula, $last);
         $approval = $this->approvals->current($formula);
@@ -74,6 +81,7 @@ final class FinishedGoodPublishService
             'override' => $this->overridePanel($formula, $decision, $user),
             'priceLists' => $this->priceLists($formula),
             'history' => $previous->map(fn (FormulaPublication $publication): array => [
+                'delivery' => $this->delivery($publication, $outbox)->toArray(),
                 'id' => $publication->getKey(),
                 'published_at' => $publication->published_at->toIso8601String(),
                 'mode' => $publication->mode,
@@ -111,7 +119,7 @@ final class FinishedGoodPublishService
 
         $approval = $this->approvals->current($formula);
         $device = SanadDevice::query()->where('tenant_id', $formula->tenant_id)->orderBy('created_at')->first();
-        if ($device === null && ! $this->lanConfigured()) {
+        if ($device === null && ! $this->sanad->isConfigured()) {
             throw SanadLinkException::noLink();
         }
 
@@ -308,6 +316,21 @@ final class FinishedGoodPublishService
         ];
     }
 
+    /**
+     * What Sanad answered for a publication: a direct (LAN) one was answered by the upsert itself; a queued one by the ack of its
+     * outbox row, or of the row it was re-queued as after a refusal.
+     *
+     * @param  Collection<string, SanadOutbox>  $outbox  The outbox rows of the publications, by id.
+     */
+    private function delivery(FormulaPublication $publication, Collection $outbox): SanadDelivery
+    {
+        if ($publication->outbox_id === null) {
+            return new SanadDelivery(SanadDeliveryStatus::Applied);
+        }
+
+        return SanadDelivery::fromOutbox($outbox->get($publication->outbox_id)?->latestInChain());
+    }
+
     /** @return array<string, mixed> */
     private function approvalRow(FormulaCostApproval $approval, ?string $staleReason): array
     {
@@ -351,10 +374,5 @@ final class FinishedGoodPublishService
                 'sync_status' => $item->priceList->sync_status->value,
                 'href' => route('price-lists.show', $item->priceList, false),
             ])->values()->all();
-    }
-
-    private function lanConfigured(): bool
-    {
-        return (string) config('sanad.client.base_url') !== '' && (string) config('sanad.client.token') !== '';
     }
 }

@@ -48,4 +48,23 @@ class SanadOutbox extends Model
     {
         return $this->belongsTo(SanadDevice::class, 'device_id');
     }
+
+    /**
+     * The newest row of this item's retry chain: a failed ack re-queues the item as a new row whose `retry_of` is the failed one
+     * (contract 3.2), so the row something first pointed at is not always the one that says where Sanad stands.
+     */
+    public function latestInChain(): self
+    {
+        $current = $this;
+        // The chain is as long as the allowed failures (config sanad.outbox.max_failures), plus the first row.
+        for ($hop = 0; $hop <= config('sanad.outbox.max_failures'); $hop++) {
+            $next = self::query()->where('retry_of', $current->id)->first();
+            if ($next === null) {
+                break;
+            }
+            $current = $next;
+        }
+
+        return $current;
+    }
 }

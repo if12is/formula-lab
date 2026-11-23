@@ -46,6 +46,7 @@ const form = useForm({
 const columns = computed(() => [
     { key: 'published_at', label: t('sanad_publish.history.when') },
     { key: 'mode', label: t('sanad_publish.history.mode'), hideBelow: 'md' },
+    { key: 'delivery', label: t('sanad_publish.history.status') },
     { key: 'sku', label: t('sanad_publish.history.sku') },
     { key: 'cost_price', label: t('sanad_publish.history.cost'), hideBelow: 'md' },
     { key: 'sell_price', label: t('sanad_publish.history.sell') },
@@ -162,9 +163,10 @@ function publish() {
 
             <Card :title="t('sanad_publish.history.title')" data-testid="publish-history">
                 <EmptyState v-if="!history.length" compact icon="ph:paper-plane-tilt" :title="t('sanad_publish.history.none')" />
-                <DataTable v-else :columns="columns" :rows="history" row-key="id" :mobile-columns="['published_at', 'sku', 'sell_price']" :caption="t('sanad_publish.history.title')">
+                <DataTable v-else :columns="columns" :rows="history" row-key="id" :mobile-columns="['published_at', 'sku', 'delivery']" :caption="t('sanad_publish.history.title')">
                     <template #cell-published_at="{ row }">{{ when(row.published_at) }}</template>
                     <template #cell-mode="{ row }">{{ t(`sanad_publish.history.modes.${row.mode}`) }}</template>
+                    <template #cell-delivery="{ row }"><StatusBadge kind="sanad_delivery_status" :status="row.delivery.status" :data-testid="`publication-status-${row.id}`" /></template>
                     <template #cell-sku="{ row }"><bdi dir="ltr">{{ row.sku }}</bdi></template>
                     <template #cell-cost_price="{ row }"><Num :value="row.cost_price" :decimals="2" /></template>
                     <template #cell-sell_price="{ row }"><Num :value="row.sell_price" :decimals="2" /></template>

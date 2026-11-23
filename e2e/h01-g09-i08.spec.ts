@@ -145,6 +145,8 @@ for (const theme of ['light', 'dark'] as const) {
         await page.getByTestId('publish-submit').click();
         await expect(page.getByText('اتحط في طابور Sanad: هيظهر في Sanad أول ما يسحب.')).toBeVisible();
         await expect(page.getByTestId('publish-history')).toContainText(code);
+        // Q-07: the history says where Sanad stands for what was published (queued: nothing pulled it yet).
+        await expect(page.getByTestId('publish-history')).toContainText('في انتظار سند');
         await shot('publish-done');
 
         const payload = JSON.parse(artisan(`tinker --execute='echo json_encode(App\\Models\\SanadOutbox::query()->latest("id")->get()->first(fn ($row) => ($row->payload["sku"] ?? null) === "${code}")->payload);'`).trim());

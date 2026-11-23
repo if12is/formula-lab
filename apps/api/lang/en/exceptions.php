@@ -96,6 +96,7 @@ return [
     'production_order_not_approved' => 'Order :order is not approved.',
     'production_approver_required' => 'Approving needs a signed-in user with an approver role.',
     'production_send_blocked' => 'Order :order was not sent to Sanad. :reasons',
+    'production_sanad_step_refused' => 'Sanad did not accept :step for order :order: :reason',
     'production_batch_closed' => 'Batch :batch is completed: its record no longer changes.',
     'production_batch_already_started' => 'The batch of order :order has already started.',
     'production_line_not_in_batch' => 'This line does not belong to this batch.',

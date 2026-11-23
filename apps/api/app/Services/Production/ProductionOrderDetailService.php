@@ -8,6 +8,7 @@ use App\Models\ProductionOrder;
 use App\Models\User;
 use App\Services\Costing\CostApprovalService;
 use App\Support\DecimalNormalizer;
+use App\Support\Sanad\SanadDelivery;
 
 /**
  * Everything the production order page shows. A weights-only role (the operator) gets the order, the sheet and the batch, never a price,
@@ -90,7 +91,12 @@ final class ProductionOrderDetailService
         $built = $order->status === ProductionOrderStatus::Draft ? null : ($this->payload)($order);
         $approval = $this->approvals->current($formula);
         $props['cost'] = $approval === null ? null : ['unit_cost' => DecimalNormalizer::normalize($approval->unit_cost), 'approved_at' => $approval->approved_at->toIso8601String()];
+        // Where the stock effect stands in Sanad: from its answer to the queued message, or to the direct (LAN) steps.
+        $delivery = $order->sanad_sync === null ? SanadDelivery::fromOutbox($outbox, confirmsStock: true) : SanadDelivery::fromSync($order->sanad_sync);
         $props['sanad'] = [
+            'mode' => $order->sanad_sync !== null ? 'lan' : ($outbox !== null ? 'outbox' : null),
+            'delivery' => $delivery->toArray(),
+            'sync' => $order->sanad_sync,
             'blockers' => $built['blockers'] ?? [],
             'payload' => $built['payload'] ?? null,
             'outbox' => $outbox === null ? null : [

@@ -96,6 +96,7 @@ return [
     'production_order_not_approved' => 'الأمر :order غير معتمد.',
     'production_approver_required' => 'الاعتماد يحتاج مستخدماً مسجّل الدخول بدور معتمِد.',
     'production_send_blocked' => 'لم يُرسل الأمر :order إلى سند. :reasons',
+    'production_sanad_step_refused' => 'سند لم يقبل :step للأمر :order: :reason',
     'production_batch_closed' => 'الدفعة :batch مكتملة: لا يمكن تغيير سجلها.',
     'production_batch_already_started' => 'بدأت دفعة الأمر :order بالفعل.',
     'production_line_not_in_batch' => 'هذا السطر لا يخص هذه الدفعة.',

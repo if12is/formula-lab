@@ -92,6 +92,10 @@ for (const theme of ['light', 'dark'] as const) {
         await page.getByTestId('send-order').click();
         await confirm('إرسال إلى سند');
         await expect(page.getByTestId('outbox-state')).toHaveAttribute('data-status', 'pending');
+        // Q-08: the same word the whole app uses for where Sanad stands (queued: nothing pulled it yet), and no alert while nothing is wrong.
+        await expect(page.getByTestId('delivery-status')).toHaveText('في انتظار سند');
+        await expect(page.getByTestId('outbox-state')).toHaveAttribute('data-delivery', 'queued');
+        await expect(page.getByTestId('delivery-alert')).toHaveCount(0);
         await shot('order-sent');
 
         // ---- Q-02 the weighing sheet: the order the steps add them in, weights only --------------------------------------------

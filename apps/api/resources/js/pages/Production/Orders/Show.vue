@@ -161,12 +161,28 @@ function startBatch() {
                         <ul class="list-disc ps-5"><li v-for="blocker in sanad.blockers" :key="blocker">{{ blocker }}</li></ul>
                     </Alert>
 
-                    <div v-if="sanad.outbox" class="flex flex-wrap items-center gap-3" data-testid="outbox-state" :data-status="sanad.outbox.status">
-                        <Badge :tone="{ pending: 'info', applied: 'success', failed: 'danger', conflict: 'warning' }[sanad.outbox.status]" dot>{{ t(`production.show.outbox.${sanad.outbox.status}`) }}</Badge>
-                        <span v-if="sanad.outbox.acked_at" class="text-label text-ink-3">{{ when(sanad.outbox.acked_at) }}</span>
-                        <span v-if="sanad.outbox.result?.consume_status" class="text-label text-ink-2">{{ t('production.show.consume_status') }}: {{ sanad.outbox.result.consume_status }}</span>
-                        <span v-if="sanad.outbox.result?.receive_status" class="text-label text-ink-2">{{ t('production.show.receive_status') }}: {{ sanad.outbox.result.receive_status }}</span>
-                        <span v-if="sanad.outbox.error?.message" class="text-label text-danger-ink">{{ sanad.outbox.error.message }}</span>
+                    <div v-if="sanad.mode" class="flex flex-col gap-3" data-testid="outbox-state" :data-status="sanad.outbox?.status ?? sanad.delivery.status" :data-delivery="sanad.delivery.status">
+                        <div class="flex flex-wrap items-center gap-3">
+                            <StatusBadge kind="sanad_delivery_status" :status="sanad.delivery.status" data-testid="delivery-status" />
+                            <span class="text-label text-ink-3">{{ t(`production.show.delivery.mode_${sanad.mode}`) }}</span>
+                            <span v-if="sanad.delivery.acked_at" class="text-label text-ink-3">{{ when(sanad.delivery.acked_at) }}</span>
+                            <span v-if="sanad.delivery.failures" class="text-label text-ink-2" data-testid="delivery-attempts">{{ t('production.show.delivery.attempts') }}: <Num :value="String(sanad.delivery.failures)" /> <template v-if="sanad.mode === 'outbox'">{{ t('production.show.delivery.of') }} <Num :value="String(sanad.delivery.max_failures)" /></template></span>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-3">
+                            <span v-if="sanad.delivery.result?.consume_status" class="text-label text-ink-2">{{ t('production.show.consume_status') }}: {{ sanad.delivery.result.consume_status }}</span>
+                            <span v-if="sanad.delivery.result?.receive_status" class="text-label text-ink-2">{{ t('production.show.receive_status') }}: {{ sanad.delivery.result.receive_status }}</span>
+                            <span v-if="sanad.sync?.consume?.total_cost" class="text-label text-ink-2">{{ t('production.show.delivery.consumed_cost') }}: <Num :value="sanad.sync.consume.total_cost"><template #suffix> {{ t('production.units.egp') }}</template></Num></span>
+                            <span v-if="sanad.delivery.result?.product_batch_uuid" class="text-label text-ink-2">{{ t('production.show.delivery.batch') }}: <bdi dir="ltr">{{ sanad.delivery.result.product_batch_uuid }}</bdi></span>
+                        </div>
+                        <Alert v-if="sanad.delivery.needs_attention" :tone="sanad.delivery.status === 'conflict' ? 'warning' : 'danger'" icon="ph:warning" data-testid="delivery-alert">
+                            <p v-if="sanad.delivery.status === 'needs_review'">{{ t('production.show.delivery.needs_review') }}</p>
+                            <p v-else-if="sanad.delivery.status === 'partial'">{{ t('production.show.delivery.partial') }}</p>
+                            <p v-if="sanad.delivery.error?.message">{{ sanad.delivery.error.remote_message ?? sanad.delivery.error.message }}</p>
+                            <ul v-if="sanad.delivery.error?.shortfalls?.length" class="list-disc ps-5" :aria-label="t('production.show.delivery.shortfalls')">
+                                <li v-for="row in sanad.delivery.error.shortfalls" :key="row.product_uuid"><bdi dir="ltr">{{ row.product_uuid }}</bdi>: <Num :value="row.required" /> / <Num :value="row.available" /></li>
+                            </ul>
+                            <p v-if="sanad.mode === 'lan' && can.send">{{ t('production.show.delivery.retry_hint') }}</p>
+                        </Alert>
                     </div>
                     <p v-else-if="order.status === 'draft'" class="text-label text-ink-3">{{ t('production.show.not_sent_draft') }}</p>
                     <p v-else class="text-label text-ink-3">{{ t('production.show.not_sent') }}</p>

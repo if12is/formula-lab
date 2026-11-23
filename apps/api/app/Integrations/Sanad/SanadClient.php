@@ -241,6 +241,12 @@ final class SanadClient
         throw SanadIntegrationException::fromStatus($response->status(), is_array($body) ? $body : []);
     }
 
+    /** Whether the LAN direct mode has an address and a token to work with. */
+    public function isConfigured(): bool
+    {
+        return (string) config('sanad.client.base_url') !== '' && (string) config('sanad.client.token') !== '';
+    }
+
     /** @throws SanadIntegrationException When the base URL or token is not configured. */
     private function pending(): PendingRequest
     {

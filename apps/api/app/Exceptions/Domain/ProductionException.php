@@ -42,6 +42,11 @@ class ProductionException extends BusinessRuleViolationException
         return new self(__('exceptions.production_send_blocked', ['order' => $code, 'reasons' => implode('; ', $reasons)]));
     }
 
+    public static function sanadStepRefused(string $code, string $step, string $reason): self
+    {
+        return new self(__('exceptions.production_sanad_step_refused', ['order' => $code, 'step' => __('production.show.steps.'.$step), 'reason' => $reason]));
+    }
+
     public static function batchClosed(string $number): self
     {
         return new self(__('exceptions.production_batch_closed', ['batch' => $number]));

@@ -180,6 +180,17 @@ return [
         'rule' => 'قاعدة هامش',
         'override' => 'سعر متفق عليه',
     ],
+    'sanad_delivery_status' => [
+        'not_sent' => 'لم يُرسل',
+        'queued' => 'في انتظار سند',
+        'retrying' => 'أُعيد الطلب بعد رفض',
+        'applied' => 'نفّذه سند',
+        'confirmed' => 'سند أكّد الصرف والاستلام',
+        'partial' => 'صُرفت الخامات ولم يُستلم المنتج التام',
+        'failed' => 'رفضه سند',
+        'needs_review' => 'يحتاج مراجعة بشرية',
+        'conflict' => 'تعارض مع سند',
+    ],
     'price_list_sync_status' => [
         'draft' => 'لم تُنشر',
         'pending' => 'بانتظار سند',

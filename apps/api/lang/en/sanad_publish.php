@@ -63,6 +63,7 @@ return [
         'when' => 'When',
         'mode' => 'How',
         'sku' => 'SKU',
+        'status' => 'Sanad status',
         'cost' => 'Cost price',
         'sell' => 'Selling price',
         'modes' => ['outbox' => 'Queued for Sanad', 'lan' => 'Sent directly'],
