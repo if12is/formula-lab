@@ -97,7 +97,7 @@ for (const theme of ['light', 'dark'] as const) {
         // ---- Q-02 the weighing sheet: the order the steps add them in, weights only --------------------------------------------
         await page.getByTestId('open-weighing').click();
         await expect(page.getByTestId('weighing-sheet')).toBeVisible();
-        await expect(page.getByTestId('weighing-sheet').locator('tbody tr, [data-mobile-table] li').first()).toContainText('Demo Prod Water');
+        await expect(page.getByTestId('weighing-sheet').locator('tbody tr, [data-mobile-table] li').first()).toContainText('Demo Prod Aqua');
         await expect(page.getByTestId('weighing-sheet').locator('[data-weigh]').first()).toContainText('2162');
         await expect(page.getByText('18.4573')).toHaveCount(0);
         await expect(page.getByText('ج.م')).toHaveCount(0);

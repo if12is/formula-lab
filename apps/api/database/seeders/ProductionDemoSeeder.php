@@ -94,7 +94,7 @@ class ProductionDemoSeeder extends Seeder
         ]);
         $surfactant = $make('Demo Prod Surfactant', 'Surfactant');
         $salt = $make('Demo Prod Salt', 'Viscosity builder');
-        $water = $make('Demo Prod Water', 'Solvent');
+        $water = $make('Demo Prod Aqua', 'Solvent');
         $bottle = TradeMaterial::factory()->packaging(ItemKind::Container)->create(['trade_name' => 'Demo Prod Bottle 400 mL', 'sanad_product_uuid' => (string) Str::uuid()]);
 
         $formula = Formula::factory()->create([
@@ -131,7 +131,7 @@ class ProductionDemoSeeder extends Seeder
         $orders->send($sent);
         app(AcknowledgeSanadOutboxItemAction::class)($device, ['id' => $sent->fresh()->sanad_outbox_id, 'status' => 'applied', 'result' => ['consume_status' => 'consumed', 'receive_status' => 'received', 'product_batch_uuid' => (string) Str::uuid()]]);
         $batch = $batches->start($sent->fresh(), 'Demo Operator', '2');
-        $this->weigh($batches, $batch, 'Demo Prod Water', '2162', 'DEMO-LOT-W1', '0.5');
+        $this->weigh($batches, $batch, 'Demo Prod Aqua', '2162', 'DEMO-LOT-W1', '0.5');
         $this->weigh($batches, $batch, 'Demo Prod Surfactant', '330', 'DEMO-LOT-7731', '51.5');
         $batches->check($batch, ['step_no' => 3, 'check_no' => 1, 'value' => '6.8', 'measured_by' => 'Demo Operator', 'measured_at' => '2026-11-26T10:30']);
         $batches->deviate($batch, ['kind' => 'weight', 'subject' => 'line:2', 'planned' => '300', 'actual' => '330', 'unit' => 'g', 'reason' => 'Topped up after a spill on the balance', 'recorded_by_name' => 'Demo Operator']);
@@ -139,7 +139,7 @@ class ProductionDemoSeeder extends Seeder
         // A completed batch with its real cost.
         $done = $this->approve($orders->create($version->refresh(), [...$data, 'planned_on' => '2026-11-20', 'packaging' => [['trade_material_id' => $bottle->id, 'quantity' => '10']]]));
         $finished = $batches->start($done, 'Demo Operator', '2');
-        $this->weigh($batches, $finished, 'Demo Prod Water', '2162', 'DEMO-LOT-W2', '0.5');
+        $this->weigh($batches, $finished, 'Demo Prod Aqua', '2162', 'DEMO-LOT-W2', '0.5');
         $this->weigh($batches, $finished, 'Demo Prod Surfactant', '300', 'DEMO-LOT-7731', '51.5');
         $this->weigh($batches, $finished, 'Demo Prod Salt', '38', 'DEMO-LOT-S1', '10');
         $this->weigh($batches, $finished, 'Demo Prod Bottle 400 mL', '10', null, '2.5');
