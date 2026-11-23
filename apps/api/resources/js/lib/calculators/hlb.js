@@ -3,14 +3,16 @@
  * the structure. Every rHLB and Davies group number is a sourced input; the engine returns bare values here, so each
  * is wrapped as a trace node over the leaves it came from (see trace.js).
  */
-import { IONICITIES, blendEmulsifiers, daviesHLB, emulsifierSystem, griffinHLB, requiredHLB } from '@fl/engine';
+import { IONICITIES, anionicActiveMatter, blendEmulsifiers, cationicTdsDose, daviesHLB, emulsifierSystem, griffinHLB, requiredHLB } from '@fl/engine';
 import { EMPTY, decimalOrNull, isBlank, outcomeOf, row, toQty, typed } from './common';
 import { blankSourced, toSourced } from './sourced';
 import { leaf, node, sourcedLeaf } from './trace';
 
-export const MODES = ['required', 'blend', 'system', 'griffin', 'davies'];
+export const MODES = ['required', 'blend', 'system', 'cationic', 'anionic', 'griffin', 'davies'];
 export { IONICITIES };
 const SCOPE = 'hlb';
+// The two ionic paths have their own reason words: a TDS range or an active matter is not an HLB.
+const IONIC_SCOPE = 'hlb_ionic';
 
 export const blankOilLine = (key) => ({ key, material: null, mass: '', hlb: blankSourced('') });
 export const blankGroup = (key) => ({ key, group: '', count: '1', h: blankSourced('') });
@@ -20,6 +22,9 @@ export const blankHlb = (firstKey) => ({
     required: { lines: [blankOilLine(firstKey)] },
     // The HLB blend rule is for non-ionic emulsifiers, so that is what each one starts as; the formulator declares otherwise and the engine refuses it.
     blend: { target: '', low: blankSourced(''), high: blankSourced(''), lowMaterial: null, highMaterial: null, lowIonicity: 'nonionic', highIonicity: 'nonionic', total: { value: '', unit: 'g' } },
+    // The ionic paths (M-08): no HLB. A cationic emulsifier is compared with the supplier's TDS range, an anionic one is worked out from its active matter.
+    cationic: { material: null, dose: '', min: blankSourced('%w/w'), max: blankSourced('%w/w') },
+    anionic: { material: null, mass: '', active: blankSourced('%w/w'), total: '' },
     griffin: { hydrophilic: '', total: '' },
     davies: { groups: [blankGroup(firstKey)] },
 });
@@ -122,6 +127,49 @@ export function runSystem(state, fallbackOf) {
     }, SCOPE);
 }
 
+/** Cationic emulsifier (M-08): its dose against the TDS usage range, no HLB. */
+export function runCationic(state, fallbackId = 'cationic') {
+    if (isBlank(state.dose) && isBlank(state.min.value) && isBlank(state.max.value)) {
+        return EMPTY;
+    }
+
+    const id = state.material?.label ?? fallbackId;
+    const min = toSourced(state.min);
+    const max = toSourced(state.max);
+    const result = cationicTdsDose({ materialId: id, ionicity: 'cationic', dosePercent: typed(state.dose), tdsMin: min, tdsMax: max });
+
+    return outcomeOf(result, (dose) => {
+        const inputs = [leaf(`${id} dose`, dose.dosePercent, '%w/w'), sourcedLeaf(`${id} TDS minimum`, min, '%w/w'), sourcedLeaf(`${id} TDS maximum`, max, '%w/w')];
+        const gap = node('x', `Distance of the dose outside the TDS range (${dose.position})`, dose.gap, '%w/w', inputs);
+
+        return [row(`tds_${dose.position}`, gap, 3, { primary: true, params: { name: id } })];
+    }, IONIC_SCOPE);
+}
+
+/** Anionic surfactant (M-08): its active matter from the mass and the active %, no HLB. */
+export function runAnionic(state, fallbackId = 'anionic') {
+    if (isBlank(state.mass) && isBlank(state.active.value) && isBlank(state.total)) {
+        return EMPTY;
+    }
+
+    const id = state.material?.label ?? fallbackId;
+    const active = toSourced(state.active);
+    const total = isBlank(state.total) ? undefined : typed(state.total);
+    const result = anionicActiveMatter({ materialId: id, ionicity: 'anionic', mass: typed(state.mass), activeMatter: active, ...(total === undefined ? {} : { totalMass: total }) });
+
+    return outcomeOf(result, (value) => {
+        const inputs = [leaf(`${id} mass`, typed(state.mass), 'g'), sourcedLeaf(`${id} active matter`, active, '%w/w')];
+        const activeMass = node('mul', 'Active mass = mass × active % ÷ 100', value.activeMass, 'g', inputs);
+        const rows = [row('active_mass', activeMass, 3, { primary: true, params: { name: id } })];
+
+        if (value.activePercentOfTotal !== null) {
+            rows.push(row('active_percent', node('div', 'Active % of the formula = active mass ÷ total × 100', value.activePercentOfTotal, '%w/w', [activeMass, leaf('Formula total', total, 'g')]), 3, { params: { name: id } }));
+        }
+
+        return rows;
+    }, IONIC_SCOPE);
+}
+
 export function runGriffin(state) {
     if (isBlank(state.hydrophilic) && isBlank(state.total)) {
         return EMPTY;
@@ -147,11 +195,14 @@ export function runDavies(state) {
     ], SCOPE);
 }
 
-export function runHlb(state, fallbackOf) {
+/** `ionicNames` names the emulsifier of the two ionic paths until a material is picked: { cationic, anionic }. */
+export function runHlb(state, fallbackOf, ionicNames = {}) {
     return {
         required: () => runRequired(state.required, fallbackOf),
         blend: () => runBlend(state.blend),
         system: () => runSystem(state, fallbackOf),
+        cationic: () => runCationic(state.cationic, ionicNames.cationic),
+        anionic: () => runAnionic(state.anionic, ionicNames.anionic),
         griffin: () => runGriffin(state.griffin),
         davies: () => runDavies(state.davies),
     }[state.mode]();

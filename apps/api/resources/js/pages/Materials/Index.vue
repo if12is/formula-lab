@@ -18,6 +18,7 @@ const props = defineProps({
     list: { type: Object, required: true },
     statusOptions: { type: Array, required: true },
     functionalClassOptions: { type: Array, required: true },
+    ionicityOptions: { type: Array, required: true },
     urls: { type: Object, required: true },
 });
 
@@ -30,7 +31,9 @@ const columns = computed(() => [
     { key: 'grade', label: t('materials.columns.grade'), hideBelow: 'md' },
     { key: 'function', label: t('materials.columns.function'), hideBelow: 'md' },
     { key: 'functional_classes', label: t('materials.columns.functional_classes'), hideBelow: 'lg' },
+    { key: 'ionicity', label: t('materials.columns.ionicity'), hideBelow: 'xl' },
     { key: 'status', label: t('materials.columns.status') },
+    { key: 'required_hlb_confidence', label: t('materials.columns.required_hlb_confidence'), hideBelow: 'xl' },
     { key: 'worst_price_confidence', label: t('materials.columns.price_confidence'), hideBelow: 'lg' },
     { key: 'has_sanad_link', label: t('materials.columns.sanad'), hideBelow: 'lg' },
     { key: 'updated_at', label: t('materials.columns.updated_at'), sortable: true, hideBelow: 'xl' },
@@ -79,6 +82,14 @@ const substanceLine = (row) => [row.substance?.inci ?? row.substance?.name_en, r
                     </span>
                     <template v-else>{{ t('common.no_data') }}</template>
                 </template>
+                <template #cell-ionicity="{ row }">
+                    <Badge v-if="row.ionicity" tone="neutral" size="sm">{{ t(`enums.ionicity.${row.ionicity}`) }}</Badge>
+                    <template v-else>{{ t('common.no_data') }}</template>
+                </template>
+                <template #cell-required_hlb_confidence="{ row }">
+                    <ConfidenceBadge v-if="row.required_hlb_confidence" :confidence="row.required_hlb_confidence" />
+                    <span v-else class="text-ink-3">{{ t('materials.no_required_hlb') }}</span>
+                </template>
                 <template #cell-status="{ row }"><StatusBadge kind="trade_material_status" :status="row.status" /></template>
                 <template #cell-worst_price_confidence="{ row }">
                     <ConfidenceBadge v-if="row.worst_price_confidence" :confidence="row.worst_price_confidence" />
@@ -111,6 +122,6 @@ const substanceLine = (row) => [row.substance?.inci ?? row.substance?.name_en, r
             />
         </div>
 
-        <MaterialFormModal v-model:open="creating" mode="create" :urls="urls" :status-options="statusOptions" :functional-class-options="functionalClassOptions" />
+        <MaterialFormModal v-model:open="creating" mode="create" :urls="urls" :status-options="statusOptions" :functional-class-options="functionalClassOptions" :ionicity-options="ionicityOptions" />
     </div>
 </template>

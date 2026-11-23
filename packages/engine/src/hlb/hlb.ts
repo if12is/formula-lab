@@ -109,12 +109,16 @@ export interface BlendResult {
   low: { materialId: string; mass: Quantity };
 }
 
-/** Splits `totalMass` of emulsifier between a low-HLB and a high-HLB emulsifier to hit `targetHLB`. */
+/**
+ * Splits `totalMass` of emulsifier between a low-HLB and a high-HLB emulsifier to hit `targetHLB`. The final calculation
+ * refuses an emulsifier HLB that is an L7 estimate (M-08), exactly as `requiredHLB` refuses an L7 rHLB, unless the policy allows it.
+ */
 export function blendEmulsifiers(
   targetHLB: string,
   low: Emulsifier,
   high: Emulsifier,
   totalMass: Quantity,
+  policy: HlbPolicy = {},
 ): Result<BlendResult> {
   const t = parseDec(targetHLB);
   const lo = parseDec(low.hlb.value);
@@ -135,6 +139,9 @@ export function blendEmulsifiers(
   for (const e of [low, high]) {
     if (e.ionicity !== undefined && e.ionicity !== 'nonionic') {
       gaps.push(bad('ionicity', 'hlb_blend_nonionic_only', e.materialId));
+    }
+    if (e.hlb.confidence === 'L7_estimate' && policy.allowL7 !== true) {
+      gaps.push(bad('hlb', 'confidence_L7_rejected_by_policy', e.materialId));
     }
   }
   if (gaps.length > 0 || t === null || lo === null || hi === null) {
@@ -236,7 +243,7 @@ export function emulsifierSystem(input: EmulsifierSystemInput, policy: HlbPolicy
   if (gaps.length > 0 || !required.ok) {
     return missing(gaps, required.warnings);
   }
-  const blend = blendEmulsifiers(required.value.value, input.low, input.high, input.totalMass);
+  const blend = blendEmulsifiers(required.value.value, input.low, input.high, input.totalMass, policy);
   if (!blend.ok) {
     return missing(blend.missing, [...required.warnings, ...blend.warnings]);
   }

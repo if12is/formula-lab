@@ -39,6 +39,7 @@ const props = defineProps({
     tab: { type: String, required: true },
     statusOptions: { type: Array, required: true },
     functionalClassOptions: { type: Array, required: true },
+    ionicityOptions: { type: Array, required: true },
     confidenceOptions: { type: Array, required: true },
     sourceKindOptions: { type: Array, required: true },
     currencyOptions: { type: Array, required: true },
@@ -79,6 +80,7 @@ const facts = computed(() => [
     { term: t('materials.fields.substance'), key: 'substance' },
     { term: t('materials.fields.function'), value: props.material.function ?? t('common.no_data') },
     { term: t('materials.fields.functional_classes'), value: props.material.functional_classes.map((item) => t(`enums.functional_class.${item}`)).join(' · ') || t('common.no_data') },
+    { term: t('materials.fields.ionicity'), value: props.material.ionicity ? t(`enums.ionicity.${props.material.ionicity}`) : t('common.no_data'), testid: 'fact-ionicity' },
     { term: t('materials.fields.grade'), value: props.material.grade ?? t('common.no_data') },
     { term: t('materials.fields.worst_price_confidence'), key: 'confidence' },
     { term: t('materials.fields.updated_at'), value: props.material.updated_at ?? t('common.no_data'), mono: true },
@@ -470,7 +472,7 @@ async function removePrice(row) {
             </TabPanel>
         </Tabs>
 
-        <MaterialFormModal v-model:open="editing" mode="edit" :material="material" :urls="urls" :status-options="statusOptions" :functional-class-options="functionalClassOptions" />
+        <MaterialFormModal v-model:open="editing" mode="edit" :material="material" :urls="urls" :status-options="statusOptions" :functional-class-options="functionalClassOptions" :ionicity-options="ionicityOptions" />
         <PropertyModal
             v-model:open="addingProperty"
             :material-id="material.id"

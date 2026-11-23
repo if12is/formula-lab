@@ -39,6 +39,7 @@ final class CalculatorMaterialService
                 'value' => $option['value'],
                 'label' => $option['label'],
                 'description' => $option['description'],
+                'ionicity' => $material->ionicity?->value,
                 'properties' => $properties,
                 'testedMarks' => $marks[$option['value']] ?? [],
             ];

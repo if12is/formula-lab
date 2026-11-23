@@ -19,7 +19,7 @@ class LabProtocolTest extends TestCase
         $this->seed(LabProtocolSeeder::class);
         $this->seed(LabProtocolSeeder::class);
 
-        $this->assertSame(['ph', 'density_pycnometer', 'viscosity_brookfield'], LabProtocol::query()->orderBy('position')->pluck('code')->all());
+        $this->assertSame(['ph', 'density_pycnometer', 'viscosity_brookfield', 'stability_centrifuge', 'stability_thermal_cycles', 'stability_40c_4w'], LabProtocol::query()->orderBy('position')->pluck('code')->all());
 
         $density = LabProtocol::query()->where('code', 'density_pycnometer')->sole();
         $this->assertSame(LabProperty::Density, $density->property);
@@ -72,7 +72,7 @@ class LabProtocolTest extends TestCase
 
         $this->get('/lab/protocols')->assertOk()->assertInertia(fn (Assert $page) => $page
             ->component('Lab/Protocols/Index')
-            ->where('list.meta.total', 3)
+            ->where('list.meta.total', 6)
             ->where('list.rows.0.code', 'ph')
             ->where('list.rows.0.name', __('lab.protocols.ph.name'))
             ->where('list.rows.0.steps', 4)

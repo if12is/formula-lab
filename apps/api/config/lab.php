@@ -21,7 +21,10 @@ return [
         'viscosity' => ['units' => ['mPa·s'], 'protocol' => 'viscosity_brookfield'],
         'cloud_point' => ['units' => ['°C'], 'protocol' => null],
         'foam' => ['units' => ['mm', 'mL'], 'protocol' => null],
-        'stability_4w' => ['units' => ['%'], 'protocol' => null],
+        /* Stability (M-07): the 4 weeks at 40 °C result, plus the quick centrifuge and thermal-cycle checks; each is the separated phase as a % per the lab's own method. */
+        'stability_4w' => ['units' => ['%'], 'protocol' => 'stability_40c_4w'],
+        'centrifuge_separation' => ['units' => ['%'], 'protocol' => 'stability_centrifuge'],
+        'thermal_cycle_separation' => ['units' => ['%'], 'protocol' => 'stability_thermal_cycles'],
         /* Active matter found by MBAS or titration, compared with the computed one (O-05). */
         'active_matter' => ['units' => ['%w/w'], 'protocol' => null],
         /* Fragrance process losses (L-04): % of the mass entering each stage; they feed the perfume cost. */
@@ -51,6 +54,8 @@ return [
         'cloud_point' => ['min' => null, 'max' => null],
         'foam' => ['min' => null, 'max' => null],
         'stability_4w' => ['min' => null, 'max' => null],
+        'centrifuge_separation' => ['min' => null, 'max' => null],
+        'thermal_cycle_separation' => ['min' => null, 'max' => null],
         'active_matter' => ['min' => null, 'max' => null],
         'ageing_loss' => ['min' => null, 'max' => null],
         'chilling_loss' => ['min' => null, 'max' => null],
@@ -80,6 +85,28 @@ return [
             'unit' => 'mPa·s',
             'instrument' => 'brookfield_viscometer',
             'steps' => ['prepare_sample', 'select_spindle', 'measure', 'record'],
+        ],
+        /*
+        | Emulsion stability (M-07). The steps name what to do, never a speed, time, temperature range or number of cycles
+        | the lab's method supplies: the only fixed figures are the 4 weeks at 40 °C the owner named for the long test.
+        */
+        'stability_centrifuge' => [
+            'property' => 'centrifuge_separation',
+            'unit' => '%',
+            'instrument' => 'centrifuge',
+            'steps' => ['prepare_sample', 'load', 'spin', 'inspect', 'record'],
+        ],
+        'stability_thermal_cycles' => [
+            'property' => 'thermal_cycle_separation',
+            'unit' => '%',
+            'instrument' => 'temperature_chamber',
+            'steps' => ['prepare_sample', 'set_cycle', 'run_cycles', 'inspect', 'record'],
+        ],
+        'stability_40c_4w' => [
+            'property' => 'stability_4w',
+            'unit' => '%',
+            'instrument' => 'stability_oven',
+            'steps' => ['prepare_sample', 'store', 'weekly_check', 'inspect', 'record'],
         ],
     ],
 

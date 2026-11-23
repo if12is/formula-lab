@@ -15,6 +15,9 @@ enum LabProperty: string
     case CloudPoint = 'cloud_point';
     case Foam = 'foam';
     case Stability4w = 'stability_4w';
+    /* Quick emulsion stability checks (M-07): the separated phase after the centrifuge and after the thermal cycles. */
+    case CentrifugeSeparation = 'centrifuge_separation';
+    case ThermalCycleSeparation = 'thermal_cycle_separation';
     case ActiveMatter = 'active_matter';
     /* Fragrance process losses (L-04): % of the mass entering the stage, measured on a trial batch. */
     case AgeingLoss = 'ageing_loss';

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Material;
 
 use App\Enums\Confidence;
 use App\Enums\FunctionalClass;
+use App\Enums\Ionicity;
 use App\Enums\SourceKind;
 use App\Enums\TradeMaterialStatus;
 use App\Http\Controllers\Controller;
@@ -41,6 +42,7 @@ class MaterialController extends Controller
             'list' => $this->materialListService->list($request, route('materials.functions', [], false)),
             'statusOptions' => TradeMaterialStatus::options(),
             'functionalClassOptions' => FunctionalClass::options(),
+            'ionicityOptions' => Ionicity::options(),
             'urls' => $this->lookupUrls(),
         ]);
     }
@@ -61,6 +63,7 @@ class MaterialController extends Controller
             'tab' => in_array($tab, self::TABS, true) ? $tab : self::TABS[0],
             'statusOptions' => TradeMaterialStatus::options(),
             'functionalClassOptions' => FunctionalClass::options(),
+            'ionicityOptions' => Ionicity::options(),
             'confidenceOptions' => Confidence::options(),
             'currencyOptions' => Currencies::options(),
             'sourceKindOptions' => SourceKind::selectableOptions(),

@@ -4,7 +4,7 @@
  * through ListFilters / useListQuery (state in the URL). A spec value never recorded reads "not recorded", not zero.
  */
 import { computed, ref } from 'vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import { Badge, Button, DataTable, EmptyState, PageHeader, Pagination } from '@kit';
 import ListFilters from '../../components/list/ListFilters.vue';
 import ConfidenceBadge from '../../components/materials/ConfidenceBadge.vue';
@@ -12,6 +12,7 @@ import Num from '../../components/Num.vue';
 import PackagingFormModal from '../../components/packaging/PackagingFormModal.vue';
 import { useI18n } from '../../composables/useI18n';
 import { useListQuery } from '../../composables/useListQuery';
+import { path } from '../../lib/routes';
 
 const props = defineProps({
     list: { type: Object, required: true },
@@ -58,6 +59,7 @@ function edit(row) {
     <div class="kit-page is-full">
         <PageHeader :title="t('packaging.title')" :description="t('packaging.description')">
             <template #actions>
+                <Link :href="path('packaging.compatibility.index')" class="type-body text-primary underline-offset-2 hover:underline" data-testid="packaging-compat-link">{{ t('packaging.compat.open') }}</Link>
                 <Button icon="ph:plus" data-testid="packaging-new" @click="create">{{ t('packaging.new') }}</Button>
             </template>
         </PageHeader>

@@ -196,7 +196,7 @@ test('test protocol templates: list, filter and a protocol with its steps and no
   await expect(page.getByRole('heading', { level: 1, name: 'بروتوكولات الاختبار' })).toBeVisible();
   await settle(page);
   const rows = page.locator('tbody tr');
-  await expect(rows).toHaveCount(3);
+  await expect(rows).toHaveCount(6);
   await expect(rows.filter({ hasText: 'الكثافة بالبيكنومتر' })).toHaveCount(1);
 
   await page.goto('/lab/protocols?search=brook');

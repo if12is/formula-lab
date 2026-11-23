@@ -18,6 +18,7 @@ import { all, missing, ok, type Result } from '../core/result';
 import type { MoneyContext } from '../cost/money';
 import { sourcedEgp } from '../cost/money';
 import { duplicateIds, lineCurrency, resolveScalar, sumTraced, type CostLine } from '../costing/line';
+import { checkPackagingCompatibility, COMPAT_REASONS, type CompatPair, type CompatPolicy } from '../packaging-check/compat';
 import { decOf, inputLeaf, traced, type Traced } from '../trace/trace';
 
 export type PackLevel = 'unit' | 'carton' | 'pallet';
@@ -33,12 +34,19 @@ export interface PackagingBomItem {
   qtyPerUnit?: SourcedScalar;
   /** Reject / breakage %, 0 <= r < 100. */
   rejectPct?: SourcedScalar;
+  /** The neck finish recorded in the packaging library; read by the compatibility check (H-02) for containers and closures. */
+  neckFinish?: string | null;
 }
 
 export interface PackagingBomInput extends MoneyContext {
   items: readonly PackagingBomItem[];
   /** Units per carton / cartons per pallet. Only needed when a carton or pallet item exists. */
   packing?: PackingConfig;
+  /**
+   * The compatibility pairs people declared (H-02). When given, a BOM whose closure or pump has no declared pair with the
+   * container's neck finish is refused (missing), exactly as an unpriced item is. The BOM editor always passes it.
+   */
+  compatibility?: { pairs: readonly CompatPair[]; policy?: CompatPolicy };
 }
 
 export interface PackagingCost {
@@ -105,6 +113,18 @@ export function packagingCostPerUnit(input: PackagingBomInput): Result<Packaging
   const lines = input.items.map((item) => itemLine(item, input));
   const warnings = lines.flatMap((l) => l.warnings);
   const gaps = [...dups, ...lines.flatMap((l) => (l.ok ? [] : l.missing))];
+  if (input.compatibility !== undefined) {
+    const compat = checkPackagingCompatibility(
+      input.items.filter((i) => i.kind !== undefined).map((i) => ({ itemId: i.itemId, kind: i.kind as string, neckFinish: i.neckFinish ?? null })),
+      input.compatibility.pairs,
+      input.compatibility.policy,
+    );
+    warnings.push(...compat.warnings);
+    gaps.push(...compat.missing);
+    for (const check of compat.checks.filter((c) => c.status === 'FAIL')) {
+      gaps.push({ materialId: check.closureId, property: 'compatibility', reason: COMPAT_REASONS.NO_PAIR });
+    }
+  }
   if (gaps.length > 0) {
     return missing(gaps, warnings);
   }

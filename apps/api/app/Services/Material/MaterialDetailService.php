@@ -54,6 +54,7 @@ final class MaterialDetailService
             'grade' => $material->grade,
             'function' => $material->function,
             'functional_classes' => $material->functional_classes ?? [],
+            'ionicity' => $material->ionicity?->value,
             'status' => $material->status->value,
             'is_mixture' => $material->is_mixture,
             'composition_complete' => $material->composition_complete,

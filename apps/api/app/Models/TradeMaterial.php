@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Casts\DecimalString;
 use App\Concerns\Auditable;
 use App\Enums\Confidence;
+use App\Enums\Ionicity;
 use App\Enums\ItemKind;
 use App\Enums\PackagingMaterial;
 use App\Enums\TradeMaterialStatus;
@@ -28,7 +29,7 @@ class TradeMaterial extends Model
 
     protected $fillable = [
         'tenant_id', 'substance_id', 'sanad_product_uuid', 'sanad_supplier_uuid',
-        'trade_name', 'grade', 'function', 'functional_classes', 'is_mixture', 'status', 'composition_complete', 'is_fragrance',
+        'trade_name', 'grade', 'function', 'functional_classes', 'ionicity', 'is_mixture', 'status', 'composition_complete', 'is_fragrance',
         'item_kind', 'packaging_material', 'nominal_capacity_ml', 'brimful_capacity_ml', 'unit_weight_g', 'neck_finish', 'packaging_source_id', 'packaging_confidence',
     ];
 
@@ -37,6 +38,7 @@ class TradeMaterial extends Model
     {
         return [
             'functional_classes' => 'array',
+            'ionicity' => Ionicity::class,
             'is_mixture' => 'boolean',
             'composition_complete' => 'boolean',
             'is_fragrance' => 'boolean',

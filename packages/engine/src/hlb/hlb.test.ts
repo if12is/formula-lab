@@ -221,3 +221,31 @@ describe('emulsifierSystem: oil phase -> required HLB -> non-ionic blend', () =>
     expect(!r.ok && r.missing[0]?.reason).toBe('hlb_blend_nonionic_only');
   });
 });
+
+describe('blendEmulsifiers: the final calculation rejects an L7 emulsifier HLB (M-08)', () => {
+  const low: Emulsifier = { materialId: 'low', hlb: sv('4.3'), ionicity: 'nonionic' };
+  const high: Emulsifier = { materialId: 'high', hlb: sv('15.0'), ionicity: 'nonionic' };
+
+  it('an L7 HLB on either emulsifier is listed and nothing is blended', () => {
+    const r = blendEmulsifiers('10', { ...low, hlb: sv('4.3', 'L7_estimate') }, { ...high, hlb: sv('15.0', 'L7_estimate') }, qty('10', 'g'));
+    expect(!r.ok && r.missing.map((m) => `${m.materialId}:${m.reason}`)).toEqual(['low:confidence_L7_rejected_by_policy', 'high:confidence_L7_rejected_by_policy']);
+  });
+
+  it('the policy override allows it (4.3/15.0 -> 10: f_high = 5.7/10.7 = 57/107)', () => {
+    const r = blendEmulsifiers('10', { ...low, hlb: sv('4.3', 'L7_estimate') }, high, qty('107', 'g'), { allowL7: true });
+    expect(r.ok && r.value.high.mass.value.toFixed()).toBe('57');
+  });
+
+  it('every non-L7 confidence is accepted, L6 included', () => {
+    const r = blendEmulsifiers('10', { ...low, hlb: sv('4.3', 'L6_community') }, high, qty('107', 'g'));
+    expect(r.ok && r.value.low.mass.value.toFixed()).toBe('50');
+  });
+
+  it('emulsifierSystem passes the policy on: an L7 emulsifier stops the system and an L7 rHLB is refused first', () => {
+    const oil = [{ materialId: 'oilA', mass: '8', phase: 'oil' as const, requiredHLB: sv('11') }];
+    const stopped = emulsifierSystem({ oilLines: oil, low: { ...low, hlb: sv('4.3', 'L7_estimate') }, high, totalMass: qty('10', 'g') });
+    expect(!stopped.ok && stopped.missing[0]?.reason).toBe('confidence_L7_rejected_by_policy');
+    const refused = emulsifierSystem({ oilLines: [{ ...oil[0]!, requiredHLB: sv('11', 'L7_estimate') }], low, high, totalMass: qty('10', 'g') });
+    expect(!refused.ok && refused.missing[0]).toMatchObject({ materialId: 'oilA', reason: 'confidence_L7_rejected_by_policy' });
+  });
+});

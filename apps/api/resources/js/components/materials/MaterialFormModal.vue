@@ -25,6 +25,8 @@ const props = defineProps({
     statusOptions: { type: Array, default: () => [] },
     /** The functional classes (M-02) to choose from; without them the field is not shown. */
     functionalClassOptions: { type: Array, default: () => [] },
+    /** The ionic characters (M-08); without them the field is not shown. */
+    ionicityOptions: { type: Array, default: () => [] },
 });
 
 const open = defineModel('open', { type: Boolean, default: false });
@@ -37,6 +39,7 @@ const initial = () => ({
     grade: props.material?.grade ?? '',
     function: props.material?.function ?? '',
     functional_classes: props.material?.functional_classes ?? [],
+    ionicity: props.material?.ionicity ?? null,
     substance_id: props.material?.substance?.id ?? null,
     is_mixture: props.material?.is_mixture ?? false,
     status: props.material?.status ?? 'draft',
@@ -44,6 +47,13 @@ const initial = () => ({
 });
 
 const form = useForm(initial());
+// Select items cannot be empty, so "not stated" is a word of its own that is sent as null.
+const NOT_STATED = 'not_stated';
+const ionicityChoices = computed(() => [{ value: NOT_STATED, label: t('materials.fields.ionicity_placeholder') }, ...props.ionicityOptions]);
+const ionicityModel = computed({
+    get: () => form.ionicity ?? NOT_STATED,
+    set: (value) => { form.ionicity = value === NOT_STATED ? null : value; },
+});
 const busy = ref(false);
 const editor = computed(() => props.mode === 'editor');
 const title = computed(() => t(`materials.form.title_${props.mode}`));
@@ -120,6 +130,10 @@ async function submitFromEditor() {
 
             <FormField v-if="functionalClassOptions.length" :label="t('materials.fields.functional_classes')" :hint="t('materials.fields.functional_classes_hint')" :error="form.errors.functional_classes" class="sm:col-span-2">
                 <MultiSelect v-model="form.functional_classes" :options="functionalClassOptions" :placeholder="t('materials.fields.functional_classes_placeholder')" :aria-label="t('materials.fields.functional_classes')" data-testid="functional-classes" />
+            </FormField>
+
+            <FormField v-if="ionicityOptions.length" :label="t('materials.fields.ionicity')" :hint="t('materials.fields.ionicity_hint')" :error="form.errors.ionicity" class="sm:col-span-2">
+                <Select v-model="ionicityModel" :options="ionicityChoices" data-testid="ionicity" />
             </FormField>
 
             <div class="sm:col-span-2">

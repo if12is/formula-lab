@@ -1,4 +1,5 @@
 import { execSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
 import { expectNoHorizontalScroll, pickRecord, settle, stamp } from './support/kit';
 
@@ -15,17 +16,25 @@ test.beforeAll(() => {
 
 const code = `DISH-${stamp()}`.toUpperCase();
 
-test('families list: 17 families, regulator and IFRA filters live in the address, and a no-match filter says so', async ({ page }) => {
-  await page.goto('/families');
+// The registry grows by phase, so the counts the screens must show come from the data files themselves.
+const registry = JSON.parse(readFileSync('packages/engine/data/product-families.json', 'utf8')) as { families: Array<{ regulator: string | null; ifraCategory: string | null }> };
+const library = JSON.parse(readFileSync('packages/engine/data/formula-templates/formula-templates.json', 'utf8')) as { templates: unknown[] };
+const familyCount = registry.families.length;
+const edaCount = registry.families.filter((f) => f.regulator === 'EDA').length;
+const ifra10bCount = registry.families.filter((f) => f.ifraCategory === '10B').length;
+const templateCount = library.templates.length;
+
+test('families list: every family of the registry, regulator and IFRA filters live in the address, and a no-match filter says so', async ({ page }) => {
+  await page.goto('/families?per=100');
   await expect(page.getByRole('heading', { level: 1, name: 'عائلات المنتجات' })).toBeVisible();
   await settle(page);
   const rows = page.locator('tbody tr');
-  await expect(rows).toHaveCount(17);
+  await expect(rows).toHaveCount(familyCount);
 
-  await page.goto('/families?regulator=EDA');
-  await expect(rows).toHaveCount(8);
+  await page.goto('/families?regulator=EDA&per=100');
+  await expect(rows).toHaveCount(edaCount);
   await page.goto('/families?ifra_category=10B');
-  await expect(rows).toHaveCount(1);
+  await expect(rows).toHaveCount(ifra10bCount);
   await expect(rows.first()).toContainText('منظف زجاج');
 
   await page.goto('/families?search=شامبو');
@@ -47,14 +56,14 @@ test('a family page shows what to calculate and measure, and "not stated" for th
 });
 
 test('templates list filters by status and the library has no approved template', async ({ page }) => {
-  await page.goto('/templates');
+  await page.goto('/templates?per=100');
   await expect(page.getByRole('heading', { level: 1, name: 'قوالب التركيبات' })).toBeVisible();
   await settle(page);
-  await expect(page.locator('tbody tr')).toHaveCount(17);
+  await expect(page.locator('tbody tr')).toHaveCount(templateCount);
   await page.goto('/templates?status=chemist_approved');
   await expect(page.getByText('لا توجد نتائج تطابق هذه الفلاتر')).toBeVisible();
-  await page.goto('/templates?status=theoretical');
-  await expect(page.locator('tbody tr')).toHaveCount(17);
+  await page.goto('/templates?status=theoretical&per=100');
+  await expect(page.locator('tbody tr')).toHaveCount(templateCount);
 });
 
 test('a template shows its lines by role with no invented share', async ({ page }) => {

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Material;
 
 use App\Enums\FunctionalClass;
+use App\Enums\Ionicity;
 use App\Enums\TradeMaterialStatus;
 use App\Http\Requests\Concerns\TranslatesValidationMessages;
 use Illuminate\Foundation\Http\FormRequest;
@@ -27,6 +28,7 @@ class StoreMaterialRequest extends FormRequest
             'function' => ['nullable', 'string', 'max:'.config('formula.max_text_length')],
             'functional_classes' => ['nullable', 'array', 'max:'.count(FunctionalClass::cases())],
             'functional_classes.*' => ['distinct', Rule::enum(FunctionalClass::class)],
+            'ionicity' => ['nullable', Rule::enum(Ionicity::class)],
             'substance_id' => ['nullable', 'uuid', 'exists:substances,id'],
             'is_mixture' => ['boolean'],
             'status' => ['required', Rule::enum(TradeMaterialStatus::class)],
@@ -46,7 +48,7 @@ class StoreMaterialRequest extends FormRequest
     /**
      * The fields a material is saved with, with is_mixture always present.
      *
-     * @return array{trade_name: string, grade: string|null, function: string|null, functional_classes: list<string>, substance_id: string|null, is_mixture: bool, status: string}
+     * @return array{trade_name: string, grade: string|null, function: string|null, functional_classes: list<string>, ionicity: string|null, substance_id: string|null, is_mixture: bool, status: string}
      */
     public function materialData(): array
     {
@@ -57,6 +59,7 @@ class StoreMaterialRequest extends FormRequest
             'grade' => $data['grade'] ?? null,
             'function' => $data['function'] ?? null,
             'functional_classes' => array_values($data['functional_classes'] ?? []),
+            'ionicity' => $data['ionicity'] ?? null,
             'substance_id' => $data['substance_id'] ?? null,
             'is_mixture' => (bool) ($data['is_mixture'] ?? false),
             'status' => $data['status'],

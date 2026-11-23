@@ -8,6 +8,7 @@ use App\Models\IfraCertificate;
 use App\Models\LabProtocol;
 use App\Models\LabTrial;
 use App\Models\MaterialComposition;
+use App\Models\PackagingCompatibility;
 use App\Models\Price;
 use App\Models\PropertyValue;
 use App\Models\RuleSet;
@@ -46,6 +47,7 @@ return [
         'rule_sets' => RuleSet::class,
         'rules' => ComplianceRule::class,
         'ifra_certificates' => IfraCertificate::class,
+        'packaging_compatibilities' => PackagingCompatibility::class,
         'material_compositions' => MaterialComposition::class,
         'property_values' => PropertyValue::class,
         'substances' => Substance::class,
