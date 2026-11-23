@@ -191,10 +191,10 @@
 190,S-15,S,agent,,done,الرئيسية بـ KPIs قرار: أسعار قديمة، قيم ناقصة/ثقة منخفضة، FAIL/UNKNOWN، اعتمادات مستنية، أثر تغيّر أسعار الخامات على الهامش
 191,S-16,S,agent,,todo,بوابة موافقة على شروط الاستخدام وإخلاء المسؤولية (الثبات والسلامة بالتجربة)
 192,S-17,S,agent,,todo,معاينة قبل الطباعة + watermark + hash النسخة على المطبوع
-193,T-01,T,agent,,todo,Golden tests (من F-11) + توسيعها مع كل منتج جديد
-194,T-02,T,agent,,todo,Property-based tests للمحرك (scaling لا يغير النسب، Σ=100 دايمًا…)
+193,T-01,T,agent,,done,Golden tests (من F-11) + توسيعها مع كل منتج جديد
+194,T-02,T,agent,,done,Property-based tests للمحرك (scaling لا يغير النسب، Σ=100 دايمًا…)
 195,T-03,T,agent,,todo,Cross-check: نفس الحسابات في Excel مستقل يحضّره الكيميائي ومقارنة آلية
-196,T-04,T,agent,,todo,Determinism test: نفس المدخلات على ويب/Electron/Node ⇒ نفس الـ hash
+196,T-04,T,agent,,partial,Determinism test: نفس المدخلات على ويب/Electron/Node ⇒ نفس الـ hash
 197,T-05,T,agent,,todo,Playwright e2e للرحلات الأساسية (تركيبة ⇒ فئة ⇒ مطابقة ⇒ دفعة ⇒ PDF)
 198,T-06,T,agent,,todo,AI evals (J-09) في CI
 199,U-01,U,human,,todo,RBAC: مالك، كيميائي، إنتاج (يشوف أوزان بس من غير نسب)، محاسب (تكلفة بس)

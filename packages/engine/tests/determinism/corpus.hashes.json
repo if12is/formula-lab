@@ -1,0 +1,20 @@
+{
+  "calculate.inputHash": "bcd81544ea9021766900d3f3682f3e5990873a12f3b48aa6c261ad14fe403750",
+  "calculate.results": "f4184d3ebd4ed60c4a45b5bbec2f36cac7639a9c1e36a19d8f73eb1d64c673f3",
+  "calculate.missing": "09294ccf478402813a31591661ba7e841ae418a7ada2ff1991c09a5d371cf8d1",
+  "soap": "c0e0261043840ecfde9582c17329aa7cac7a80ad19d03ac4ba8ca3cca97bcfac",
+  "active.blend": "7a9bc8c0fcb37089b0054c3c85e908f3a44580c1ba3cb3553e7d152d836a3f5d",
+  "active.dilution": "4237f2386e43554dbc3a2057315f408cb7b292874499879462ce337b7101bbec",
+  "chlorine.storage": "acbdc79ad260cc0d7a6fc4e3121fe6110ea0884c2d5cf7e531de22207298a1f5",
+  "neutralize": "331e2fb21ef4fcbbc4d54d4bbf16c7e219ef8efcdd8e5bdba9090c304d96227d",
+  "hlb": "33a88284053e96e602d54aa4f323b4013f53f5376d45ecd9c13b9b5585417bf1",
+  "fine.fragrance": "6f8cad2c93c693120d985d68a334a85a59610119184e2aea73cecf8c2e034991",
+  "alcohol.dilution": "4e5e3dcfaed5b13c293dcb1b9b6f6ca8a30cdcad11532edd528f7b9ad3d87a3c",
+  "disinfectant": "3cea10b72bd3b83f3555d50675d4ea39aa954ef953a7bc6743cddb644b317ac2",
+  "unit.cost": "11baf68ef1e87a430e5e8c316db61b6bb714cc7dd6af4e97a852cd141fb8e6e7",
+  "waterfall.forward": "be1afc5e899a16faa04f668111ad739b0ca70c8f7bf34226e405894ee3a20acc",
+  "waterfall.backward": "817a62871daccc36e03262eb27e8e6b0555caaa468ae9c0187904523cc227248",
+  "weighing": "d7a8b2d19fc09a53c3909e0915084f806ea220104f5320784185697b44330ae6",
+  "curves": "2499116fc1e0dca6c1e1b597647e4f882c7d47cd9a10a9ac94a313672a6604cb",
+  "format.trip": "a6d10cab6386fd9b8d63fa3976dff05c459e715d9859aa443fdc251e97a0fee1"
+}
