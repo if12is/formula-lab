@@ -7,6 +7,7 @@ use App\Models\TradeMaterial;
 use App\Models\User;
 use App\Services\Currency\Providers\ExchangeRateProvider;
 use App\Services\Decisions\OverrideAuthorizer;
+use App\Services\Production\ProductionAudience;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Schema\Blueprint;
@@ -38,6 +39,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Y-04: who may override a blocked decision (replaced by a real permission when RBAC lands, U-01).
         Gate::define('decisions.override', fn (User $user): bool => app(OverrideAuthorizer::class)->allows($user));
+
+        // Q-01 / Q-11: who may approve a production order or a deviation above the threshold (replaced by a real permission at U-01).
+        Gate::define('production.approve', fn (User $user): bool => app(ProductionAudience::class)->allowsApproval($user));
 
         // Stable, DB-visible names for polymorphic references (property_values.entity_type).
         Relation::morphMap([

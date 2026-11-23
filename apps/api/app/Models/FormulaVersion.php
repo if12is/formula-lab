@@ -58,6 +58,12 @@ class FormulaVersion extends Model
         return $this->hasMany(FormulaLine::class)->orderBy('line_no');
     }
 
+    /** @return HasMany<FormulaProcessStep, $this> The manufacturing steps (Q-10): part of the version's content and hash. */
+    public function processSteps(): HasMany
+    {
+        return $this->hasMany(FormulaProcessStep::class)->orderBy('step_no');
+    }
+
     /** @return HasMany<LabTrial, $this> */
     public function trials(): HasMany
     {
@@ -86,15 +92,39 @@ class FormulaVersion extends Model
         return $this->lines->map(fn (FormulaLine $line): array => $line->canonical())->all();
     }
 
+    /**
+     * What the hash covers: the lines alone for a version without process steps (so every hash made before Q-10 is unchanged),
+     * the lines and the steps together for one that has them.
+     *
+     * @return list<array<string, mixed>>|array{lines: list<array<string, mixed>>, processSteps: list<array<string, mixed>>}
+     */
+    public function canonicalContent(): array
+    {
+        $this->unsetRelation('processSteps');
+        $steps = $this->processSteps()->with(['checks', 'formulaLine'])->get();
+
+        return self::content($this->canonicalLines(), $steps->map(fn (FormulaProcessStep $step): array => $step->canonical())->all());
+    }
+
+    /**
+     * @param  list<array<string, mixed>>  $canonicalLines
+     * @param  list<array<string, mixed>>  $canonicalSteps
+     * @return list<array<string, mixed>>|array{lines: list<array<string, mixed>>, processSteps: list<array<string, mixed>>}
+     */
+    public static function content(array $canonicalLines, array $canonicalSteps = []): array
+    {
+        return $canonicalSteps === [] ? $canonicalLines : ['lines' => $canonicalLines, 'processSteps' => $canonicalSteps];
+    }
+
     /** @param  list<array<string, mixed>>  $canonicalLines */
     public static function hashLines(array $canonicalLines): string
     {
         return CanonicalJson::hash($canonicalLines);
     }
 
-    /** True when the stored lines still hash to the recorded hash. */
+    /** True when the stored lines (and steps) still hash to the recorded hash. */
     public function verifyHash(): bool
     {
-        return hash_equals($this->hash, self::hashLines($this->canonicalLines()));
+        return hash_equals($this->hash, CanonicalJson::hash($this->canonicalContent()));
     }
 }

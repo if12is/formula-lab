@@ -1,6 +1,6 @@
 import { execSync } from 'node:child_process';
 import type { BrowserContext } from '@playwright/test';
-import { E2E_OVERRIDE_ROLE } from './e2e-env';
+import { E2E_OPERATOR_ROLE, E2E_OVERRIDE_ROLE } from './e2e-env';
 
 /** TEST-FIXTURE password of the e2e user (not a secret: the e2e database is disposable). */
 export const E2E_PASSWORD = 'e2e-password-123';
@@ -12,8 +12,17 @@ const tinker = (php: string): string => execSync(`php artisan tinker --execute='
  * session for them and hands the browser the encrypted session cookie Laravel would have issued. Only the disposable e2e database.
  */
 export async function signInAsQualityManager(context: BrowserContext, run: string): Promise<string> {
-  const email = `e2e-${run}@example.test`;
-  const id = tinker(`echo App\\Models\\User::query()->create(["name" => "E2E Quality ${run}", "email" => "${email}", "password" => "${E2E_PASSWORD}", "role" => "${E2E_OVERRIDE_ROLE}"])->id;`);
+  return signInAs(context, run, E2E_OVERRIDE_ROLE, 'Quality');
+}
+
+/** The operator of the weighing room: a user whose role sees weights only (no prices, no costs). */
+export async function signInAsOperator(context: BrowserContext, run: string): Promise<string> {
+  return signInAs(context, run, E2E_OPERATOR_ROLE, 'Operator');
+}
+
+async function signInAs(context: BrowserContext, run: string, role: string, label: string): Promise<string> {
+  const email = `e2e-${role}-${run}@example.test`;
+  const id = tinker(`echo App\\Models\\User::query()->create(["name" => "E2E ${label} ${run}", "email" => "${email}", "password" => "${E2E_PASSWORD}", "role" => "${role}"])->id;`);
   const cookie = tinker(
     `$sid = Illuminate\\Support\\Str::random(40); Illuminate\\Support\\Facades\\DB::table("sessions")->insert(["id" => $sid, "user_id" => ${id}, "ip_address" => "127.0.0.1", "user_agent" => "e2e", "payload" => base64_encode(serialize(["login_web_" . sha1(Illuminate\\Auth\\SessionGuard::class) => ${id}])), "last_activity" => time()]); ` +
       `echo config("session.cookie") . "=" . Illuminate\\Support\\Facades\\Crypt::encryptString(Illuminate\\Cookie\\CookieValuePrefix::create(config("session.cookie"), Illuminate\\Support\\Facades\\Crypt::getKey()) . $sid);`,

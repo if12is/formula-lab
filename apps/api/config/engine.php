@@ -30,6 +30,7 @@ return [
         'publish-decision' => 'scripts/publish-decision.ts',
         'validate-families' => 'scripts/validate-families.ts',
         'check-template' => 'scripts/check-template.ts',
+        'production' => 'scripts/production.ts',
         'check-packaging-compat' => 'scripts/check-packaging-compat.ts',
     ],
 ];

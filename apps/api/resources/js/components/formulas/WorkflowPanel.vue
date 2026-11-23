@@ -101,6 +101,12 @@ const items = computed(() => props.workflow.signatures.map((row) => ({
                 </ul>
             </div>
 
+            <div class="flex flex-wrap items-center gap-2 border-t border-line pt-4" data-testid="workflow-production">
+                <h3 class="type-h6 text-ink">{{ t('production.workflow.title') }}</h3>
+                <Button size="sm" variant="ghost" icon="ph:list-numbers" :href="workflow.urls.process" class="ms-auto" data-testid="workflow-process">{{ t('production.workflow.process') }}</Button>
+                <Button v-if="workflow.status === 'approved'" size="sm" variant="secondary" icon="ph:factory" :href="workflow.urls.newOrder" data-testid="workflow-new-order">{{ t('production.workflow.new_order') }}</Button>
+            </div>
+
             <div class="flex flex-col gap-3 border-t border-line pt-4" data-testid="workflow-signatures">
                 <h3 class="type-h6 text-ink">{{ t('formulas.workflow.signatures') }}</h3>
                 <p v-if="items.length === 0" class="text-label text-ink-3">{{ t('formulas.workflow.no_signatures') }}</p>

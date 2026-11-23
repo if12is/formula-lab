@@ -48,3 +48,4 @@ export * from './core/validate';
 export * from './core/canonical-hash';
 export * from './decision';
 export * from './lab';
+export * from './production';

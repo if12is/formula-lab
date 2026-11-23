@@ -12,6 +12,7 @@ use App\Models\FormulaCostApproval;
 use App\Models\FormulaPublication;
 use App\Models\FormulaVersionTransition;
 use App\Models\LabMeasurement;
+use App\Models\ProductionBatchCheck;
 use App\Models\TestedValueMark;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
@@ -37,6 +38,7 @@ class QualityTablesTest extends TestCase
         'formula_publications' => FormulaPublication::class,
         'formula_version_transitions' => FormulaVersionTransition::class,
         'lab_measurements' => LabMeasurement::class,
+        'production_batch_checks' => ProductionBatchCheck::class,
         'tested_value_marks' => TestedValueMark::class,
     ];
 

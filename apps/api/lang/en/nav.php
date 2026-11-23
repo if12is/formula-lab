@@ -18,6 +18,7 @@ return [
     'lab' => 'Lab',
     'price_lists' => 'Price lists',
     'production' => 'Production',
+    'production_trace' => 'Lot trace',
     'settings' => 'Settings',
     'exchange_rates' => 'Exchange rates',
     'lab_protocols' => 'Test protocols',

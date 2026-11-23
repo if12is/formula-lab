@@ -133,6 +133,8 @@ final class FormulaWorkflowService
                 'reject' => route('formulas.versions.reject', [$version->formula_id, $version->version], false),
                 'saltCurve' => route('formulas.salt-curve', $version->formula_id, false),
                 'newTrial' => route('lab.trials.create', ['formula_version' => $version->getKey()], false),
+                'process' => route('formulas.versions.process', [$version->formula_id, $version->version], false),
+                'newOrder' => route('production.orders.create', ['formula_version' => $version->getKey()], false),
             ],
         ];
     }

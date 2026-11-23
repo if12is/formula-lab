@@ -26,7 +26,7 @@ class EngineKeysTest extends TestCase
                 continue;
             }
 
-            preg_match_all('/[\'"`]((?:formula|cost|confidence|input|density|batch|engine|soap|water|neutralize|active|alcohol|fragrance|percent_from_weight|compliance|inci|ifra|dsl|tax|disinfectant)\.[a-z0-9_]+)(?![A-Za-z0-9_.])/', (string) file_get_contents($file->getPathname()), $matches);
+            preg_match_all('/[\'"`]((?:formula|cost|confidence|input|density|batch|engine|soap|water|neutralize|active|alcohol|fragrance|percent_from_weight|compliance|inci|ifra|dsl|tax|disinfectant|production)\.[a-z0-9_]+)(?![A-Za-z0-9_.])/', (string) file_get_contents($file->getPathname()), $matches);
             array_push($keys, ...$matches[1]);
         }
 

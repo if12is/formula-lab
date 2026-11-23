@@ -18,6 +18,7 @@ return [
     'lab' => 'المعمل',
     'price_lists' => 'قوائم الأسعار',
     'production' => 'الإنتاج',
+    'production_trace' => 'تتبع اللوط',
     'settings' => 'الإعدادات',
     'exchange_rates' => 'أسعار الصرف',
     'lab_protocols' => 'بروتوكولات الاختبار',

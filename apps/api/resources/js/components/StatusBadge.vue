@@ -17,6 +17,8 @@ const props = defineProps({
 const TONES = {
     formula_status: { draft: 'neutral', lab_testing: 'info', approved: 'success', rejected: 'danger' },
     lab_trial_status: { in_progress: 'info', completed: 'success' },
+    production_order_status: { draft: 'neutral', approved: 'success', sent: 'info' },
+    production_batch_status: { in_progress: 'info', completed: 'success' },
     trade_material_status: { draft: 'warning', active: 'success' },
     // The engine's check outcome (an IFRA limit, a compliance rule): UNKNOWN is never shown as a pass.
     // NOT_APPLICABLE: the rule's scope does not match this product, so it says nothing either way.

@@ -38,6 +38,7 @@ export const navigation = [
         items: [
             { id: 'price-lists', href: '/price-lists', icon: 'ph:tag', labelKey: 'nav.price_lists' },
             { id: 'production', href: '/production', icon: 'ph:factory', labelKey: 'nav.production' },
+            { id: 'production-trace', href: '/production/trace', icon: 'ph:path', labelKey: 'nav.production_trace', parentId: 'production' },
         ],
     },
     {
