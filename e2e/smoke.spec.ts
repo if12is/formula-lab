@@ -11,21 +11,28 @@ test.describe('app shell', () => {
     await expect(sidebar.getByText('Formula Lab').first()).toBeVisible();
     const nav = sidebar.getByRole('navigation');
     await expect(nav).toBeVisible();
-    // dashboard, formulas, materials, families, templates, packaging, calculators, compliance, lab, lab protocols, price lists, production, lot trace, settings, exchange rates
-    await expect(nav.getByRole('link')).toHaveCount(15);
+    // dashboard, formulas, materials, families, templates, packaging, calculators, compliance, lab, lab protocols, COA, tiers, EDA files, price lists, price ladder, production, lot trace, settings, export log, exchange rates
+    await expect(nav.getByRole('link')).toHaveCount(20);
     await expect(nav.getByRole('link', { name: 'لوحة التحكم' })).toHaveAttribute('aria-current', 'page');
     await expect(page.getByRole('heading', { level: 1, name: 'لوحة التحكم' })).toBeVisible();
     await expect(page).toHaveTitle('لوحة التحكم - Formula Lab');
   });
 
-  test('missing KPI figures show a dash with the reason, never zero', async ({ page }) => {
+  test('every home figure is a number or a dash with its reason, never an unexplained zero', async ({ page }) => {
     await page.goto('/');
-    const cards = page.locator('main section').first().locator('section');
-    await expect(cards).toHaveCount(4);
+    const cards = page.getByTestId('kpis').locator('[data-kpi]');
+    // stale prices, low-confidence formulas, compliance, pending approvals, biggest cost move (S-15)
+    await expect(cards).toHaveCount(5);
     for (const card of await cards.all()) {
-      await expect(card).toContainText('—');
-      await expect(card).toContainText('لا توجد بيانات بعد');
-      await expect(card).not.toHaveText(/(^|\s)0(\s|$)/);
+      const lines = (await card.innerText()).split('\n').map((line) => line.trim()).filter(Boolean);
+      // label, figure (or a dash), then a reason or a caption: a dash is never alone.
+      expect(lines.length).toBeGreaterThanOrEqual(3);
+      if (lines.includes('—')) {
+        expect(lines.filter((line) => line !== '—').length).toBeGreaterThanOrEqual(2);
+      } else {
+        // The e2e database carries the demo records, so a card that is not a dash holds a real figure.
+        expect(lines[1]).toMatch(/\d/);
+      }
     }
   });
 

@@ -8,6 +8,8 @@ import { expectNoHorizontalScroll, pickRecord, setTheme, settle } from './suppor
  * on a desktop and a 390px phone, at deviceScaleFactor 2. Data: TiersDemoSeeder (TEST-FIXTURE numbers), DisinfectantDemoSeeder and the TEST-FIXTURE
  * checklist (invented document names; the shipped data lists none). Saved to orchestration/evidence/J-09-N-08/. Every shot asserts RTL and no sideways scroll.
  */
+// The tier profiles belong to a product type and cannot be deleted once a version cites them (append-only provenance): the screenshots
+// product has a type of its own, so the 15 EGP/kg limit the tiers spec saves on demo_shampoo/mid never reaches these shots.
 const OUT = 'orchestration/evidence/J-09-N-08';
 
 test.describe.configure({ mode: 'serial' });
@@ -17,7 +19,7 @@ const artisan = (command: string): string => execSync(`php artisan ${command}`, 
 test.beforeAll(() => {
   artisan('db:seed --class=TiersDemoSeeder --force');
   artisan('db:seed --class=DisinfectantDemoSeeder --force');
-  artisan(`tinker --execute='if (! App\\Models\\Formula::query()->where("code", "DEMO-OPT-SHOT")->exists()) { App\\Models\\Formula::factory()->create(["tenant_id" => App\\Models\\Tenant::query()->value("id"), "code" => "DEMO-OPT-SHOT", "name" => "Demo optimized (screenshots)", "product_type" => "demo_shampoo"]); }'`);
+  artisan(`tinker --execute='if (! App\\Models\\Formula::query()->where("code", "DEMO-OPT-SHOT")->exists()) { App\\Models\\Formula::factory()->create(["tenant_id" => App\\Models\\Tenant::query()->value("id"), "code" => "DEMO-OPT-SHOT", "name" => "Demo optimized (screenshots)", "product_type" => "demo_shampoo_shot"]); }'`);
 });
 
 test.beforeEach(() => {

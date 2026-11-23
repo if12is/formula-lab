@@ -8,14 +8,14 @@ use Illuminate\Database\Seeder;
 
 /**
  * Deterministic trade materials for the list-demo Playwright spec (/__dev/list-demo).
- * Idempotent: it removes its own rows (names starting "E2E ") before inserting them again.
+ * Idempotent: it removes its own rows (names starting "E2E Material "; other specs own other "E2E ..." materials, which can be referenced and must not be touched) before inserting them again.
  * Not part of DatabaseSeeder; run with `php artisan db:seed --class=ListDemoSeeder`.
  */
 class ListDemoSeeder extends Seeder
 {
     public function run(): void
     {
-        TradeMaterial::query()->where('trade_name', 'like', 'E2E %')->get()->each->delete();
+        TradeMaterial::query()->where('trade_name', 'like', 'E2E Material %')->get()->each->delete();
 
         $functions = ['Surfactant', 'Solvent', 'Fragrance', 'Preservative'];
 

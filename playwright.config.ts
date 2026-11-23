@@ -1,6 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 import { E2E_GATE_PORT, E2E_PORT, e2eServerEnv } from './e2e/support/e2e-env';
 
+const EXCLUSIVE = [/j09-n08-evidence\.spec\.ts/, /currency\.spec\.ts/];
+
 // The spec workers shell out to artisan (seeders, tinker) too: they must hit the same disposable database as the server.
 Object.assign(process.env, e2eServerEnv());
 
@@ -10,7 +12,14 @@ export default defineConfig({
   fullyParallel: true,
   reporter: 'list',
   use: { baseURL: `http://127.0.0.1:${E2E_PORT}`, trace: 'off' },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  // One database serves every worker. A spec that rewrites rows other specs read runs alone, after everything else, in a chain:
+  // currency.spec wipes and re-adds every exchange rate (the tiers/ladder/home numbers read the USD rate), and j09-n08-evidence
+  // clears and rewrites the EDA checklist entries that j09-n08.spec walks through. Run in parallel they gave wrong costs and missing validation.
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] }, testIgnore: EXCLUSIVE },
+    { name: 'exclusive-eda', use: { ...devices['Desktop Chrome'] }, testMatch: /j09-n08-evidence\.spec\.ts/, dependencies: ['chromium'] },
+    { name: 'exclusive-rates', use: { ...devices['Desktop Chrome'] }, testMatch: /currency\.spec\.ts/, dependencies: ['exclusive-eda'] },
+  ],
   webServer: [
     {
       command: `pnpm --filter @fl/api build && php artisan serve --host 127.0.0.1 --port ${E2E_PORT}`,

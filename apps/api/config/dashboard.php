@@ -10,6 +10,6 @@
 return [
     'stale_price_days' => env('DASHBOARD_STALE_PRICE_DAYS') === null || env('DASHBOARD_STALE_PRICE_DAYS') === '' ? null : (string) env('DASHBOARD_STALE_PRICE_DAYS'),
 
-    /* Rows each list on the home page shows before "see all" (the list screens hold the full set). */
-    'list_limit' => 5,
+    /* Rows each list on the home page shows before "see all" (the list screens hold the full set). DASHBOARD_LIST_LIMIT overrides it. */
+    'list_limit' => (int) env('DASHBOARD_LIST_LIMIT', 5),
 ];

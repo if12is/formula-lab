@@ -52,6 +52,8 @@ export const e2eServerEnv = (): Record<string, string> => ({
   PRODUCTION_APPROVER_ROLES: E2E_OVERRIDE_ROLE,
   PRODUCTION_WEIGHTS_ONLY_ROLES: E2E_OPERATOR_ROLE,
   DASHBOARD_STALE_PRICE_DAYS: E2E_STALE_PRICE_DAYS,
+  // The home lists are capped (5) and ordered by code: with every spec adding products to the shared database, a fixed product can fall off the first five. The e2e run lifts the cap.
+  DASHBOARD_LIST_LIMIT: '200',
   EDA_CHECKLIST_DEFINITIONS_PATH: E2E_EDA_DEFINITIONS,
   // S-16: off on the main server; the gate server (E2E_GATE_PORT) turns it on.
   TERMS_GATE_ENFORCED: 'false',
