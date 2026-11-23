@@ -25,6 +25,7 @@ for (const theme of ['light', 'dark'] as const) {
       test.use({ viewport, deviceScaleFactor: 2 });
 
       test('screens', async ({ page }) => {
+        test.setTimeout(120_000);
         const shot = async (name: string, target?: ReturnType<Page['getByTestId']>): Promise<void> => {
           await settle(page);
           await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');

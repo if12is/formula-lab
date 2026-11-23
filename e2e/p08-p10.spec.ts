@@ -23,10 +23,10 @@ type ProviderBody = {
 
 const provider = async (request: APIRequestContext): Promise<ProviderBody[]> => (await request.get(`${PROVIDER}/__requests`)).json();
 
-/** The disclosure log rows of this run as "outcome:surface:categories", oldest first (a read of the assistant's own table). */
+/** The disclosure log rows of this run as "outcome:surface:categories", oldest first (a read of the assistant's own table, chat tools only: the COA specs write coa_upload rows to the same append-only log). */
 const disclosures = (): string[] => {
   const out = execSync(
-    `php artisan tinker --execute='echo App\\Models\\AssistantDisclosure::query()->orderBy("occurred_at")->orderBy("id")->get()->map(fn ($row) => $row->outcome->value.":".$row->surface.":".implode("+", $row->categories))->implode("|");'`,
+    `php artisan tinker --execute='echo App\\Models\\AssistantDisclosure::query()->where("surface", "!=", "coa_upload")->orderBy("occurred_at")->orderBy("id")->get()->map(fn ($row) => $row->outcome->value.":".$row->surface.":".implode("+", $row->categories))->implode("|");'`,
     { cwd: 'apps/api', stdio: 'pipe', encoding: 'utf8' },
   ).trim();
 
