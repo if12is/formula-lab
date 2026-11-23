@@ -24,6 +24,7 @@ return [
     'production_trace' => 'Lot trace',
     'settings' => 'Settings',
     'exchange_rates' => 'Exchange rates',
+    'coa' => 'Certificates of analysis (COA)',
     'exports' => 'Export log',
     'terms' => 'Terms of use',
     'lab_protocols' => 'Test protocols',

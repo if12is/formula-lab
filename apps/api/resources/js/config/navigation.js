@@ -32,6 +32,7 @@ export const navigation = [
             { id: 'eda', href: '/eda', icon: 'ph:file-text', labelKey: 'nav.eda' },
             { id: 'lab', href: '/lab', icon: 'ph:test-tube', labelKey: 'nav.lab' },
             { id: 'lab-protocols', href: '/lab/protocols', icon: 'ph:list-checks', labelKey: 'nav.lab_protocols', parentId: 'lab' },
+            { id: 'coa', href: '/coa', icon: 'ph:file-magnifying-glass', labelKey: 'nav.coa' },
         ],
     },
     {

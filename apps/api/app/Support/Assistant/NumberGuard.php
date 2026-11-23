@@ -117,6 +117,35 @@ final class NumberGuard
         return $violations;
     }
 
+    /**
+     * Every digit run of a text as canonical numbers, with none of the masking `extract()` does (dates, identifiers, standard codes stay numbers).
+     * For checking that a figure appears in a document at all; a figure that is in the text is found, whatever the words around it.
+     *
+     * @return array<string, true>
+     */
+    public function plainNumbers(string $text): array
+    {
+        $found = [];
+        preg_match_all('/\d+(?:[.,]\d+)*/', $this->normalize($text), $matches);
+        foreach ($matches[0] as $token) {
+            foreach ($this->candidatesOf($token) as $candidate) {
+                $found[$candidate] = true;
+            }
+        }
+
+        return $found;
+    }
+
+    /**
+     * The canonical forms of one unsigned token ("1,234.50" -> "1234.5", "12,5" -> "12.5").
+     *
+     * @return list<string>
+     */
+    public function candidatesOf(string $token): array
+    {
+        return $this->candidates($token);
+    }
+
     /** Blanks out everything that looks like a number but is not one (see the class note). */
     private function mask(string $text): string
     {

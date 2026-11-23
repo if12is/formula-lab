@@ -4,6 +4,7 @@ use App\Services\Assistant\Tools\CalculateFormulaTool;
 use App\Services\Assistant\Tools\CheckComplianceTool;
 use App\Services\Assistant\Tools\ConvertUnitsTool;
 use App\Services\Assistant\Tools\ExplainResultTool;
+use App\Services\Assistant\Tools\ExtractCoaTool;
 use App\Services\Assistant\Tools\GetMaterialTool;
 use App\Services\Assistant\Tools\OptimizeTierTool;
 
@@ -49,7 +50,7 @@ return [
         'reference_prefixes' => ['ES', 'EN', 'ISO', 'IEC', 'CAS', 'IFRA', 'OIML', 'EDREX', 'INS', 'Annex', 'Category', 'Cat', 'Step', 'pH-', 'الفئة', 'فئة', 'المواصفة', 'مواصفة', 'خطوة'],
 
         /* Keys of a tool answer whose value is an identifier or a checksum: the digits inside never count as an answer's numbers. */
-        'identifier_keys' => ['id', 'availableMaterialIds', 'uuid', 'hash', 'inputHash', 'outputHash', 'dataset_version', 'datasetVersion', 'sourceId', 'source_id', 'ruleId', 'ruleSetId', 'ruleSetVersion', 'ruleVersion', 'materialId', 'formulaVersionId', 'messageKey', 'key', 'reason', 'optimizerVersion', 'engineVersion', 'packageVersion'],
+        'identifier_keys' => ['id', 'availableMaterialIds', 'uuid', 'hash', 'inputHash', 'outputHash', 'dataset_version', 'datasetVersion', 'sourceId', 'source_id', 'ruleId', 'ruleSetId', 'ruleSetVersion', 'ruleVersion', 'materialId', 'formulaVersionId', 'messageKey', 'key', 'reason', 'optimizerVersion', 'engineVersion', 'packageVersion', 'extractionId'],
     ],
 
     /* The tools the model may call, in the order they are offered (App\Support\Assistant\AssistantTool). */
@@ -60,6 +61,7 @@ return [
         CheckComplianceTool::class,
         ConvertUnitsTool::class,
         ExplainResultTool::class,
+        ExtractCoaTool::class,
     ],
 
     /*

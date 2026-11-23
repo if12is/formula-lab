@@ -149,7 +149,7 @@
 148,P-02,P,agent,,done,"تعريف tools: get_material, calculate_formula, optimize_tier, check_compliance, convert_units, explain_result, extract_coa"
 149,P-03,P,agent,,done,System prompt بالعربي المصري: ممنوع حساب أو تقدير رقم، كل رقم من tool
 150,P-04,P,agent,P-02,done,Number guard: كل رقم في رد Haiku لازم يطابق رقم في tool results وإلا الرد يترفض ويتعاد
-151,P-05,P,agent,,todo,COA extraction: Haiku يقرا PDF/صورة ⇒ JSON بمستوى ثقة ⇒ إنسان يأكد قبل الحفظ (L1 بعد التأكيد بس)
+151,P-05,P,agent,,done,COA extraction: Haiku يقرا PDF/صورة ⇒ JSON بمستوى ثقة ⇒ إنسان يأكد قبل الحفظ (L1 بعد التأكيد بس)
 152,P-06,P,agent,,todo,Data cleaning assistant: يكتشف تعارضات (SAP برة نطاق Codex، active غير منطقي) ويقترح، والقرار للإنسان
 153,P-07,P,agent,,todo,Formulation assistant: يحول طلب المستخدم ('عايز شامبو اقتصادي بـ 35 جنيه') لـ tier profile + optimize_tier
 154,P-08,P,agent,,todo,temperature 0 + structured outputs + prompt caching للـ system prompt والـ tools

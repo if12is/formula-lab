@@ -24,6 +24,7 @@ return [
     'production_trace' => 'تتبع اللوط',
     'settings' => 'الإعدادات',
     'exchange_rates' => 'أسعار الصرف',
+    'coa' => 'شهادات التحليل (COA)',
     'exports' => 'سجل التصدير',
     'terms' => 'شروط الاستخدام',
     'lab_protocols' => 'بروتوكولات الاختبار',

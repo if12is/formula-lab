@@ -256,47 +256,17 @@
  },
  {
   "name": "extract_coa",
-  "description": "Store a DRAFT extraction of a COA/TDS for human confirmation. Never final until confirmed.",
+  "description": "Report the draft of a certificate of analysis (COA) that was uploaded and read, by extractionId. The values are an UNCONFIRMED reading (L7): a person must confirm each one on the review screen before it is saved (then L1) and before any calculation can use it. Never present a draft value as data. missing lists what the document did not give.",
   "input_schema": {
    "type": "object",
    "properties": {
-    "fileId": {
-     "type": "string"
-    },
-    "supplier": {
-     "type": "string"
-    },
-    "lotNo": {
-     "type": "string"
-    },
-    "values": {
-     "type": "array",
-     "items": {
-      "type": "object",
-      "properties": {
-       "property": {
-        "type": "string"
-       },
-       "valueAsPrinted": {
-        "type": "string"
-       },
-       "unit": {
-        "type": "string"
-       },
-       "needsReview": {
-        "type": "boolean"
-       }
-      },
-      "required": [
-       "property",
-       "valueAsPrinted"
-      ]
-     }
+    "extractionId": {
+     "type": "string",
+     "description": "The id of the uploaded and read COA."
     }
    },
    "required": [
-    "fileId",
-    "values"
+    "extractionId"
    ],
    "additionalProperties": false
   }

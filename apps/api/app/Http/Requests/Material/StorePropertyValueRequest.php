@@ -7,8 +7,8 @@ use App\Http\Requests\Concerns\TranslatesValidationMessages;
 use App\Models\IfraCertificate;
 use App\Models\PropertyValue;
 use App\Models\TradeMaterial;
-use App\Support\DecimalCompare;
 use App\Support\PropertyRegistry;
+use App\Support\PropertyValueShape;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -17,8 +17,6 @@ use Illuminate\Validation\Validator;
 class StorePropertyValueRequest extends FormRequest
 {
     use TranslatesValidationMessages;
-
-    private const DECIMAL = '/^-?\d+(\.\d+)?$/';
 
     public function authorize(): bool
     {
@@ -65,9 +63,9 @@ class StorePropertyValueRequest extends FormRequest
     {
         return [
             'property' => ['required', 'string', Rule::in(PropertyRegistry::keys())],
-            'value' => ['nullable', 'string', 'regex:'.self::DECIMAL],
-            'min' => ['nullable', 'string', 'regex:'.self::DECIMAL],
-            'max' => ['nullable', 'string', 'regex:'.self::DECIMAL],
+            'value' => ['nullable', 'string', 'regex:'.PropertyValueShape::DECIMAL],
+            'min' => ['nullable', 'string', 'regex:'.PropertyValueShape::DECIMAL],
+            'max' => ['nullable', 'string', 'regex:'.PropertyValueShape::DECIMAL],
             'unit' => ['required', 'string', Rule::in(PropertyRegistry::unitsFor((string) $this->input('property')))],
             'source_id' => ['required', 'uuid', 'exists:sources,id'],
             'confidence' => ['required', Rule::enum(Confidence::class)],
@@ -101,12 +99,9 @@ class StorePropertyValueRequest extends FormRequest
                 return;
             }
 
-            if ($value === null && $min === null && $max === null) {
-                $validator->errors()->add('value', __('materials.errors.value_or_range_required'));
-            } elseif ($value !== null && ($min !== null || $max !== null)) {
-                $validator->errors()->add('value', __('materials.errors.value_or_range_exclusive'));
-            } elseif ($min !== null && $max !== null && DecimalCompare::compare($min, $max) > 0) {
-                $validator->errors()->add('min', __('materials.errors.range_order'));
+            $violation = PropertyValueShape::violation($value, $min, $max);
+            if ($violation !== null) {
+                $validator->errors()->add($violation === 'materials.errors.range_order' ? 'min' : 'value', __($violation));
             }
         });
     }
