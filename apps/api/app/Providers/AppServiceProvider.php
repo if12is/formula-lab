@@ -11,6 +11,8 @@ use App\Services\Currency\Providers\ExchangeRateProvider;
 use App\Services\Decisions\OverrideAuthorizer;
 use App\Services\Production\ProductionAudience;
 use App\Support\Assistant\NumberGuard;
+use App\Support\Clock\Clock;
+use App\Support\Clock\SystemClock;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Schema\Blueprint;
@@ -31,6 +33,8 @@ class AppServiceProvider extends ServiceProvider
         // The source of exchange rates is a config choice (config/currencies.php), so a CBE provider is a drop-in.
         // The assistant's model provider; tests bind a fake in its place so nothing reaches the network.
         $this->app->bind(MessagesClient::class, HttpMessagesClient::class);
+        // The clock behind records that carry a trusted time (terms acceptance, export log); tests bind a FixedClock.
+        $this->app->bind(Clock::class, SystemClock::class);
         $this->app->bind(NumberGuard::class, fn (): NumberGuard => new NumberGuard((array) config('assistant.guard.reference_prefixes')));
 
         $this->app->bind(ExchangeRateProvider::class, fn ($app): ExchangeRateProvider => $app->make(config('currencies.providers')[config('currencies.provider')]));

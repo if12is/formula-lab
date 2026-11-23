@@ -202,5 +202,9 @@ return [
         'note' => 'note',
         'formula_version_id' => 'formula version',
         'lab_protocol_id' => 'protocol',
+        'accepted' => 'acceptance',
+        'subject_id' => 'subject',
+        'lot' => 'lot',
+        'material_id' => 'material',
     ],
 ];

@@ -25,6 +25,8 @@ require __DIR__.'/tiers.php';
 require __DIR__.'/compliance.php';
 require __DIR__.'/calculators.php';
 require __DIR__.'/settings.php';
+require __DIR__.'/terms.php';
+require __DIR__.'/exports.php';
 
 // Sidebar destinations that are not built yet. A section leaves this list when it gets its own route.
 Route::get('/{section}', ComingSoonController::class)

@@ -8,11 +8,13 @@ use App\Models\AuditLog;
 use App\Models\CalcRun;
 use App\Models\DatasetVersion;
 use App\Models\DecisionOverride;
+use App\Models\ExportLog;
 use App\Models\FormulaCostApproval;
 use App\Models\FormulaPublication;
 use App\Models\FormulaVersionTransition;
 use App\Models\LabMeasurement;
 use App\Models\ProductionBatchCheck;
+use App\Models\TermsAcceptance;
 use App\Models\TestedValueMark;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
@@ -34,11 +36,13 @@ class QualityTablesTest extends TestCase
         'calc_runs' => CalcRun::class,
         'dataset_versions' => DatasetVersion::class,
         'decision_overrides' => DecisionOverride::class,
+        'export_logs' => ExportLog::class,
         'formula_cost_approvals' => FormulaCostApproval::class,
         'formula_publications' => FormulaPublication::class,
         'formula_version_transitions' => FormulaVersionTransition::class,
         'lab_measurements' => LabMeasurement::class,
         'production_batch_checks' => ProductionBatchCheck::class,
+        'terms_acceptances' => TermsAcceptance::class,
         'tested_value_marks' => TestedValueMark::class,
     ];
 

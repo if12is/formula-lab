@@ -202,5 +202,9 @@ return [
         'note' => 'الملاحظة',
         'formula_version_id' => 'نسخة التركيبة',
         'lab_protocol_id' => 'البروتوكول',
+        'accepted' => 'الموافقة',
+        'subject_id' => 'الموضوع',
+        'lot' => 'رقم اللوط',
+        'material_id' => 'الخامة',
     ],
 ];

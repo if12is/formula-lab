@@ -8,6 +8,7 @@ use App\Http\Requests\Production\StartProductionBatchRequest;
 use App\Http\Requests\Production\StoreProductionOrderRequest;
 use App\Models\FormulaVersion;
 use App\Models\ProductionOrder;
+use App\Services\Exports\PrintDocumentService;
 use App\Services\Production\ProductionBatchService;
 use App\Services\Production\ProductionLookupService;
 use App\Services\Production\ProductionOrderDetailService;
@@ -30,6 +31,7 @@ class ProductionOrderController extends Controller
         private ProductionOrderDetailService $detailService,
         private ProductionLookupService $lookupService,
         private ProductionSheetService $sheetService,
+        private PrintDocumentService $printDocumentService,
     ) {}
 
     public function index(Request $request): InertiaResponse
@@ -118,6 +120,7 @@ class ProductionOrderController extends Controller
                 'version' => $order->formulaVersion->version,
                 'formula_hash' => $order->formula_hash,
             ],
+            'document' => $this->printDocumentService->forOrder($order)->toArray(),
             'sheet' => $this->sheetService->forOrder($order),
             'steps' => $order->snapshot['steps'],
             'materials' => array_column($order->snapshot['lines'], 'material', 'line_no'),

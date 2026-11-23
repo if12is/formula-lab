@@ -37,11 +37,13 @@ return [
         'calc_runs',
         'dataset_versions',
         'decision_overrides',
+        'export_logs',
         'formula_cost_approvals',
         'formula_publications',
         'formula_version_transitions',
         'lab_measurements',
         'production_batch_checks',
+        'terms_acceptances',
         'tested_value_marks',
     ],
 

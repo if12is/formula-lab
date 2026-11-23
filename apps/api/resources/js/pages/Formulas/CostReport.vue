@@ -8,10 +8,11 @@
  */
 import { computed, ref } from 'vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
-import { Alert, Badge, Button, Card, DescriptionList, FormField, PageHeader, Select, Textarea } from '@kit';
+import { Alert, Badge, Button, Card, DescriptionList, FormField, Select, Textarea } from '@kit';
 import ExplainableNum from '../../components/explain/ExplainableNum.vue';
 import ConfidenceBadge from '../../components/materials/ConfidenceBadge.vue';
 import Num from '../../components/Num.vue';
+import PreviewShell from '../../components/print/PreviewShell.vue';
 import UnitCostModal from '../../components/pricing/UnitCostModal.vue';
 import StatusBadge from '../../components/StatusBadge.vue';
 import { useDateTime } from '../../composables/useDateTime';
@@ -27,6 +28,7 @@ const props = defineProps({
     confidenceOptions: { type: Array, required: true },
     sourceKindOptions: { type: Array, required: true },
     urls: { type: Object, required: true },
+    document: { type: Object, required: true },
 });
 
 const { t } = useI18n();
@@ -54,19 +56,15 @@ const summary = computed(() => [
 
 const materialHref = (id) => path('materials.show', { material: id, tab: 'prices' });
 const pickVersion = (value) => router.get(path('formulas.cost-report', formula.value.id), { version: value }, { preserveState: false });
-const print = () => window.print();
 const approve = () => form.post(path('formulas.cost-approvals.store', formula.value.id), { preserveScroll: true, onSuccess: () => form.reset() });
 </script>
 
 <template>
     <Head :title="`${t('cost_report.title')} · ${formula.code}`" />
-    <div class="kit-page" data-testid="cost-report">
-        <PageHeader :title="t('cost_report.title')" :description="`${formula.code} · ${formula.name}`">
-            <template #actions>
-                <Button variant="secondary" icon="ph:printer" class="print:hidden" data-testid="print-report" @click="print">{{ t('cost_report.print') }}</Button>
-                <Button :href="path('formulas.publish', formula.id)" icon="ph:paper-plane-tilt" class="print:hidden" data-testid="to-publish">{{ t('cost_report.publish') }}</Button>
-            </template>
-        </PageHeader>
+    <PreviewShell :document="document" :title="t('cost_report.title')" :description="`${formula.code} · ${formula.name}`" data-testid="cost-report">
+        <template #actions>
+            <Button :href="path('formulas.publish', formula.id)" icon="ph:paper-plane-tilt" data-testid="to-publish">{{ t('cost_report.publish') }}</Button>
+        </template>
 
         <p class="mb-4 text-label text-ink-3">{{ t('cost_report.description') }}</p>
 
@@ -217,5 +215,5 @@ const approve = () => form.post(path('formulas.cost-approvals.store', formula.va
         </div>
 
         <UnitCostModal v-model:open="costOpen" :row="costRow" :confidence-options="confidenceOptions" :source-kind-options="sourceKindOptions" :urls="urls" />
-    </div>
+    </PreviewShell>
 </template>

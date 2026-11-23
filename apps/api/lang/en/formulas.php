@@ -176,7 +176,6 @@ return [
         'page_title' => 'Label of {name}',
         'version' => 'Version',
         'copy' => 'Copy INCI list',
-        'print' => 'Print',
         'es6910_title' => 'The detergent label (ES 6910) waits for the standard',
         'es6910_description' => 'The Arabic detergent label generator needs the purchase of the ES 6910 text. No label field is invented before that. Only the INCI list and its warnings are shown here.',
         'rule_set' => 'Rule set for label warnings',

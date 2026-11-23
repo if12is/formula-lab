@@ -9,8 +9,9 @@
 import { computed, ref } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import { path } from '../../lib/routes';
-import { Alert, Badge, Button, Card, CopyButton, DescriptionList, EmptyState, FormField, PageHeader, Select } from '@kit';
+import { Alert, Badge, Card, CopyButton, DescriptionList, EmptyState, FormField, Select } from '@kit';
 import ExplainableNum from '../../components/explain/ExplainableNum.vue';
+import PreviewShell from '../../components/print/PreviewShell.vue';
 import StatusBadge from '../../components/StatusBadge.vue';
 import { useI18n } from '../../composables/useI18n';
 import { gapsByMaterial, inciList, reasonText, ruleSetsForProductType } from '../../lib/compliance';
@@ -21,6 +22,7 @@ const props = defineProps({
     lines: { type: Array, required: true },
     materials: { type: Object, required: true },
     ruleSets: { type: Array, required: true },
+    document: { type: Object, required: true },
 });
 
 const { t, has } = useI18n();
@@ -56,26 +58,20 @@ const facts = computed(() => [
     { term: t('formulas.label.version'), key: 'version' },
     { term: t('formulas.fields.product_type'), value: props.formula.product_type },
 ]);
-
-const print = () => window.print();
 </script>
 
 <template>
     <Head :title="t('formulas.label.page_title', { name: formula.name })" />
-    <div class="kit-page">
-        <PageHeader
-            :title="t('formulas.label.title')"
-            :description="formula.name"
-            :back="path('formulas.versions.edit', [formula.id, version.number])"
-            :back-label="formula.name"
-        >
-            <template #actions>
-                <span class="flex flex-wrap gap-2 print:hidden">
-                    <CopyButton v-if="list" :value="inciString" size="md">{{ t('formulas.label.copy') }}</CopyButton>
-                    <Button variant="secondary" icon="ph:printer" data-testid="print-label" @click="print">{{ t('formulas.label.print') }}</Button>
-                </span>
-            </template>
-        </PageHeader>
+    <PreviewShell
+        :document="document"
+        :title="t('formulas.label.title')"
+        :description="formula.name"
+        :back="path('formulas.versions.edit', [formula.id, version.number])"
+        :back-label="formula.name"
+    >
+        <template #actions>
+            <CopyButton v-if="list" :value="inciString" size="md">{{ t('formulas.label.copy') }}</CopyButton>
+        </template>
 
         <div class="flex flex-col gap-4">
             <Card>
@@ -144,5 +140,5 @@ const print = () => window.print();
                 </Card>
             </template>
         </div>
-    </div>
+    </PreviewShell>
 </template>

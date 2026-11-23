@@ -29,6 +29,7 @@ export const navigation = [
         labelKey: 'nav.groups.quality',
         items: [
             { id: 'compliance', href: '/compliance', icon: 'ph:seal-check', labelKey: 'nav.compliance' },
+            { id: 'eda', href: '/eda', icon: 'ph:file-text', labelKey: 'nav.eda' },
             { id: 'lab', href: '/lab', icon: 'ph:test-tube', labelKey: 'nav.lab' },
             { id: 'lab-protocols', href: '/lab/protocols', icon: 'ph:list-checks', labelKey: 'nav.lab_protocols', parentId: 'lab' },
         ],
@@ -48,6 +49,7 @@ export const navigation = [
         labelKey: 'nav.groups.system',
         items: [
             { id: 'settings', href: '/settings', icon: 'ph:gear', labelKey: 'nav.settings', exact: true },
+            { id: 'exports', href: '/exports', icon: 'ph:printer', labelKey: 'nav.exports' },
             { id: 'exchange-rates', href: '/settings/exchange-rates', icon: 'ph:currency-circle-dollar', labelKey: 'nav.exchange_rates', parentId: 'settings' },
         ],
     },

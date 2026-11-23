@@ -253,4 +253,15 @@ return [
         'raw_material' => 'Material',
         'packaging' => 'Packaging',
     ],
+    'export_kind' => [
+        'formula_label' => 'Formula label',
+        'cost_report' => 'Cost report',
+        'weighing_sheet' => 'Weighing sheet',
+        'lot_trace' => 'Lot trace',
+    ],
+    'print_watermark' => [
+        'approved' => 'Printed copy',
+        'unapproved' => 'Draft - not approved',
+        'neutral' => 'Printed copy',
+    ],
 ];

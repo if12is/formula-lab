@@ -112,4 +112,5 @@ return [
     'assistant_tool_rounds_exceeded' => 'تجاوز المساعد حدّ :limit استدعاءات للأدوات في سؤال واحد.',
     'assistant_unknown_tool' => 'الأداة :tool غير معروفة.',
     'assistant_invalid_tool_input' => 'مدخلات الأداة :tool غير صحيحة: :detail',
+    'terms_version_changed' => 'الشروط اتغيّرت والصفحة مفتوحة (اللي شفته :submitted والإصدار الحالي :current). اقرأ الشروط الحالية ووافق عليها تاني.',
 ];

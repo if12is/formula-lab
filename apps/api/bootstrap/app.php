@@ -5,6 +5,7 @@ use App\Http\Middleware\AuthenticateMockSanad;
 use App\Http\Middleware\AuthenticateSanadDevice;
 use App\Http\Middleware\EnsureIdempotency;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\RequireTermsAcceptance;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -35,6 +36,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             SetLocale::class,
             HandleInertiaRequests::class,
+            // S-16: after the Inertia middleware, so its redirect is an Inertia-aware one.
+            RequireTermsAcceptance::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

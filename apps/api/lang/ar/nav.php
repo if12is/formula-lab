@@ -23,6 +23,8 @@ return [
     'production_trace' => 'تتبع اللوط',
     'settings' => 'الإعدادات',
     'exchange_rates' => 'أسعار الصرف',
+    'exports' => 'سجل التصدير',
+    'terms' => 'شروط الاستخدام',
     'lab_protocols' => 'بروتوكولات الاختبار',
     'user' => [
         'name' => 'مستخدم تجريبي',

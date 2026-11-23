@@ -55,6 +55,7 @@ const rates = reactive(blankRates());
 const extra = reactive({ pack_fill_kg: '', non_formula_cost_per_unit: '', scenario_pct: '10', qs_material_id: null });
 const qsLabel = ref('');
 const state = reactive({ busy: false, failed: false, errors: {}, result: null });
+const draft = reactive({ busy: false, failed: false, error: null, saved: null });
 
 const productLabel = computed(() => (props.product ? `${props.product.code} · ${props.product.name}` : ''));
 const tierChoices = computed(() => props.tierOptions);
@@ -101,6 +102,8 @@ async function solve() {
 
         if (outcome.ok) {
             state.result = outcome.data;
+            draft.saved = null;
+            draft.error = null;
         } else {
             state.errors = outcome.errors;
         }
@@ -108,6 +111,27 @@ async function solve() {
         state.failed = true;
     } finally {
         state.busy = false;
+    }
+}
+
+/** J-09: the server solves again on the saved profile and keeps the answer as a draft version with where it came from; nothing is sent back from this screen's numbers. */
+async function saveDraft() {
+    draft.busy = true;
+    draft.failed = false;
+    draft.error = null;
+
+    try {
+        const outcome = await postJson(props.urls.saveVersion, { formula_id: props.product.id, tier: props.tier, qs_material_id: extra.qs_material_id });
+
+        if (outcome.ok) {
+            draft.saved = outcome.data;
+        } else {
+            draft.error = Object.values(outcome.errors)[0] ?? null;
+        }
+    } catch {
+        draft.failed = true;
+    } finally {
+        draft.busy = false;
     }
 }
 
@@ -253,6 +277,19 @@ const propertyText = (property) => t(`tiers.excluded.${property}`);
                                             </tr>
                                         </tbody>
                                     </table>
+                                </div>
+                            </div>
+
+                            <div v-if="state.result.status === 'optimal' && state.result.formula.length" class="flex flex-col gap-3 rounded-lg border border-line p-4" data-testid="save-draft">
+                                <p class="text-label text-ink-3">{{ t('tiers.save_version.hint') }}</p>
+                                <Alert v-if="draft.saved" tone="success" icon="ph:check-circle" data-testid="draft-saved" :data-version="draft.saved.number" :data-status="draft.saved.status" :data-hash="draft.saved.hash">
+                                    {{ t('tiers.save_version.saved', { number: draft.saved.number }) }}
+                                    <a :href="draft.saved.url" class="ms-2 text-primary-ink underline underline-offset-2" data-testid="draft-open">{{ t('tiers.save_version.open') }}</a>
+                                </Alert>
+                                <Alert v-if="draft.error" tone="danger" icon="ph:warning-circle" data-testid="draft-error">{{ draft.error }}</Alert>
+                                <Alert v-if="draft.failed" tone="danger" icon="ph:warning-circle">{{ t('tiers.save_version.failed') }}</Alert>
+                                <div>
+                                    <Button variant="secondary" icon="ph:floppy-disk" :loading="draft.busy" :disabled="draft.saved !== null" data-testid="save-draft-button" @click="saveDraft">{{ t('tiers.save_version.action') }}</Button>
                                 </div>
                             </div>
 

@@ -5,6 +5,8 @@
 /** `E2E_DATABASE` / `E2E_PORT` let two runs side by side use their own disposable database and server; the name must still end in `_e2e`. */
 export const E2E_DATABASE = process.env.E2E_DATABASE ?? 'formula_lab_e2e';
 export const E2E_PORT = process.env.E2E_PORT ?? '8000';
+/** A second server on the next port with the terms-of-use gate ON (S-16): the main server runs with it off so the other specs are not sent to the terms screen. */
+export const E2E_GATE_PORT = String(Number(E2E_PORT) + 1);
 
 /**
  * TEST-FIXTURE margin rule (the app ships none: config/pricing.php). +25 % on cost, labelled "تجار الجملة", which the
@@ -47,6 +49,8 @@ export const e2eServerEnv = (): Record<string, string> => ({
   PRODUCTION_APPROVER_ROLES: E2E_OVERRIDE_ROLE,
   PRODUCTION_WEIGHTS_ONLY_ROLES: E2E_OPERATOR_ROLE,
   DASHBOARD_STALE_PRICE_DAYS: E2E_STALE_PRICE_DAYS,
+  // S-16: off on the main server; the gate server (E2E_GATE_PORT) turns it on.
+  TERMS_GATE_ENFORCED: 'false',
 });
 
 /** Demo seeders every run starts from (each is idempotent and the specs still call the ones they need). */

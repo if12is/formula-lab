@@ -253,4 +253,15 @@ return [
         'raw_material' => 'خامة',
         'packaging' => 'تغليف',
     ],
+    'export_kind' => [
+        'formula_label' => 'بطاقة التركيبة',
+        'cost_report' => 'تقرير التكلفة',
+        'weighing_sheet' => 'ورقة الوزن',
+        'lot_trace' => 'تتبع اللوط',
+    ],
+    'print_watermark' => [
+        'approved' => 'نسخة مطبوعة',
+        'unapproved' => 'مسودة - غير معتمدة',
+        'neutral' => 'نسخة مطبوعة',
+    ],
 ];

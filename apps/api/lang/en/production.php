@@ -209,13 +209,11 @@ return [
     'weighing' => [
         'title' => 'Weighing sheet {order}',
         'description' => 'For the operator: weights only, no prices or costs.',
-        'print' => 'Print',
         'sheet' => 'Materials in order of addition',
         'weigh' => 'Weight',
         'done' => 'Done',
         'below_resolution' => 'Lines {lines} are below the balance resolution and cannot be weighed on this balance. Choose a finer one.',
         'sheet_hash' => 'Sheet hash',
-        'printed_note' => 'Printed from an approved version, hash {hash}.',
     ],
     'batches' => [
         'title' => 'Batch {batch}',
@@ -367,7 +365,6 @@ return [
         'title' => 'Lot trace',
         'description' => 'Type a material lot number to see every batch that used it.',
         'open' => 'Lot trace',
-        'print' => 'Print the report',
         'lot' => 'Lot number',
         'lot_hint' => 'Matched as it was recorded when weighing.',
         'material_filter' => 'Limited to the material {material}.',

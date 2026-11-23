@@ -23,6 +23,8 @@ return [
     'production_trace' => 'Lot trace',
     'settings' => 'Settings',
     'exchange_rates' => 'Exchange rates',
+    'exports' => 'Export log',
+    'terms' => 'Terms of use',
     'lab_protocols' => 'Test protocols',
     'user' => [
         'name' => 'Demo user',

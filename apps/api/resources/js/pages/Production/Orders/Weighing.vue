@@ -5,8 +5,9 @@
  * no cost, for any role. The page prints as a document (the kit hides the shell) with the hash of the approved version it came from.
  */
 import { Head } from '@inertiajs/vue3';
-import { Alert, Badge, Button, Card, DataTable, DescriptionList, PageHeader } from '@kit';
+import { Alert, Badge, Button, Card, DataTable, DescriptionList } from '@kit';
 import { computed } from 'vue';
+import PreviewShell from '../../../components/print/PreviewShell.vue';
 import ProcessStepsList from '../../../components/production/ProcessStepsList.vue';
 import Num from '../../../components/Num.vue';
 import { useI18n } from '../../../composables/useI18n';
@@ -17,10 +18,10 @@ const props = defineProps({
     steps: { type: Array, required: true },
     materials: { type: Object, required: true },
     urls: { type: Object, required: true },
+    document: { type: Object, required: true },
 });
 
 const { t } = useI18n();
-const print = () => window.print();
 
 const facts = computed(() => [
     { term: t('production.show.formula'), value: `${props.order.formula_code} · ${props.order.formula_name} · ${t('formulas.version_short', { version: props.order.version })}` },
@@ -42,13 +43,10 @@ const columns = computed(() => [
 
 <template>
     <Head :title="t('production.weighing.title', { order: order.code })" />
-    <div class="kit-page">
-        <PageHeader :title="t('production.weighing.title', { order: order.code })" :description="t('production.weighing.description')">
-            <template #actions>
-                <Button variant="ghost" :href="urls.order" icon="ph:arrow-right" class="print:hidden">{{ t('production.show.back_to_order') }}</Button>
-                <Button variant="secondary" icon="ph:printer" class="print:hidden" data-testid="print-sheet" @click="print">{{ t('production.weighing.print') }}</Button>
-            </template>
-        </PageHeader>
+    <PreviewShell :document="document" :title="t('production.weighing.title', { order: order.code })" :description="t('production.weighing.description')">
+        <template #actions>
+            <Button variant="ghost" :href="urls.order" icon="ph:arrow-right">{{ t('production.show.back_to_order') }}</Button>
+        </template>
 
         <div class="flex flex-col gap-4">
             <Card><DescriptionList :items="facts" :columns="3" /></Card>
@@ -75,8 +73,6 @@ const columns = computed(() => [
             <Card v-if="steps.length" :title="t('production.show.steps_title')">
                 <ProcessStepsList :steps="steps" :materials="materials" />
             </Card>
-
-            <p class="hidden text-label text-ink-3 print:block">{{ t('production.weighing.printed_note', { hash: order.formula_hash }) }}</p>
         </div>
-    </div>
+    </PreviewShell>
 </template>

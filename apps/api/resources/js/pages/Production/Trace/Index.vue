@@ -7,7 +7,8 @@
 import { computed } from 'vue';
 import { Head, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import { Alert, Badge, Button, Card, DataTable, EmptyState, FormField, Input, PageHeader } from '@kit';
+import { Alert, Badge, Button, Card, DataTable, EmptyState, FormField, Input } from '@kit';
+import PreviewShell from '../../../components/print/PreviewShell.vue';
 import StatusBadge from '../../../components/StatusBadge.vue';
 import { useDateTime } from '../../../composables/useDateTime';
 import { useI18n } from '../../../composables/useI18n';
@@ -18,12 +19,12 @@ const props = defineProps({
     searched: { type: Boolean, required: true },
     rows: { type: Array, required: true },
     urls: { type: Object, required: true },
+    document: { type: Object, default: null },
 });
 
 const { t } = useI18n();
 const { when } = useDateTime();
 const lot = ref(props.filters.lot);
-const print = () => window.print();
 
 const columns = computed(() => [
     { key: 'material', label: t('production.trace.columns.material') },
@@ -41,12 +42,7 @@ function search() {
 
 <template>
     <Head :title="t('production.trace.title')" />
-    <div class="kit-page is-full">
-        <PageHeader :title="t('production.trace.title')" :description="t('production.trace.description')">
-            <template #actions>
-                <Button v-if="rows.length" variant="secondary" icon="ph:printer" class="print:hidden" data-testid="print-trace" @click="print">{{ t('production.trace.print') }}</Button>
-            </template>
-        </PageHeader>
+    <PreviewShell :document="rows.length ? document : null" :title="t('production.trace.title')" :description="t('production.trace.description')" full>
 
         <div class="flex flex-col gap-4">
             <Card class="print:hidden">
@@ -77,5 +73,5 @@ function search() {
             </Card>
             <EmptyState v-else compact icon="ph:path" :title="t('production.trace.start_title')" :description="t('production.trace.start_description')" />
         </div>
-    </div>
+    </PreviewShell>
 </template>

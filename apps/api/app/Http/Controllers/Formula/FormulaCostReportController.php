@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Formula;
 
 use App\Enums\Confidence;
+use App\Enums\ExportKind;
 use App\Enums\SourceKind;
 use App\Exceptions\Domain\BusinessRuleViolationException;
 use App\Http\Controllers\Controller;
@@ -10,6 +11,7 @@ use App\Http\Requests\Costing\ApproveFormulaCostRequest;
 use App\Models\Formula;
 use App\Services\Costing\CostApprovalService;
 use App\Services\Costing\CostReportService;
+use App\Services\Exports\PrintDocumentService;
 use App\Support\DecimalNormalizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,6 +24,7 @@ class FormulaCostReportController extends Controller
     public function __construct(
         private CostReportService $reportService,
         private CostApprovalService $approvalService,
+        private PrintDocumentService $printDocumentService,
     ) {}
 
     /** The report of the latest approved version (or of the latest version when none is approved); `?version=` picks one. */
@@ -35,6 +38,7 @@ class FormulaCostReportController extends Controller
 
         return Inertia::render('Formulas/CostReport', [
             'report' => $this->reportService->report($formula, $version),
+            'document' => $this->printDocumentService->forVersion(ExportKind::CostReport, $formula, $version)->toArray(),
             'approval' => $latest === null ? null : [
                 'id' => $latest->getKey(),
                 'unit_cost' => DecimalNormalizer::normalize($latest->unit_cost),

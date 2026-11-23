@@ -2,9 +2,11 @@
 
 namespace App\Services\Formula;
 
+use App\Enums\ExportKind;
 use App\Models\Formula;
 use App\Models\FormulaVersion;
 use App\Services\Compliance\ComplianceEditorService;
+use App\Services\Exports\PrintDocumentService;
 
 /**
  * What the label page of one formula version needs: its lines and the composition of every material they use, and the
@@ -15,6 +17,7 @@ final class FormulaLabelService
     public function __construct(
         private FormulaEditorService $formulaEditorService,
         private ComplianceEditorService $complianceEditorService,
+        private PrintDocumentService $printDocumentService,
     ) {}
 
     /** @return array<string, mixed> */
@@ -33,6 +36,7 @@ final class FormulaLabelService
                 'status' => $version->status->value,
                 'hash' => $version->hash,
             ],
+            'document' => $this->printDocumentService->forVersion(ExportKind::FormulaLabel, $formula, $version)->toArray(),
             ...$this->formulaEditorService->linesAndMaterials($version),
             'ruleSets' => $this->complianceEditorService->ruleSets(),
         ];

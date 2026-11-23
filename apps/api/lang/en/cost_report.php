@@ -5,7 +5,6 @@ return [
     'description' => 'Every number in the material cost, with where it came from: an invoice or a manual entry, its source, confidence and date. Nothing is costed as zero.',
     'product' => 'Product',
     'approved' => 'Cost approved.',
-    'print' => 'Print',
     'back_to_formula' => 'Back to the formula',
     'publish' => 'Publish to Sanad',
     'version' => 'Version',

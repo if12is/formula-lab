@@ -7,7 +7,7 @@
  */
 import { computed, ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
-import { Alert, Badge, Button, Card, CopyButton, Modal, FormField, Textarea, Timeline } from '@kit';
+import { Alert, Badge, Button, Card, CopyButton, DescriptionList, Modal, FormField, Textarea, Timeline } from '@kit';
 import { useDateTime } from '../../composables/useDateTime';
 import { useI18n } from '../../composables/useI18n';
 import DecisionCard from '../decisions/DecisionCard.vue';
@@ -46,6 +46,20 @@ function sign() {
         .post(props.workflow.urls[key.value], { preserveScroll: true, onSuccess: () => { move.value = null; } });
 }
 
+const provenanceFacts = computed(() => {
+    const row = props.workflow.provenance;
+
+    return row === null ? [] : [
+        { term: t('formulas.workflow.provenance.origin'), value: t(`enums.formula_version_origin.${row.origin}`) },
+        { term: t('formulas.workflow.provenance.tier'), value: t(`enums.product_tier.${row.tier}`) },
+        { term: t('formulas.workflow.provenance.cost'), value: row.cost_per_kg, mono: true },
+        { term: t('formulas.workflow.provenance.solver'), value: row.solver, mono: true },
+        { term: t('formulas.workflow.provenance.optimizer_version'), value: row.optimizer_version, mono: true },
+        { term: t('formulas.workflow.provenance.tier_profile'), value: row.has_profile ? t('formulas.workflow.provenance.profile_kept') : t('formulas.workflow.provenance.profile_deleted') },
+        { term: t('formulas.workflow.provenance.input_hash'), value: row.input_hash, mono: true },
+    ];
+});
+
 const items = computed(() => props.workflow.signatures.map((row) => ({
     id: row.id,
     icon: { lab_testing: 'ph:test-tube', approved: 'ph:seal-check', rejected: 'ph:x-circle' }[row.to],
@@ -81,6 +95,15 @@ const items = computed(() => props.workflow.signatures.map((row) => ({
                 :blocked-text="t('formulas.workflow.blocked_verdict')"
                 data-testid="workflow-blocked"
             />
+
+            <div v-if="workflow.provenance" class="flex flex-col gap-3 rounded-lg border border-line p-4" data-testid="workflow-provenance" :data-origin="workflow.provenance.origin">
+                <div class="flex flex-wrap items-center gap-2">
+                    <h3 class="type-h6 text-ink">{{ t('formulas.workflow.provenance.title') }}</h3>
+                    <Button size="sm" variant="ghost" icon="ph:stack" :href="workflow.provenance.href" class="ms-auto">{{ t('formulas.workflow.provenance.open_tiers') }}</Button>
+                </div>
+                <p class="text-label text-ink-3">{{ t('formulas.workflow.provenance.optimizer_description') }}</p>
+                <DescriptionList :items="provenanceFacts" :columns="2" />
+            </div>
 
             <CoveragePanel v-if="showCoverage" :coverage="workflow.coverage" />
 

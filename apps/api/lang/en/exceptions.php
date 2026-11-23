@@ -112,4 +112,5 @@ return [
     'assistant_tool_rounds_exceeded' => 'The assistant went over the limit of :limit tool calls for one question.',
     'assistant_unknown_tool' => 'The tool :tool is not known.',
     'assistant_invalid_tool_input' => 'The input of the tool :tool is not valid: :detail',
+    'terms_version_changed' => 'The terms changed while this page was open (you saw :submitted, the current version is :current). Read the current terms and accept them again.',
 ];

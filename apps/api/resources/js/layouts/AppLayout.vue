@@ -80,6 +80,7 @@ function switchLocale(code) {
         <template #user>
             <UserMenu :name="t('nav.user.name')" :email="t('nav.user.role')">
                 <DropdownItem icon="ph:gear" href="/settings">{{ t('nav.user.profile') }}</DropdownItem>
+                <DropdownItem icon="ph:scroll" href="/terms">{{ t('nav.terms') }}</DropdownItem>
             </UserMenu>
         </template>
 

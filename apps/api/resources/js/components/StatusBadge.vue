@@ -24,6 +24,9 @@ const TONES = {
     // NOT_APPLICABLE: the rule's scope does not match this product, so it says nothing either way.
     check_status: { PASS: 'success', FAIL: 'danger', UNKNOWN: 'warning', NOT_APPLICABLE: 'neutral' },
     rule_set_status: { draft: 'warning', published: 'success' },
+    // The EDA notification file (N-08): an undefined document list is a warning, never a pass.
+    eda_item_status: { missing: 'warning', attached: 'success', not_applicable: 'neutral' },
+    eda_readiness: { out_of_scope: 'neutral', items_not_sourced: 'warning', incomplete: 'info', ready: 'success' },
     price_list_sync_status: { draft: 'neutral', pending: 'info', applied: 'success', failed: 'danger', conflict: 'warning' },
 };
 
