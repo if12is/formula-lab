@@ -122,14 +122,15 @@ trait BuildsProductionFixtures
     }
 
     /**
-     * The props the page was sent (the translation dictionary left out, so a word in it is never mistaken for data).
+     * The props the page was sent (the translation dictionary and the shared UI flags and word lists left out, so a word in them is never
+     * mistaken for data: the audience flags say `cost`, the assistant's category list names a formula's cost).
      *
      * @return array<string, mixed>
      */
     protected function pageProps(TestResponse $response): array
     {
         $props = $response->original->getData()['page']['props'];
-        unset($props['translations']);
+        unset($props['translations'], $props['fieldAudience'], $props['assistant']);
 
         return $props;
     }

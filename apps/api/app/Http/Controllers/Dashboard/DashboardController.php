@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Services\Dashboard\DashboardService;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 
@@ -12,10 +13,12 @@ class DashboardController extends Controller
 {
     public function __construct(private DashboardService $dashboardService) {}
 
-    public function index(): InertiaResponse
+    public function index(Request $request): InertiaResponse
     {
+        $user = $request->user();
+
         return Inertia::render('Dashboard', [
-            'kpis' => Inertia::defer(fn (): array => $this->dashboardService->kpis()),
+            'kpis' => Inertia::defer(fn (): array => $this->dashboardService->kpis($user)),
         ]);
     }
 }

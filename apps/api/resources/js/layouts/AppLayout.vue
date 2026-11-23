@@ -17,6 +17,11 @@ const { t, locale } = useI18n();
 
 const locales = computed(() => page.props.locale.supported);
 
+// U-07: a destination that exists only to show a field group the role was not sent (`requires`) is not offered; the server answers 403 for it anyway.
+const visibleNavigation = computed(() => navigation
+    .map((group) => ({ ...group, items: group.items.filter((item) => !item.requires || page.props.fieldAudience?.[`sees_${item.requires}`] !== false) }))
+    .filter((group) => group.items.length > 0));
+
 // The assistant is off unless the server says so (production default); its panel is mounted once here for every page.
 const assistantEnabled = computed(() => page.props.assistant?.enabled === true);
 const assistantOpen = ref(false);
@@ -60,7 +65,7 @@ function switchLocale(code) {
 <template>
     <AppShell :app-name="t('app.name')">
         <template #nav>
-            <SidebarSection v-for="group in navigation" :key="group.id" :label="group.labelKey ? t(group.labelKey) : undefined">
+            <SidebarSection v-for="group in visibleNavigation" :key="group.id" :label="group.labelKey ? t(group.labelKey) : undefined">
                 <NavItem
                     v-for="item in group.items"
                     :key="item.id"

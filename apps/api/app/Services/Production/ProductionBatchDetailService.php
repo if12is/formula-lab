@@ -128,7 +128,7 @@ final class ProductionBatchDetailService
             'lots' => $this->trace->lotsOfBatch($batch->getKey()),
             'threshold' => config('production.deviation_threshold_pct'),
             'approval' => $this->audience->approvalAvailability($user),
-            'audience' => ['sees_prices' => $seesPrices],
+            'audience' => ['sees_prices' => $seesPrices, 'sees_percentages' => $this->audience->seesPercentages($user)],
             'choices' => [
                 'kinds' => DeviationKind::options(),
                 'units' => array_map(fn (string $unit): array => ['value' => $unit, 'label' => $unit], config('production.deviation_units')),

@@ -14,6 +14,7 @@ return [
         'compliance' => 'Formulas FAIL or UNKNOWN',
         'compliance_caption' => '{fail} failing, {unknown} undecided, of {checked} formulas checked',
         'approvals' => 'Pending approvals',
+        'approvals_caption_no_cost' => 'versions in lab {lab}, production orders {orders}, deviations {deviations}',
         'approvals_caption' => 'versions in lab {lab}, production orders {orders}, deviations {deviations}, costs {costs}',
         'impact' => 'Largest change in material cost',
         'impact_caption' => 'product {code} since its cost was approved',

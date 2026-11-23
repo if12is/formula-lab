@@ -3,6 +3,7 @@
 namespace App\Services\Dashboard;
 
 use App\Actions\Tenancy\EnsureDefaultTenantAction;
+use App\Enums\FieldGroup;
 use App\Enums\FormulaStatus;
 use App\Enums\Production\DeviationApprovalStatus;
 use App\Enums\Production\ProductionOrderStatus;
@@ -15,10 +16,12 @@ use App\Models\Price;
 use App\Models\ProductionDeviation;
 use App\Models\ProductionOrder;
 use App\Models\TradeMaterial;
+use App\Models\User;
 use App\Services\Compliance\ComplianceEditorService;
 use App\Services\Costing\CostApprovalService;
 use App\Services\Costing\CostInputService;
 use App\Services\Material\MaterialOptionService;
+use App\Services\Security\FieldVisibilityService;
 use App\Support\DecimalCompare;
 use App\Support\DecimalNormalizer;
 use App\Support\Engine\EngineRunner;
@@ -40,13 +43,18 @@ final class DashboardService
         private readonly CostApprovalService $approvals,
         private readonly MaterialOptionService $materialOptions,
         private readonly ComplianceEditorService $ruleSets,
+        private readonly FieldVisibilityService $visibility,
     ) {}
 
     /**
+     * The figures built on what things cost (stale prices, the price-move impact, costs waiting for approval) are left out, not just hidden,
+     * for a user whose role does not see the cost group (U-07): the screen reads their absence and draws no card.
+     *
      * @return array<string, mixed>
      */
-    public function kpis(): array
+    public function kpis(?User $user = null): array
     {
+        $seesCost = $this->visibility->allows($user, FieldGroup::Cost);
         $tenantId = ($this->ensureDefaultTenant)()->getKey();
         $formulas = Formula::query()->where('tenant_id', $tenantId)->orderBy('code')->get();
         $limit = (int) config('dashboard.list_limit');
@@ -91,11 +99,11 @@ final class DashboardService
         return [
             'as_of' => now()->toDateString(),
             'formula_count' => $formulas->count(),
-            'stale' => $this->stale($answer['stale'], $names, $limit),
+            'stale' => $seesCost ? $this->stale($answer['stale'], $names, $limit) : null,
             'quality' => $this->quality($formulas, $byFormula, $names, $limit),
             'compliance' => $this->compliance($formulas, $byFormula, $limit),
-            'approvals' => $this->pendingApprovals($formulas, $limit),
-            'impact' => $this->impact($formulas, $byFormula, $limit),
+            'approvals' => $this->pendingApprovals($formulas, $limit, $seesCost),
+            'impact' => $seesCost ? $this->impact($formulas, $byFormula, $limit) : null,
         ];
     }
 
@@ -237,13 +245,13 @@ final class DashboardService
      * @param  Collection<int, Formula>  $formulas
      * @return array<string, mixed>
      */
-    private function pendingApprovals(Collection $formulas, int $limit): array
+    private function pendingApprovals(Collection $formulas, int $limit, bool $seesCost): array
     {
         $tenantId = $formulas->first()?->tenant_id;
         $inLab = FormulaVersion::query()->with('formula')->whereIn('formula_id', $formulas->pluck('id'))->where('status', FormulaStatus::LabTesting)->get();
         $orders = ProductionOrder::query()->where('status', ProductionOrderStatus::Draft)->when($tenantId !== null, fn ($query) => $query->where('tenant_id', $tenantId))->get();
         $deviations = ProductionDeviation::query()->where('approval_status', DeviationApprovalStatus::Pending)->count();
-        $costs = $formulas->filter(fn (Formula $formula): bool => $this->approvals->latestApprovedVersion($formula) !== null && $this->approvals->staleReason($formula) !== null)->values();
+        $costs = ! $seesCost ? collect() : $formulas->filter(fn (Formula $formula): bool => $this->approvals->latestApprovedVersion($formula) !== null && $this->approvals->staleReason($formula) !== null)->values();
 
         $total = $inLab->count() + $orders->count() + $deviations + $costs->count();
 
@@ -252,7 +260,7 @@ final class DashboardService
             'versions_in_lab' => (string) $inLab->count(),
             'orders_to_approve' => (string) $orders->count(),
             'deviations_pending' => (string) $deviations,
-            'costs_to_approve' => (string) $costs->count(),
+            ...($seesCost ? ['costs_to_approve' => (string) $costs->count()] : []),
             'items' => [
                 ...$inLab->take($limit)->map(fn (FormulaVersion $version): array => ['kind' => 'version', 'label' => $version->formula->code.' · v'.$version->version, 'href' => route('formulas.show', $version->formula, false)])->all(),
                 ...$costs->take($limit)->map(fn (Formula $formula): array => ['kind' => 'cost', 'label' => $formula->code, 'href' => route('formulas.cost-report', $formula, false)])->all(),

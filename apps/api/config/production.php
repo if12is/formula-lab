@@ -28,10 +28,9 @@ return [
     'deviation_threshold_pct' => env('PRODUCTION_DEVIATION_THRESHOLD_PCT') === '' ? null : env('PRODUCTION_DEVIATION_THRESHOLD_PCT'),
 
     /*
-    | Roles that see weights only (the operator view: no prices, no costs). Roles that may approve a deviation or a production
-    | order: empty until the owner names them, so nobody can (the safe default; U-01 brings real accounts). Comma separated.
+    | Roles that may approve a deviation or a production order: empty until the owner names them, so nobody can (the safe default;
+    | U-01 brings real accounts). Comma separated. Who sees prices, costs and percentages is the central policy, config/field_visibility.php.
     */
-    'weights_only_roles' => array_values(array_filter(array_map('trim', explode(',', (string) env('PRODUCTION_WEIGHTS_ONLY_ROLES', 'production'))))),
     'approver_roles' => array_values(array_filter(array_map('trim', explode(',', (string) env('PRODUCTION_APPROVER_ROLES', ''))))),
 
     /* The properties a process check point can name: the lab measurements plus the temperature of the mass. */

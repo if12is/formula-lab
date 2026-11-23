@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Enums\Assistant\AssistantDataCategory;
 use App\Services\Currency\DisplayCurrencyService;
+use App\Services\Security\FieldVisibilityService;
 use App\Support\PropertyRegistry;
 use App\Support\Translations;
 use App\Support\UiPreferences;
@@ -27,7 +28,7 @@ class HandleInertiaRequests extends Middleware
      *
      * @see https://inertiajs.com/asset-versioning
      */
-    public function __construct(private DisplayCurrencyService $displayCurrencyService) {}
+    public function __construct(private DisplayCurrencyService $displayCurrencyService, private FieldVisibilityService $fieldVisibility) {}
 
     public function version(Request $request): ?string
     {
@@ -48,6 +49,8 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'appUrl' => config('app.url'),
+            // U-07: which field groups this visitor was sent; a page leaves out what it was not sent (the keys themselves are removed server-side).
+            'fieldAudience' => fn (): array => $this->fieldVisibility->audience($request->user()),
             'locale' => [
                 'current' => $locale,
                 'direction' => UiPreferences::direction($locale),

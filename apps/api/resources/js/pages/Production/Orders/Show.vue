@@ -50,7 +50,7 @@ const facts = computed(() => [
 const lineColumns = computed(() => [
     { key: 'line_no', label: '#', hideBelow: 'md' },
     { key: 'material', label: t('production.show.columns.material') },
-    { key: 'percent', label: t('production.show.columns.percent') },
+    ...(props.audience.sees_percentages ? [{ key: 'percent', label: t('production.show.columns.percent') }] : []),
     { key: 'phase', label: t('production.show.columns.phase'), hideBelow: 'md' },
     { key: 'temp', label: t('production.show.columns.temp'), hideBelow: 'lg' },
 ]);
@@ -106,9 +106,10 @@ function startBatch() {
             <Card>
                 <DescriptionList :items="facts" :columns="3">
                     <template #formula>
-                        <a :href="formula.editorHref" class="text-primary-ink underline underline-offset-2" data-testid="formula-link">
+                        <a v-if="audience.sees_percentages" :href="formula.editorHref" class="text-primary-ink underline underline-offset-2" data-testid="formula-link">
                             <bdi dir="ltr">{{ formula.code }}</bdi> · {{ formula.name }}
                         </a>
+                        <span v-else data-testid="formula-name"><bdi dir="ltr">{{ formula.code }}</bdi> · {{ formula.name }}</span>
                         <Badge tone="neutral" mono class="ms-2">{{ t('formulas.version_short', { version: formula.version }) }}</Badge>
                     </template>
                     <template #hash><bdi dir="ltr" class="break-all font-mono text-label" data-testid="order-hash">{{ order.formula_hash }}</bdi></template>
@@ -133,7 +134,7 @@ function startBatch() {
             </Card>
 
             <Card :title="t('production.show.lines_title')" :description="t('production.show.lines_description')">
-                <DataTable :columns="lineColumns" :rows="snapshot.lines" row-key="line_no" flush :mobile-columns="['material', 'percent']" :title="t('production.show.lines_title')">
+                <DataTable :columns="lineColumns" :rows="snapshot.lines" row-key="line_no" flush :mobile-columns="audience.sees_percentages ? ['material', 'percent'] : ['material', 'phase']" :title="t('production.show.lines_title')">
                     <template #cell-line_no="{ row }"><Badge tone="neutral" mono>{{ row.line_no }}</Badge></template>
                     <template #cell-percent="{ row }"><Num v-if="row.percent_ww" :value="row.percent_ww"><template #suffix> %</template></Num><Badge v-else tone="info" size="sm">q.s.</Badge></template>
                     <template #cell-phase="{ row }"><span v-if="row.phase">{{ t(`enums.formula_phase.${row.phase}`) }}</span><span v-else class="text-ink-3">{{ t('common.no_data') }}</span></template>

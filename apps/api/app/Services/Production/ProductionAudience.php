@@ -2,30 +2,37 @@
 
 namespace App\Services\Production;
 
+use App\Enums\FieldGroup;
 use App\Models\User;
+use App\Services\Security\FieldVisibilityService;
 
 /**
- * Who sees what in production. The role is read in ONE place, roleOf(), which U-01 (RBAC) replaces; the gate `production.approve`
- * (AppServiceProvider) asks allowsApproval(), so FormRequests and controllers keep working when real permissions land.
+ * Who sees what in production. The role is read in ONE place (FieldVisibilityService::roleOf(), which U-01 replaces); the gate
+ * `production.approve` (AppServiceProvider) asks allowsApproval(), so FormRequests and controllers keep working when real permissions land.
  *
- * A weights-only role (config production.weights_only_roles) is the operator: weights, order and lots, never a price or a cost.
- * With nobody signed in (no accounts yet) the full view is shown, as everywhere else in the app; the weighing sheet itself is
- * weights only for everybody.
+ * What a role may see is decided by the central field policy (config/field_visibility.php, U-07): the operator (role `production`) gets
+ * weights, order and lots, never a price, a cost or a percentage. With nobody signed in (no accounts yet) the full view is shown, as
+ * everywhere else in the app; the weighing sheet itself is weights only for everybody.
  */
 final class ProductionAudience
 {
+    public function __construct(private readonly FieldVisibilityService $visibility) {}
+
     public function roleOf(?User $user): ?string
     {
-        $role = $user?->getAttribute('role');
-
-        return is_string($role) && $role !== '' ? $role : null;
+        return $this->visibility->roleOf($user);
     }
 
+    /** The money of a production order or batch: what it costs (a sell price never appears on these screens; the price group is stripped by the middleware if it does). */
     public function seesPrices(?User $user): bool
     {
-        $role = $this->roleOf($user);
+        return $this->visibility->allows($user, FieldGroup::Cost);
+    }
 
-        return $role === null || ! in_array($role, (array) config('production.weights_only_roles'), true);
+    /** The percentage composition of the formula (the recipe): the operator weighs grams and never sees it. */
+    public function seesPercentages(?User $user): bool
+    {
+        return $this->visibility->allows($user, FieldGroup::Percentage);
     }
 
     public function allowsApproval(?User $user): bool

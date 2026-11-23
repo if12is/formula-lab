@@ -4,6 +4,7 @@
  * ComingSoon placeholder (config/ui.php `placeholder_sections`); a section leaves that list when
  * it gets its own route. A group without `labelKey` is unlabelled: its items sit in the top bar as plain
  * links (and at the top of the sidebar); a labelled group is a dropdown in the top bar and a section in the sidebar.
+ * An item with `requires` (cost, price, percentage) is offered only to a role that is sent that field group (U-07).
  * The same definition serves both layouts. An item with a `parentId` is listed in the sidebar and shows that item before it in the breadcrumbs.
  */
 export const navigation = [
@@ -21,7 +22,7 @@ export const navigation = [
             { id: 'templates', href: '/templates', icon: 'ph:files', labelKey: 'nav.templates' },
             { id: 'packaging', href: '/packaging', icon: 'ph:package', labelKey: 'nav.packaging' },
             { id: 'calculators', href: '/calculators', icon: 'ph:calculator', labelKey: 'nav.calculators' },
-            { id: 'tiers', href: '/tiers', icon: 'ph:stack', labelKey: 'nav.tiers' },
+            { id: 'tiers', href: '/tiers', icon: 'ph:stack', labelKey: 'nav.tiers', requires: 'cost' },
         ],
     },
     {
@@ -39,8 +40,8 @@ export const navigation = [
         id: 'operations',
         labelKey: 'nav.groups.operations',
         items: [
-            { id: 'price-lists', href: '/price-lists', icon: 'ph:tag', labelKey: 'nav.price_lists' },
-            { id: 'price-ladder', href: '/price-ladder', icon: 'ph:stairs', labelKey: 'nav.price_ladder' },
+            { id: 'price-lists', href: '/price-lists', icon: 'ph:tag', labelKey: 'nav.price_lists', requires: 'price' },
+            { id: 'price-ladder', href: '/price-ladder', icon: 'ph:stairs', labelKey: 'nav.price_ladder', requires: 'price' },
             { id: 'production', href: '/production', icon: 'ph:factory', labelKey: 'nav.production' },
             { id: 'production-trace', href: '/production/trace', icon: 'ph:path', labelKey: 'nav.production_trace', parentId: 'production' },
         ],

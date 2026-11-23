@@ -20,7 +20,8 @@ export async function signInAsOperator(context: BrowserContext, run: string): Pr
   return signInAs(context, run, E2E_OPERATOR_ROLE, 'Operator');
 }
 
-async function signInAs(context: BrowserContext, run: string, role: string, label: string): Promise<string> {
+/** Signs in a user of any role (the four roles of U-07: owner, chemist, production, accountant). Only the disposable e2e database. */
+export async function signInAs(context: BrowserContext, run: string, role: string, label: string): Promise<string> {
   const email = `e2e-${role}-${run}@example.test`;
   const id = tinker(`echo App\\Models\\User::query()->create(["name" => "E2E ${label} ${run}", "email" => "${email}", "password" => "${E2E_PASSWORD}", "role" => "${role}"])->id;`);
   const cookie = tinker(

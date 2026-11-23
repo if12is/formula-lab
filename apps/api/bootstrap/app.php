@@ -1,6 +1,7 @@
 <?php
 
 use App\Exceptions\Domain\SanadLinkException;
+use App\Http\Middleware\ApplyFieldVisibility;
 use App\Http\Middleware\AuthenticateMockSanad;
 use App\Http\Middleware\AuthenticateSanadDevice;
 use App\Http\Middleware\EnsureAssistantEnabled;
@@ -51,6 +52,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             SetLocale::class,
             HandleInertiaRequests::class,
+            // U-07: inside the Inertia middleware, so every page and JSON reload is stripped of the groups the role may not see.
+            ApplyFieldVisibility::class,
             // S-16: after the Inertia middleware, so its redirect is an Inertia-aware one.
             RequireTermsAcceptance::class,
         ]);

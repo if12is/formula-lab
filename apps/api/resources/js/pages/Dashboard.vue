@@ -5,7 +5,7 @@
  * The figures arrive after the page opens (a deferred prop), so the page never waits for the engine.
  */
 import { computed } from 'vue';
-import { Deferred, Head } from '@inertiajs/vue3';
+import { Deferred, Head, usePage } from '@inertiajs/vue3';
 import { Alert, Badge, Button, Card, EmptyState, PageHeader, Skeleton, StatCard } from '@kit';
 import ConfidenceBadge from '../components/materials/ConfidenceBadge.vue';
 import Num from '../components/Num.vue';
@@ -19,6 +19,7 @@ const props = defineProps({
 });
 
 const { t } = useI18n();
+const fieldAudience = computed(() => usePage().props.fieldAudience);
 const { reasonOf } = useEngineText();
 
 /** The reason a figure is missing: the first gap, worded by the server or by the engine's lang group. */
@@ -33,7 +34,8 @@ const cards = computed(() => {
     const { stale, quality, compliance, approvals, impact } = k.value;
 
     return [
-        {
+        // A role that does not see costs is sent neither the stale-price nor the price-move figures (U-07): no card is drawn for them.
+        ...(stale ? [{
             id: 'stale',
             label: t('dashboard.kpi.stale'),
             value: stale.value,
@@ -41,7 +43,7 @@ const cards = computed(() => {
             caption: stale.checked === null ? null : t('dashboard.kpi.stale_caption', { checked: stale.checked }),
             icon: 'ph:clock-countdown',
             alert: stale.value !== null && stale.value !== '0',
-        },
+        }] : []),
         {
             id: 'quality',
             label: t('dashboard.kpi.quality'),
@@ -65,11 +67,13 @@ const cards = computed(() => {
             label: t('dashboard.kpi.approvals'),
             value: approvals.value,
             reason: null,
-            caption: t('dashboard.kpi.approvals_caption', { lab: approvals.versions_in_lab, orders: approvals.orders_to_approve, deviations: approvals.deviations_pending, costs: approvals.costs_to_approve }),
+            caption: approvals.costs_to_approve === undefined
+                ? t('dashboard.kpi.approvals_caption_no_cost', { lab: approvals.versions_in_lab, orders: approvals.orders_to_approve, deviations: approvals.deviations_pending })
+                : t('dashboard.kpi.approvals_caption', { lab: approvals.versions_in_lab, orders: approvals.orders_to_approve, deviations: approvals.deviations_pending, costs: approvals.costs_to_approve }),
             icon: 'ph:hourglass-medium',
             alert: false,
         },
-        {
+        ...(impact ? [{
             id: 'impact',
             label: t('dashboard.kpi.impact'),
             value: impact.value === null ? null : `${impact.value.startsWith('-') ? '' : '+'}${new Intl.NumberFormat('en', { maximumFractionDigits: 2 }).format(impact.value)}%`,
@@ -77,10 +81,11 @@ const cards = computed(() => {
             caption: impact.largest ? t('dashboard.kpi.impact_caption', { code: impact.largest.code }) : null,
             icon: 'ph:trend-up',
             alert: false,
-        },
+        }] : []),
     ];
 });
 
+const approvalKeys = computed(() => ['versions_in_lab', 'orders_to_approve', 'deviations_pending', 'costs_to_approve'].filter((key) => k.value?.approvals[key] !== undefined));
 const gapLine = (gap) => [[gap.materialId, gap.subject].filter(Boolean).join(' · ') || gap.property, gap.text ?? reasonOf(gap)].join(': ');
 const missingLines = (row) => row.missing.slice(0, 2).map(gapLine);
 </script>
@@ -115,7 +120,7 @@ const missingLines = (row) => row.missing.slice(0, 2).map(gapLine);
                 <EmptyState v-if="k.formula_count === 0" class="mt-6" icon="ph:flask" :title="t('dashboard.empty_title')" :description="t('dashboard.empty_description')" />
 
                 <div class="mt-6 grid gap-4 lg:grid-cols-2">
-                    <Card :title="t('dashboard.stale.title')" :description="t('dashboard.stale.description', { date: k.as_of })" data-testid="card-stale">
+                    <Card v-if="k.stale" :title="t('dashboard.stale.title')" :description="t('dashboard.stale.description', { date: k.as_of })" data-testid="card-stale">
                         <Alert v-if="k.stale.missing.length" tone="warning" icon="ph:warning" data-testid="stale-missing">{{ reasonFor(k.stale.missing) }}</Alert>
                         <template v-else>
                             <ul v-if="k.stale.items.length" class="flex flex-col divide-y divide-line">
@@ -162,7 +167,7 @@ const missingLines = (row) => row.missing.slice(0, 2).map(gapLine);
 
                     <Card :title="t('dashboard.approvals.title')" :description="t('dashboard.approvals.description')" data-testid="card-approvals">
                         <dl class="grid grid-cols-2 gap-3">
-                            <div v-for="key in ['versions_in_lab', 'orders_to_approve', 'deviations_pending', 'costs_to_approve']" :key="key" class="flex flex-col gap-1">
+                            <div v-for="key in approvalKeys" :key="key" class="flex flex-col gap-1">
                                 <dt class="text-label text-ink-3">{{ t(`dashboard.approvals.${key}`) }}</dt>
                                 <dd class="type-metric text-ink" :data-approval="key"><Num :value="k.approvals[key]" :decimals="0" /></dd>
                             </div>
@@ -175,7 +180,7 @@ const missingLines = (row) => row.missing.slice(0, 2).map(gapLine);
                         </ul>
                     </Card>
 
-                    <Card :title="t('dashboard.impact.title')" :description="t('dashboard.impact.description', { threshold: k.impact.threshold_pct })" class="lg:col-span-2" data-testid="card-impact">
+                    <Card v-if="k.impact" :title="t('dashboard.impact.title')" :description="t('dashboard.impact.description', { threshold: k.impact.threshold_pct })" class="lg:col-span-2" data-testid="card-impact">
                         <ul v-if="k.impact.items.length" class="flex flex-col divide-y divide-line">
                             <li v-for="row in k.impact.items" :key="row.formula.id" class="grid gap-2 py-3 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1.2fr)] sm:items-center" :data-formula="row.formula.code">
                                 <a :href="row.formula.href" class="font-semibold text-primary-ink underline underline-offset-2">{{ row.formula.code }} · {{ row.formula.name }}</a>
@@ -201,7 +206,7 @@ const missingLines = (row) => row.missing.slice(0, 2).map(gapLine);
                     </Card>
                 </div>
 
-                <div class="mt-6 flex flex-wrap gap-2 print:hidden">
+                <div v-if="fieldAudience?.sees_price && fieldAudience?.sees_cost" class="mt-6 flex flex-wrap gap-2 print:hidden">
                     <Button :href="path('tiers.index')" variant="secondary" icon="ph:stack" size="sm">{{ t('nav.tiers') }}</Button>
                     <Button :href="path('price-ladder.index')" variant="secondary" icon="ph:stairs" size="sm">{{ t('nav.price_ladder') }}</Button>
                 </div>

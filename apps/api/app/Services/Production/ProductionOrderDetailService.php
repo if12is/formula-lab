@@ -67,7 +67,7 @@ final class ProductionOrderDetailService
                 'href' => route('production.batches.show', $order->batch, false),
             ],
             'approval' => $this->audience->approvalAvailability($user),
-            'audience' => ['sees_prices' => $seesPrices],
+            'audience' => ['sees_prices' => $seesPrices, 'sees_percentages' => $this->audience->seesPercentages($user)],
             'choices' => ['wasteStep' => null],
             'urls' => [
                 'index' => route('production.orders.index', [], false),

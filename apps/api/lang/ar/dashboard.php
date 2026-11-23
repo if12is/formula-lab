@@ -14,6 +14,7 @@ return [
         'compliance' => 'تركيبات FAIL أو UNKNOWN',
         'compliance_caption' => '{fail} فاشلة، {unknown} غير محسومة، من {checked} تركيبة فُحصت',
         'approvals' => 'اعتمادات مستنية',
+        'approvals_caption_no_cost' => 'نسخ في المعمل {lab}، أوامر إنتاج {orders}، انحرافات {deviations}',
         'approvals_caption' => 'نسخ في المعمل {lab}، أوامر إنتاج {orders}، انحرافات {deviations}، تكاليف {costs}',
         'impact' => 'أكبر تغيّر في تكلفة الخامات',
         'impact_caption' => 'للمنتج {code} منذ اعتماد التكلفة',
