@@ -149,6 +149,12 @@ return [
         'batch_not_positive' => 'The batch size must be greater than zero.',
         'exceeds_100' => 'The percentage is above 100%: check the amount and the batch size.',
     ],
+    'packaging' => [
+        'duplicate_item' => 'This component is repeated in the BOM.',
+        'reject_out_of_range' => 'The reject % must be below 100.',
+        'invalid_packing_config' => 'Units per carton and cartons per pallet must be whole numbers above zero.',
+    ],
+    'packing configuration required' => 'A carton or pallet level component: enter the units per carton (and cartons per pallet) in the SKU details.',
     'packaging_compat' => [
         'neck_finish_missing' => 'Record the neck finish of this component in the packaging library.',
         'no_container' => 'A closure needs a container in the same BOM.',

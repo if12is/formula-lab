@@ -26,3 +26,10 @@ export async function postJson(url, payload) {
         throw error;
     }
 }
+
+/** GETs JSON and returns its body. A failure (network, 503 from the engine) throws so the caller shows its generic error. */
+export async function getJson(url) {
+    const response = await window.axios.get(url, { headers: { Accept: 'application/json' } });
+
+    return response.data;
+}

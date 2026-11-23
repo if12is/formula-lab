@@ -59,6 +59,7 @@ function edit(row) {
     <div class="kit-page is-full">
         <PageHeader :title="t('packaging.title')" :description="t('packaging.description')">
             <template #actions>
+                <Link :href="path('packaging.boms.index')" class="type-body text-primary underline-offset-2 hover:underline" data-testid="packaging-bom-link">{{ t('packaging.bom.open') }}</Link>
                 <Link :href="path('packaging.compatibility.index')" class="type-body text-primary underline-offset-2 hover:underline" data-testid="packaging-compat-link">{{ t('packaging.compat.open') }}</Link>
                 <Button icon="ph:plus" data-testid="packaging-new" @click="create">{{ t('packaging.new') }}</Button>
             </template>

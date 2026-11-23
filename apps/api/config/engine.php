@@ -35,6 +35,7 @@ return [
         'check-template' => 'scripts/check-template.ts',
         'production' => 'scripts/production.ts',
         'check-packaging-compat' => 'scripts/check-packaging-compat.ts',
+        'packaging-bom-cost' => 'scripts/packaging-bom-cost.ts',
         'assistant' => 'scripts/assistant.ts',
         'eda-checklist' => 'scripts/eda-checklist.ts',
         // The optimizer package's own script (P-02): paths are relative to package_path.

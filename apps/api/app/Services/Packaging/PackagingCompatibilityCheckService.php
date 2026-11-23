@@ -5,6 +5,7 @@ namespace App\Services\Packaging;
 use App\Models\PackagingCompatibility;
 use App\Models\TradeMaterial;
 use App\Support\Engine\EngineRunner;
+use App\Support\Packaging\CompatPairsPayload;
 
 /**
  * Asks the engine whether the closures and pumps among the given packaging components fit the container, from the pairs people
@@ -30,13 +31,7 @@ final class PackagingCompatibilityCheckService
                 'kind' => $item->item_kind->value,
                 'neckFinish' => $item->neck_finish,
             ])->values()->all(),
-            'pairs' => $pairs->map(fn (PackagingCompatibility $pair): array => [
-                'containerNeck' => $pair->container_neck_finish,
-                'closureNeck' => $pair->closure_neck_finish,
-                'sourceId' => (string) $pair->source_id,
-                'confidence' => $pair->confidence->value,
-                'validFrom' => $pair->source?->retrieved_at?->toDateString(),
-            ])->all(),
+            'pairs' => CompatPairsPayload::load(),
         ]);
 
         $sourceTitles = $pairs->mapWithKeys(fn (PackagingCompatibility $pair): array => [(string) $pair->source_id => $pair->source?->title])->all();
