@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { checkIfraCompliance, ifraCategoryForFamily, IFRA_REASONS, type IfraCertificate, type IfraInput } from './ifra';
+import { checkIfraCompliance, ifraCategoryForFamily, ifraLimitsByCategory, IFRA_REASONS, type IfraCertificate, type IfraInput } from './ifra';
 import { fixture } from '../test-fixtures';
 
 /* Fictional certificates: oil F-1 limits {4: 20, 5A: 0.5, 9: 1.5}; oil F-2 limits {4: 8}. All TEST inputs. */
@@ -107,5 +107,19 @@ describe('ifraCategoryForFamily', () => {
     expect(ifraCategoryForFamily('test_family_a', mapping)).toBe('4');
     expect(ifraCategoryForFamily('unmapped', mapping)).toBeUndefined();
     expect(ifraCategoryForFamily('constructor', mapping)).toBeUndefined();
+  });
+});
+
+describe('ifraLimitsByCategory (picks the limit the check uses, S-15)', () => {
+  const row = (category: string, value: string | null, confidence: 'L1_coa_batch' | 'L2_supplier_tds' | 'L5_reference', validFrom = '2026-01-01') => ({ category, value, unit: '%w/w' as const, sourceId: 'TEST-FIXTURE', confidence, validFrom });
+
+  it('takes the best-confidence limit of a category (L2 1.2 beats L5 0.8) and leaves out a category without a value', () => {
+    const limits = ifraLimitsByCategory([row('4', '1.2', 'L2_supplier_tds'), row('4', '0.8', 'L5_reference', '2026-06-01'), row('5A', null, 'L1_coa_batch')]);
+    expect(Object.keys(limits)).toEqual(['4']);
+    expect(limits['4']).toMatchObject({ value: '1.2', confidence: 'L2_supplier_tds' });
+  });
+
+  it('at the same confidence the newer date wins: 0.9 (2026-06-01) over 1.1 (2026-01-01)', () => {
+    expect(ifraLimitsByCategory([row('4', '1.1', 'L2_supplier_tds'), row('4', '0.9', 'L2_supplier_tds', '2026-06-01')])['4']?.value).toBe('0.9');
   });
 });

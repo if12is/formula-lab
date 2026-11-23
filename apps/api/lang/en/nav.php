@@ -16,6 +16,8 @@ return [
     'calculators' => 'Calculators',
     'compliance' => 'Compliance',
     'lab' => 'Lab',
+    'tiers' => 'Tiers',
+    'price_ladder' => 'Price ladder',
     'price_lists' => 'Price lists',
     'production' => 'Production',
     'production_trace' => 'Lot trace',

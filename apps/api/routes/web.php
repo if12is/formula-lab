@@ -1,12 +1,12 @@
 <?php
 
 use App\Http\Controllers\ComingSoonController;
+use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Dev\ListDemoController;
 use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
-Route::get('/', fn () => Inertia::render('Dashboard'))->name('home');
+Route::get('/', [DashboardController::class, 'index'])->name('home');
 
 Route::put('/settings/theme', [SettingsController::class, 'theme'])->name('settings.theme');
 Route::put('/settings/nav-layout', [SettingsController::class, 'navLayout'])->name('settings.nav-layout');
@@ -20,6 +20,8 @@ require __DIR__.'/costing.php';
 require __DIR__.'/lab.php';
 require __DIR__.'/production.php';
 require __DIR__.'/pricing.php';
+require __DIR__.'/ladder.php';
+require __DIR__.'/tiers.php';
 require __DIR__.'/compliance.php';
 require __DIR__.'/calculators.php';
 require __DIR__.'/settings.php';

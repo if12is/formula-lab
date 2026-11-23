@@ -49,3 +49,4 @@ export * from './core/canonical-hash';
 export * from './decision';
 export * from './lab';
 export * from './production';
+export * from './dashboard/kpis';

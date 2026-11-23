@@ -7,7 +7,10 @@
 import type { MissingData } from '../contract';
 import { dec } from '../core/decimal';
 import type { SourcedScalar } from '../core/parse';
+import { resolveValue } from '../data/resolve';
 import { checkIfraLimit, type IfraCheck } from '../fragrance/fine-fragrance';
+import type { Confidence } from '../contract';
+import type { Unit } from '../core/quantity';
 import type { ConfidencePolicy } from '../trace/sourced';
 import { inputLeaf, traced } from '../trace/trace';
 import type { CheckStatus } from '../core/check-status';
@@ -126,4 +129,35 @@ export function checkIfraCompliance(input: IfraInput): IfraReport {
     missing: results.flatMap((r) => r.missing),
     warnings: results.flatMap((r) => r.check?.warnings ?? []),
   };
+}
+
+/** One IFRA limit on file for a fragrance oil (a value of its certificate), as the app stores it. */
+export interface IfraLimitRow {
+  id?: string;
+  category: string;
+  value?: string | null;
+  unit: Unit;
+  sourceId: string;
+  confidence: Confidence;
+  validFrom: string;
+}
+
+/**
+ * The limits of a fragrance's certificate by category: for each category the one value `resolveValue` picks (best confidence, then
+ * newest, then source id: always the same one for the same rows). A category with no value on file has no limit, so the check says UNKNOWN.
+ */
+export function ifraLimitsByCategory(rows: readonly IfraLimitRow[]): Record<string, SourcedScalar> {
+  const withValue = rows.filter((row) => row.value !== null && row.value !== undefined);
+  const limits: Record<string, SourcedScalar> = {};
+  for (const category of [...new Set(withValue.map((row) => row.category))]) {
+    const candidates = withValue
+      .filter((row) => row.category === category)
+      .map((row) => ({ _id: row.id, value: row.value as string, unit: row.unit, sourceId: row.sourceId, confidence: row.confidence, validFrom: row.validFrom }));
+    const resolved = resolveValue('ifra_limit', candidates);
+    if (resolved.ok && resolved.value.chosenBy === 'rule') {
+      const { value, unit, sourceId, confidence, validFrom } = resolved.value.chosen;
+      limits[category] = { value: value as string, unit, sourceId, confidence, validFrom };
+    }
+  }
+  return limits;
 }

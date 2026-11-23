@@ -21,6 +21,7 @@ export const navigation = [
             { id: 'templates', href: '/templates', icon: 'ph:files', labelKey: 'nav.templates' },
             { id: 'packaging', href: '/packaging', icon: 'ph:package', labelKey: 'nav.packaging' },
             { id: 'calculators', href: '/calculators', icon: 'ph:calculator', labelKey: 'nav.calculators' },
+            { id: 'tiers', href: '/tiers', icon: 'ph:stack', labelKey: 'nav.tiers' },
         ],
     },
     {
@@ -37,6 +38,7 @@ export const navigation = [
         labelKey: 'nav.groups.operations',
         items: [
             { id: 'price-lists', href: '/price-lists', icon: 'ph:tag', labelKey: 'nav.price_lists' },
+            { id: 'price-ladder', href: '/price-ladder', icon: 'ph:stairs', labelKey: 'nav.price_ladder' },
             { id: 'production', href: '/production', icon: 'ph:factory', labelKey: 'nav.production' },
             { id: 'production-trace', href: '/production/trace', icon: 'ph:path', labelKey: 'nav.production_trace', parentId: 'production' },
         ],

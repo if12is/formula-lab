@@ -265,6 +265,36 @@ return [
         'not_a_decimal' => 'The value is not a valid number.',
         'limits_not_defined' => 'The check point has no limit defined.',
     ],
+    'no_candidates' => 'No value is recorded.',
+    'no_eligible_candidates' => 'Every recorded value is unusable.',
+    'pricing' => [
+        'waterfall' => [
+            'non_positive_price' => 'The price fell to zero or less along the steps: check the margins and the distribution cost.',
+            'invalid_margin_basis' => 'The margin basis is unknown: on cost or on price.',
+            'unit_cost_not_egp' => 'The unit cost must be in pounds and not negative.',
+        ],
+        'ladder' => [
+            'fill_required' => 'The product weight per unit is required.',
+            'usd_exposure_unavailable' => 'The USD-priced part cannot be known because the material cost report is incomplete or zero.',
+            'invalid_change_pct' => 'The dollar move must be a number above −100.',
+        ],
+    ],
+    'dashboard' => [
+        'stale_threshold_not_set' => 'The owner has not decided the price age limit yet, so the number of old prices is not counted (and is not taken as zero).',
+        'stale_threshold_invalid' => 'The price age limit that was written is not valid.',
+        'as_of_invalid' => "Today's date is not valid.",
+        'nothing_to_check' => 'There is nothing to check.',
+        'price_missing' => 'There is no current price of this material to compare with.',
+        'approved_price_invalid' => 'The price of this material when the cost was approved cannot be compared.',
+        'sell_price_missing' => 'No selling price has been published for this product yet, so the margin effect is not worked out.',
+        'unit_cost_missing' => 'There is no approved unit cost.',
+        'sell_price_not_positive' => 'The published selling price is not a positive number.',
+    ],
+    'optimizer' => [
+        'input' => [
+            'price_conflict' => 'Two different prices have the same confidence and date and cannot be told apart.',
+        ],
+    ],
     'unknown_reason' => 'Reason from the engine: {reason}',
     'tax' => [
         'regime_missing' => 'No tax regime of this rate is in force on the price date.',

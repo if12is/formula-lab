@@ -18,3 +18,5 @@ export { reversePricing, REVERSE_REASONS } from './reverse';
 export type { MarginBasis, ReversePricingInput, ReversePricingResult, ReverseStep } from './reverse';
 export { OPTIMIZER_MESSAGE_KEYS, messageKeysJson } from './messages';
 export type { MessageKeySpec } from './messages';
+export { offeredMaterials, withProfileSource } from './app-input';
+export type { ExcludedMaterial, MaterialQuotes, OfferedMaterials } from './app-input';

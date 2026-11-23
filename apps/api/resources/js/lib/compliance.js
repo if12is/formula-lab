@@ -6,7 +6,7 @@
  * What the engine takes about a formula is its lines and, per material, its sourced composition (the server builds that
  * shape in App\Services\Material\MaterialCompositionService::enginePayloads and sends it with each material).
  */
-import { OPERATORS, UNITS, buildInciList, checkIfraCompliance, draftSummary, evaluateCompliance, hashRuleSet, isDecimalString, overallStatus, resolveValue, validateRuleSet } from '@fl/engine';
+import { OPERATORS, UNITS, buildInciList, checkIfraCompliance, draftSummary, evaluateCompliance, hashRuleSet, ifraLimitsByCategory, isDecimalString, overallStatus, validateRuleSet } from '@fl/engine';
 import { engineLines, normalizeDecimalText } from './engine';
 
 /* ---- a formula as the compliance engine reads it ---------------------------------- */
@@ -89,25 +89,9 @@ export function combinedStatus(statuses) {
     return decided.length === 0 ? 'NOT_APPLICABLE' : overallStatus(decided);
 }
 
-/** The limits of a fragrance's IFRA certificate by category: for each, the one value the engine's resolveValue picks. */
+/** The limits of a fragrance's IFRA certificate by category (engine ifraLimitsByCategory), from the rows the server sends. */
 function limitsByCategory(rows) {
-    const categories = [...new Set(rows.filter((row) => row.value !== null && row.value !== undefined).map((row) => row.category))];
-    const limits = {};
-
-    for (const category of categories) {
-        const candidates = rows
-            .filter((row) => row.category === category && row.value !== null && row.value !== undefined)
-            .map((row) => ({ _id: row.id, value: row.value, unit: row.unit, sourceId: row.source_id, confidence: row.confidence, validFrom: row.valid_from }));
-        const resolved = resolveValue('ifra_limit', candidates);
-
-        // No single winner (a conflict at the top confidence) leaves the category without a limit: the engine says UNKNOWN.
-        if (resolved.ok && resolved.value.chosenBy === 'rule') {
-            const { value, unit, sourceId, confidence, validFrom } = resolved.value.chosen;
-            limits[category] = { value, unit, sourceId, confidence, validFrom };
-        }
-    }
-
-    return limits;
+    return ifraLimitsByCategory(rows.map((row) => ({ id: row.id, category: row.category, value: row.value, unit: row.unit, sourceId: row.source_id, confidence: row.confidence, validFrom: row.valid_from })));
 }
 
 /**

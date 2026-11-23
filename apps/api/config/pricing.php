@@ -33,6 +33,9 @@ return [
     /* Rows the customer / product selectors return per search. */
     'search_limit' => 20,
 
+    /* Most dollar moves the price ladder screen tries at once. */
+    'ladder_max_fx_changes' => 5,
+
     /* Decimal places of the price sent to Sanad (it rounds to the same, contract 8.2). */
     'price_places' => 2,
 ];

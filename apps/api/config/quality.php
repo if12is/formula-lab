@@ -20,6 +20,7 @@ use App\Models\PropertyValue;
 use App\Models\RuleSet;
 use App\Models\Source;
 use App\Models\Substance;
+use App\Models\TierProfile;
 use App\Models\TradeMaterial;
 
 /*
@@ -67,6 +68,7 @@ return [
         'trade_materials' => TradeMaterial::class,
         'sources' => Source::class,
         'prices' => Price::class,
+        'tier_profiles' => TierProfile::class,
     ],
 
     'outside' => [

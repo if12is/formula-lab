@@ -82,6 +82,29 @@ final class TaxRegimeService
     }
 
     /**
+     * The tax of a product as the engine's price waterfall reads it (`resolveProductTax` input): the setting (absent while none was chosen,
+     * never a default), the dated regimes of this tax, the tax type and the date. The engine checks the rate against the regimes.
+     *
+     * @return array<string, mixed>
+     */
+    public function engineTax(Formula $formula): array
+    {
+        $setting = match ($formula->tax_mode) {
+            TaxMode::Disabled => ['mode' => 'disabled'],
+            TaxMode::Rate => ['mode' => 'rate', 'ratePct' => (string) $this->rateOf($formula)],
+            null => null,
+        };
+
+        return array_filter([
+            'setting' => $setting,
+            'regimes' => $this->engineRegimes((string) $formula->getKey()),
+            'productFamilyId' => (string) $formula->getKey(),
+            'taxType' => config('tax.type'),
+            'asOf' => $this->asOf(),
+        ], fn (mixed $part): bool => $part !== null);
+    }
+
+    /**
      * Props of the pricing/tax panel of the editor.
      *
      * @return array<string, mixed>

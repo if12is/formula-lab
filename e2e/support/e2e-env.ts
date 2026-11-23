@@ -34,6 +34,9 @@ export const E2E_DEVIATION_THRESHOLD_PCT = '5';
 /** TEST-FIXTURE role of an operator: weights only, no prices (config production.weights_only_roles). */
 export const E2E_OPERATOR_ROLE = 'production';
 
+/** TEST-FIXTURE price age limit (the owner has not decided it: HUMAN-TODO S-15). The app ships none; the e2e run uses 30 days so the stale-price figure can be exercised. */
+export const E2E_STALE_PRICE_DAYS = '30';
+
 /** Environment for every artisan process and for the server: the process env wins over apps/api/.env. */
 export const e2eServerEnv = (): Record<string, string> => ({
   DB_DATABASE: E2E_DATABASE,
@@ -43,7 +46,8 @@ export const e2eServerEnv = (): Record<string, string> => ({
   PRODUCTION_DEVIATION_THRESHOLD_PCT: E2E_DEVIATION_THRESHOLD_PCT,
   PRODUCTION_APPROVER_ROLES: E2E_OVERRIDE_ROLE,
   PRODUCTION_WEIGHTS_ONLY_ROLES: E2E_OPERATOR_ROLE,
+  DASHBOARD_STALE_PRICE_DAYS: E2E_STALE_PRICE_DAYS,
 });
 
 /** Demo seeders every run starts from (each is idempotent and the specs still call the ones they need). */
-export const E2E_DEMO_SEEDERS = ['FormulationDemoSeeder', 'ComplianceDemoSeeder', 'FamilyDemoSeeder', 'LabDemoSeeder', 'CostingDemoSeeder', 'PriceListDemoSeeder', 'ProductionDemoSeeder'];
+export const E2E_DEMO_SEEDERS = ['FormulationDemoSeeder', 'ComplianceDemoSeeder', 'FamilyDemoSeeder', 'LabDemoSeeder', 'CostingDemoSeeder', 'PriceListDemoSeeder', 'ProductionDemoSeeder', 'TiersDemoSeeder'];

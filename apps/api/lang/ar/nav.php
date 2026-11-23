@@ -16,6 +16,8 @@ return [
     'calculators' => 'الحاسبات',
     'compliance' => 'المطابقة',
     'lab' => 'المعمل',
+    'tiers' => 'الفئات والمُحسِّن',
+    'price_ladder' => 'سلّم السعر',
     'price_lists' => 'قوائم الأسعار',
     'production' => 'الإنتاج',
     'production_trace' => 'تتبع اللوط',
