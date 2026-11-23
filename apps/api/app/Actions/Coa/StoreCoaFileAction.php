@@ -4,7 +4,6 @@ namespace App\Actions\Coa;
 
 use App\Exceptions\Domain\CoaException;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 
 /** Keeps an uploaded certificate on the private disk and returns what identifies it: where, its name, type, size and SHA-256. */
 final class StoreCoaFileAction
@@ -30,10 +29,5 @@ final class StoreCoaFileAction
             'size' => (int) $file->getSize(),
             'sha256' => $hash,
         ];
-    }
-
-    public function discard(string $path): void
-    {
-        Storage::disk((string) config('coa.disk'))->delete($path);
     }
 }

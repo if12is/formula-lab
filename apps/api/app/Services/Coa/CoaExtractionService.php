@@ -4,6 +4,7 @@ namespace App\Services\Coa;
 
 use App\Actions\Assistant\RecordAssistantRequestAction;
 use App\Actions\Coa\ConfirmCoaExtractionAction;
+use App\Actions\Coa\DiscardCoaFileAction;
 use App\Actions\Coa\RecordCoaExtractionAction;
 use App\Actions\Coa\RejectCoaExtractionAction;
 use App\Actions\Coa\RunCoaExtractionAction;
@@ -32,6 +33,7 @@ final class CoaExtractionService
 {
     public function __construct(
         private readonly StoreCoaFileAction $storeFile,
+        private readonly DiscardCoaFileAction $discardFile,
         private readonly RunCoaExtractionAction $runExtraction,
         private readonly RecordCoaExtractionAction $recordExtraction,
         private readonly ConfirmCoaExtractionAction $confirmExtraction,
@@ -60,7 +62,7 @@ final class CoaExtractionService
 
             $extraction = ($this->recordExtraction)($material, $tenantId, $file, $this->header($answer, $document, $usage), $fields, $userId);
         } catch (BusinessRuleViolationException $exception) {
-            $this->storeFile->discard($file['path']);
+            ($this->discardFile)($file['path']);
             $this->recordUsage(AssistantRequestStatus::Failed, $usage, $started, $userId, $tenantId, $exception instanceof AssistantException ? $exception->reason : 'coa_unusable');
 
             throw $exception;
