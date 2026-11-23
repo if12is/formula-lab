@@ -45,6 +45,11 @@ final class ExplainResultTool implements AssistantTool
         ];
     }
 
+    public function dataCategories(array $input): array
+    {
+        return [];
+    }
+
     public function __invoke(array $input, ToolContext $context): array
     {
         $valid = $this->validated($input, ['tool' => ['required', Rule::in($this->explainable)]]);

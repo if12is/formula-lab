@@ -2,6 +2,7 @@
 
 namespace App\Support\Assistant;
 
+use App\Enums\Assistant\AssistantDataCategory;
 use App\Exceptions\Domain\BusinessRuleViolationException;
 
 /**
@@ -25,6 +26,15 @@ interface AssistantTool
      * @return array<string, mixed>
      */
     public function inputSchema(): array;
+
+    /**
+     * The kinds of the owner's data this call would put in front of the model provider (P-10). Empty for a tool that reads only public
+     * reference data: it is never gated. A non-empty list is refused until the session has consented to each category.
+     *
+     * @param  array<string, mixed>  $input
+     * @return list<AssistantDataCategory>
+     */
+    public function dataCategories(array $input): array;
 
     /**
      * @param  array<string, mixed>  $input  Already checked against the schema.

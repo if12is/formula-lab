@@ -14,5 +14,6 @@ export function useDateTime() {
     return {
         when: format({ dateStyle: 'medium', timeStyle: 'short' }),
         day: format({ dateStyle: 'medium' }),
+        time: format({ timeStyle: 'short' }),
     };
 }

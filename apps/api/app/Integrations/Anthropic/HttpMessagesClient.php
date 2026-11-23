@@ -45,6 +45,8 @@ final class HttpMessagesClient implements MessagesClient
             (string) $response->json('stop_reason'),
             (int) $response->json('usage.input_tokens', 0),
             (int) $response->json('usage.output_tokens', 0),
+            (int) $response->json('usage.cache_creation_input_tokens', 0),
+            (int) $response->json('usage.cache_read_input_tokens', 0),
         );
     }
 }

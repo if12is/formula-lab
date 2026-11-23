@@ -4,6 +4,8 @@ namespace Tests\Feature\Quality;
 
 use App\Concerns\Auditable;
 use App\Enums\AuditAction;
+use App\Models\AssistantConsentEvent;
+use App\Models\AssistantDisclosure;
 use App\Models\AuditLog;
 use App\Models\CalcRun;
 use App\Models\CoaExtraction;
@@ -36,6 +38,8 @@ class QualityTablesTest extends TestCase
 
     /** @var array<string, class-string<Model>> */
     private const APPEND_ONLY_MODELS = [
+        'assistant_consent_events' => AssistantConsentEvent::class,
+        'assistant_disclosures' => AssistantDisclosure::class,
         'audit_log' => AuditLog::class,
         'calc_runs' => CalcRun::class,
         'coa_extraction_events' => CoaExtractionEvent::class,

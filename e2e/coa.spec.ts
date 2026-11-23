@@ -140,5 +140,9 @@ test('the upload form needs a material and a file before it can read, and tells 
   await pickRecord(page, page.getByRole('combobox', { name: /^الخامة/ }), 'Demo Glycerin', /Demo Glycerin \(COA\)/);
   await expect(page.getByTestId('coa-upload-submit')).toBeDisabled();
   await page.getByTestId('coa-file-input').locator('input[type="file"]').setInputFiles('apps/api/tests/fixtures/coa/sample-coa.pdf');
+  // P-10: even with both, reading is blocked until the session allows sending a certificate to the Claude service.
+  await expect(page.getByTestId('coa-upload-submit')).toBeDisabled();
+  await page.getByRole('checkbox', { name: /شهادات تحليل الموردين/ }).check();
+  await page.getByTestId('consent-allow').click();
   await expect(page.getByTestId('coa-upload-submit')).toBeEnabled();
 });

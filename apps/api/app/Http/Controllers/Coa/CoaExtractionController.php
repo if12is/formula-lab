@@ -12,6 +12,7 @@ use App\Models\TradeMaterial;
 use App\Services\Coa\CoaExtractionDetailService;
 use App\Services\Coa\CoaExtractionListService;
 use App\Services\Coa\CoaExtractionService;
+use App\Support\Assistant\AssistantSessionKey;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -26,6 +27,7 @@ class CoaExtractionController extends Controller
         private CoaExtractionListService $listService,
         private CoaExtractionDetailService $detailService,
         private CoaExtractionService $extractionService,
+        private AssistantSessionKey $sessionKey,
     ) {}
 
     public function index(Request $request): InertiaResponse
@@ -44,7 +46,7 @@ class CoaExtractionController extends Controller
     public function store(StoreCoaDocumentRequest $request): RedirectResponse
     {
         try {
-            $extraction = $this->extractionService->extract($request->file('file'), TradeMaterial::query()->findOrFail($request->validated('trade_material_id')), $request->user()?->getKey());
+            $extraction = $this->extractionService->extract($request->file('file'), TradeMaterial::query()->findOrFail($request->validated('trade_material_id')), $request->user()?->getKey(), $this->sessionKey->for($request));
         } catch (BusinessRuleViolationException $exception) {
             return back()->with('error', $exception->getMessage());
         }

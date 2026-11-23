@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Testing\TestResponse;
 use Tests\Concerns\BuildsCostedFormulas;
+use Tests\Concerns\GrantsAssistantConsent;
 use Tests\fakes\anthropic\FakeMessagesClient;
 use Tests\TestCase;
 
@@ -22,7 +23,7 @@ use Tests\TestCase;
  */
 class AssistantEndpointTest extends TestCase
 {
-    use BuildsCostedFormulas, RefreshDatabase;
+    use BuildsCostedFormulas, GrantsAssistantConsent, RefreshDatabase;
 
     private FakeMessagesClient $model;
 
@@ -33,6 +34,9 @@ class AssistantEndpointTest extends TestCase
         parent::setUp();
 
         $this->model = FakeMessagesClient::bind($this->app);
+        // P-10: the questions below involve formulas, so they run in a session that has consented (the refusals are tested in AssistantConsentTest).
+        $this->runUnderConsentSession();
+        $this->consentTo();
         $this->versionId = $this->costedProduct(Tenant::factory()->create()->id)->versions()->firstOrFail()->id;
         Http::preventStrayRequests();
     }
@@ -70,8 +74,8 @@ class AssistantEndpointTest extends TestCase
         $this->assertSame('claude-haiku-5-5', $payload['model']);
         $this->assertSame('claude-haiku-5-5', config('assistant.model'), 'the default model id comes from config');
         $this->assertSame(0, $payload['temperature']);
-        $this->assertStringContainsString('أي رقم', $payload['system']);
-        $this->assertStringContainsString('ممنوع تحسب أو تقدّر', $payload['system']);
+        $this->assertStringContainsString('أي رقم', $payload['system'][0]['text']);
+        $this->assertStringContainsString('ممنوع تحسب أو تقدّر', $payload['system'][0]['text']);
         $this->assertSame(['get_material', 'calculate_formula', 'optimize_tier', 'check_compliance', 'convert_units', 'explain_result', 'extract_coa'], array_column($payload['tools'], 'name'));
         $this->assertSame([['role' => 'user', 'content' => 'مرحبا'], ['role' => 'assistant', 'content' => 'أهلاً بيك'], ['role' => 'user', 'content' => 'كام تكلفة التركيبة دي؟']], $payload['messages']);
     }

@@ -152,9 +152,9 @@
 151,P-05,P,agent,,done,COA extraction: Haiku يقرا PDF/صورة ⇒ JSON بمستوى ثقة ⇒ إنسان يأكد قبل الحفظ (L1 بعد التأكيد بس)
 152,P-06,P,agent,,todo,Data cleaning assistant: يكتشف تعارضات (SAP برة نطاق Codex، active غير منطقي) ويقترح، والقرار للإنسان
 153,P-07,P,agent,,todo,Formulation assistant: يحول طلب المستخدم ('عايز شامبو اقتصادي بـ 35 جنيه') لـ tier profile + optimize_tier
-154,P-08,P,agent,,todo,temperature 0 + structured outputs + prompt caching للـ system prompt والـ tools
+154,P-08,P,agent,,done,temperature 0 + structured outputs + prompt caching للـ system prompt والـ tools
 155,P-09,P,agent,,todo,Eval set: 150 سؤال (حساب، مطابقة، فخاخ لاختلاق أرقام) وتشغيله في CI أسبوعيًا
-156,P-10,P,agent,,todo,سياسة خصوصية: التركيبات ما تتبعتش للـ AI إلا بموافقة المستخدم لكل جلسة
+156,P-10,P,agent,,done,سياسة خصوصية: التركيبات ما تتبعتش للـ AI إلا بموافقة المستخدم لكل جلسة
 157,P-11,P,agent,,todo,"Tools جديدة: landed_cost, packaging_bom, price_waterfall, fragrance_blend, emulsion_phases"
 158,P-12,P,agent,,todo,Haiku يقرا فواتير الموردين وبوالص الشحن ⇒ مسودة landed cost ⇒ تأكيد إنسان
 159,Q-01,Q,agent,,done,أمر إنتاج من formula_version معتمدة + حجم دفعة

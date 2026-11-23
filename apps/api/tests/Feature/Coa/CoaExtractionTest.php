@@ -85,7 +85,7 @@ class CoaExtractionTest extends TestCase
     public function test_the_model_gets_the_document_a_forced_tool_no_sampling_and_the_egyptian_arabic_instruction(): void
     {
         $this->modelReadsTheCertificate();
-        app(CoaExtractionService::class)->extract($this->pdf(), $this->material);
+        app(CoaExtractionService::class)->extract($this->pdf(), $this->material, null, $this->consentKey);
 
         $payload = $this->model->payloads[0];
         $this->assertSame(config('assistant.model'), $payload['model']);
@@ -100,8 +100,8 @@ class CoaExtractionTest extends TestCase
         $this->assertSame('document', $block['type']);
         $this->assertSame('application/pdf', $block['source']['media_type']);
         $this->assertStringStartsWith('%PDF', base64_decode($block['source']['data']));
-        $this->assertStringContainsString('null', $payload['system']);
-        $this->assertStringContainsString('report_coa', $payload['system']);
+        $this->assertStringContainsString('null', $payload['system'][0]['text']);
+        $this->assertStringContainsString('report_coa', $payload['system'][0]['text']);
     }
 
     public function test_an_image_is_sent_as_an_image_block(): void
@@ -109,7 +109,7 @@ class CoaExtractionTest extends TestCase
         $this->documentText = null;
         $this->modelReports([$this->reported(['quote' => null])]);
 
-        app(CoaExtractionService::class)->extract(UploadedFile::fake()->image('scan.png', 20, 20), $this->material);
+        app(CoaExtractionService::class)->extract(UploadedFile::fake()->image('scan.png', 20, 20), $this->material, null, $this->consentKey);
 
         $this->assertSame('image', $this->model->payloads[0]['messages'][0]['content'][0]['type']);
         $this->assertSame('image/png', $this->model->payloads[0]['messages'][0]['content'][0]['source']['media_type']);
@@ -123,7 +123,7 @@ class CoaExtractionTest extends TestCase
             $this->reported(['propertyAsPrinted' => 'Purity', 'propertyKey' => 'purity', 'value' => '1.3', 'unit' => '%w/w', 'quote' => 'Purity: 99.7 %w/w']),
         ]);
 
-        $extraction = app(CoaExtractionService::class)->extract($this->pdf(), $this->material);
+        $extraction = app(CoaExtractionService::class)->extract($this->pdf(), $this->material, null, $this->consentKey);
         $fields = $this->fieldsByProperty($extraction);
 
         $this->assertSame('1.2610', $fields['density']->value);
@@ -145,7 +145,7 @@ class CoaExtractionTest extends TestCase
             $this->reported(['propertyAsPrinted' => 'HLB', 'propertyKey' => 'hlb', 'value' => null, 'unit' => null, 'quote' => null]),
         ]);
 
-        $fields = $this->fieldsByProperty(app(CoaExtractionService::class)->extract($this->pdf(), $this->material));
+        $fields = $this->fieldsByProperty(app(CoaExtractionService::class)->extract($this->pdf(), $this->material, null, $this->consentKey));
 
         $this->assertContains('value_shape', $fields['density']->issues);
         $this->assertContains('range_order', $fields['purity']->issues);
@@ -166,7 +166,7 @@ class CoaExtractionTest extends TestCase
             $this->reported(['propertyAsPrinted' => 'IFRA', 'propertyKey' => 'ifra_limit', 'value' => '99.7', 'unit' => '%w/w', 'quote' => null]),
         ]);
 
-        $extraction = app(CoaExtractionService::class)->extract($this->pdf(), $this->material);
+        $extraction = app(CoaExtractionService::class)->extract($this->pdf(), $this->material, null, $this->consentKey);
         [$unknown, $alias, $percent, $ifra] = $extraction->fields->all();
 
         $this->assertNull($unknown->property_key);
@@ -185,7 +185,7 @@ class CoaExtractionTest extends TestCase
         $this->documentText = null;
         $this->modelReports([$this->reported()], ['supplier' => 'Not On The Page']);
 
-        $extraction = app(CoaExtractionService::class)->extract($this->pdf(), $this->material);
+        $extraction = app(CoaExtractionService::class)->extract($this->pdf(), $this->material, null, $this->consentKey);
 
         $this->assertSame('unverified', $extraction->text_check);
         $this->assertContains('unverifiable', $extraction->fields->first()->issues);
@@ -197,7 +197,7 @@ class CoaExtractionTest extends TestCase
     {
         $this->modelReports([$this->reported()], ['supplier' => 'Invented Corp', 'lotNo' => 'ZZ999']);
 
-        $extraction = app(CoaExtractionService::class)->extract($this->pdf(), $this->material);
+        $extraction = app(CoaExtractionService::class)->extract($this->pdf(), $this->material, null, $this->consentKey);
 
         $this->assertNull($extraction->supplier);
         $this->assertNull($extraction->lot_no);
@@ -207,7 +207,7 @@ class CoaExtractionTest extends TestCase
     {
         $this->modelReports([$this->reported(['quote' => 'Density 1.2610 measured at the plant'])]);
 
-        $field = app(CoaExtractionService::class)->extract($this->pdf(), $this->material)->fields->first();
+        $field = app(CoaExtractionService::class)->extract($this->pdf(), $this->material, null, $this->consentKey)->fields->first();
 
         $this->assertContains('quote_not_in_document', $field->issues);
         $this->assertSame('low', $field->reading_confidence->value);
@@ -221,7 +221,7 @@ class CoaExtractionTest extends TestCase
             $this->reported(['propertyAsPrinted' => 'Purity', 'propertyKey' => 'purity', 'value' => '99,7', 'unit' => '%w/w', 'quote' => null]),
         ]);
 
-        $fields = $this->fieldsByProperty(app(CoaExtractionService::class)->extract($this->pdf(), $this->material));
+        $fields = $this->fieldsByProperty(app(CoaExtractionService::class)->extract($this->pdf(), $this->material, null, $this->consentKey));
 
         $this->assertSame('1.2610', $fields['density']->value);
         $this->assertSame('99.7', $fields['purity']->value);
@@ -232,7 +232,7 @@ class CoaExtractionTest extends TestCase
         $this->documentText = 'Viscosity 1,234';
         $this->modelReports([$this->reported(['propertyAsPrinted' => 'Viscosity', 'propertyKey' => 'viscosity', 'value' => '1,234', 'unit' => 'mPa.s', 'quote' => null])]);
 
-        $field = app(CoaExtractionService::class)->extract($this->pdf(), $this->material)->fields->first();
+        $field = app(CoaExtractionService::class)->extract($this->pdf(), $this->material, null, $this->consentKey)->fields->first();
 
         $this->assertNull($field->value);
         $this->assertContains('not_numeric', $field->issues);
@@ -271,7 +271,7 @@ class CoaExtractionTest extends TestCase
     {
         $this->model->replyText("```json\n".json_encode(['supplier' => null, 'lotNo' => null, 'documentDate' => null, 'fields' => [$this->reported()]])."\n```");
 
-        $extraction = app(CoaExtractionService::class)->extract($this->pdf(), $this->material);
+        $extraction = app(CoaExtractionService::class)->extract($this->pdf(), $this->material, null, $this->consentKey);
 
         $this->assertCount(1, $extraction->fields);
         $this->assertNull($extraction->lot_no);
@@ -292,7 +292,7 @@ class CoaExtractionTest extends TestCase
     public function test_a_successful_reading_is_recorded_as_usage_with_its_tokens(): void
     {
         $this->modelReadsTheCertificate();
-        $extraction = app(CoaExtractionService::class)->extract($this->pdf(), $this->material);
+        $extraction = app(CoaExtractionService::class)->extract($this->pdf(), $this->material, null, $this->consentKey);
 
         $usage = AssistantRequest::query()->firstOrFail();
         $this->assertSame(AssistantRequestStatus::Answered, $usage->status);

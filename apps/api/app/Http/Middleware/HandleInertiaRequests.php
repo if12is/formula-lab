@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\Assistant\AssistantDataCategory;
 use App\Services\Currency\DisplayCurrencyService;
 use App\Support\PropertyRegistry;
 use App\Support\Translations;
@@ -66,6 +67,14 @@ class HandleInertiaRequests extends Middleware
             'theme' => ['preference' => UiPreferences::theme($request), 'navLayout' => UiPreferences::navLayout($request)],
             // The base currency, the visitor's display currency and the newest rate for it (the second figure next to EGP).
             'currency' => fn (): array => $this->displayCurrencyService->props(UiPreferences::displayCurrency($request)),
+            // The assistant panel (P-10): off unless config assistant.enabled; its endpoints and the data categories it asks consent for.
+            'assistant' => fn (): array => [
+                'enabled' => (bool) config('assistant.enabled'),
+                'askUrl' => route('assistant.ask', [], false),
+                'consentUrl' => route('assistant.consent.show', [], false),
+                'categories' => AssistantDataCategory::options(),
+                'maxMessageChars' => (int) config('assistant.max_message_chars'),
+            ],
             // The whole dictionary travels once per locale; later visits leave it out.
             'translations' => Inertia::once(fn (): array => Translations::for($locale))->as("translations.{$locale}"),
         ];

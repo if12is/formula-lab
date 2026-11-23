@@ -134,7 +134,7 @@ class CoaConfirmationTest extends TestCase
     {
         $this->documentText = "Density 1.2610 g/mL\n";
         $this->modelReports([$this->reported(), $this->reported(['propertyAsPrinted' => 'Purity', 'propertyKey' => 'purity', 'value' => '77.7', 'unit' => '%w/w'])]);
-        $this->extraction = app(CoaExtractionService::class)->extract($this->pdf(), $this->material);
+        $this->extraction = app(CoaExtractionService::class)->extract($this->pdf(), $this->material, null, $this->consentKey);
 
         $this->post(route('coa.confirm', $this->extraction), $this->body())
             ->assertSessionHasErrors(['fields.1.value']);

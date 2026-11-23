@@ -118,4 +118,6 @@ return [
     'eda_item_unknown' => 'The checklist of this product has no document called :item.',
     'eda_items_not_sourced' => 'The list of required documents is not defined yet, so nothing can be recorded against it.',
     'eda_data_invalid' => 'The EDA checklist data did not pass its own checks, so no readiness can be shown.',
+    'assistant_consent_required' => 'Formula content, costs and supplier certificates are not sent to the assistant unless you allow it for this session. Allow the needed categories (:categories) in the assistant panel and try again.',
+    'field_group_forbidden' => 'This screen shows :group, which your role may not see.',
 ];

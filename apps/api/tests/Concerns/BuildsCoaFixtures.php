@@ -16,6 +16,8 @@ use Tests\fakes\anthropic\FakeMessagesClient;
  */
 trait BuildsCoaFixtures
 {
+    use GrantsAssistantConsent;
+
     protected FakeMessagesClient $model;
 
     /** The text the server "reads" from the uploaded PDF; null = a scan with no text layer. */
@@ -24,6 +26,11 @@ trait BuildsCoaFixtures
     protected function setUpCoa(): void
     {
         Storage::fake((string) config('coa.disk'));
+        // P-10: a certificate reaches the (fake) provider only with the session's consent, so these tests run in a consented session.
+        $this->runUnderConsentSession();
+        if ($this->coaSessionConsents()) {
+            $this->consentTo();
+        }
         $this->model = FakeMessagesClient::bind($this->app);
         $text = fn (): ?string => $this->documentText;
         $this->app->instance(DocumentTextReader::class, new class($text) implements DocumentTextReader
@@ -35,6 +42,12 @@ trait BuildsCoaFixtures
                 return ($this->text)();
             }
         });
+    }
+
+    /** Whether the fixed browser session of these tests has already consented to every category (a test about the consent itself says no). */
+    protected function coaSessionConsents(): bool
+    {
+        return true;
     }
 
     protected function pdf(string $name = 'coa.pdf'): UploadedFile
@@ -90,6 +103,6 @@ trait BuildsCoaFixtures
     {
         $this->modelReadsTheCertificate();
 
-        return app(CoaExtractionService::class)->extract($this->pdf(), $material);
+        return app(CoaExtractionService::class)->extract($this->pdf(), $material, null, $this->consentKey);
     }
 }

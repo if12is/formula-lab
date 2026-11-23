@@ -10,11 +10,13 @@ use App\Actions\Coa\RejectCoaExtractionAction;
 use App\Actions\Coa\RunCoaExtractionAction;
 use App\Actions\Coa\StoreCoaFileAction;
 use App\Actions\Tenancy\EnsureDefaultTenantAction;
+use App\Enums\Assistant\AssistantDataCategory;
 use App\Enums\Assistant\AssistantRequestStatus;
 use App\Exceptions\Domain\AssistantException;
 use App\Exceptions\Domain\BusinessRuleViolationException;
 use App\Models\CoaExtraction;
 use App\Models\TradeMaterial;
+use App\Services\Assistant\AssistantConsentService;
 use App\Support\Assistant\NumberGuard;
 use App\Support\Assistant\TurnUsage;
 use App\Support\Coa\CoaAnswer;
@@ -31,6 +33,9 @@ use Illuminate\Support\Facades\Storage;
  */
 final class CoaExtractionService
 {
+    /** The name this surface carries in the disclosure log. */
+    public const DISCLOSURE_SURFACE = 'coa_upload';
+
     public function __construct(
         private readonly StoreCoaFileAction $storeFile,
         private readonly DiscardCoaFileAction $discardFile,
@@ -43,13 +48,19 @@ final class CoaExtractionService
         private readonly DocumentTextReader $textReader,
         private readonly CoaFieldChecker $checker,
         private readonly NumberGuard $guard,
+        private readonly AssistantConsentService $consent,
     ) {}
 
     /**
-     * @throws BusinessRuleViolationException When the file cannot be read, the provider fails or its answer is not usable (nothing is kept then).
+     * @param  string|null  $consentKey  The browser session whose consent covers sending a supplier certificate to the provider (P-10).
+     *
+     * @throws BusinessRuleViolationException When there is no consent, the file cannot be read, the provider fails or its answer is not usable (nothing is kept then).
      */
-    public function extract(UploadedFile $upload, TradeMaterial $material, ?int $userId = null): CoaExtraction
+    public function extract(UploadedFile $upload, TradeMaterial $material, ?int $userId = null, ?string $consentKey = null): CoaExtraction
     {
+        // P-10: the certificate is the supplier's document; it reaches the provider only with the session's consent. Checked before anything is stored.
+        $this->consent->authorize($consentKey, self::DISCLOSURE_SURFACE, [AssistantDataCategory::SupplierCertificate]);
+
         $file = ($this->storeFile)($upload);
         $usage = new TurnUsage;
         $started = hrtime(true);
@@ -57,6 +68,8 @@ final class CoaExtractionService
 
         try {
             $document = CoaDocumentText::of($this->textReader->read(Storage::disk((string) config('coa.disk'))->path($file['path']), $file['mime']), $this->guard);
+            // The file leaves for the provider here: log it whatever the provider answers.
+            $this->consent->disclosed($consentKey, self::DISCLOSURE_SURFACE, [AssistantDataCategory::SupplierCertificate]);
             $answer = ($this->runExtraction)($file['path'], $file['mime'], $usage);
             $fields = array_map(fn (array $raw): array => $this->checker->check($raw, $document), $answer->fields);
 

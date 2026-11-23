@@ -6,7 +6,9 @@
 import { ref, watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import { Alert, Button, FileUploader, FormField, Modal } from '@kit';
+import AssistantConsentPrompt from '../assistant/AssistantConsentPrompt.vue';
 import EntitySelect from '../form/EntitySelect.vue';
+import { useAssistantConsent } from '../../composables/useAssistantConsent';
 import { useI18n } from '../../composables/useI18n';
 
 const props = defineProps({
@@ -15,6 +17,9 @@ const props = defineProps({
 
 const open = defineModel('open', { type: Boolean, default: false });
 const { t } = useI18n();
+const consent = useAssistantConsent();
+// The certificate is sent to the Claude service, so reading it needs the session's consent for supplier certificates (P-10).
+const CERTIFICATE = 'supplier_certificate';
 
 const files = ref([]);
 const form = useForm({ trade_material_id: null, file: null });
@@ -49,10 +54,11 @@ function submit() {
                 <FileUploader v-model="files" :auto-upload="false" layout="list" :accept="upload.accept" :max-files="1" :max-size="upload.maxMb" data-testid="coa-file-input" />
             </FormField>
             <Alert tone="info" icon="ph:info">{{ t('coa.upload.notice') }}</Alert>
+            <AssistantConsentPrompt :only="[CERTIFICATE]" reason-key="assistant_ui.consent.coa_needed" />
         </form>
         <template #footer>
             <Button variant="ghost" @click="open = false">{{ t('common.cancel') }}</Button>
-            <Button type="submit" form="coa-upload-form" icon="ph:magic-wand" :loading="form.processing" :disabled="!form.trade_material_id || files.length === 0" data-testid="coa-upload-submit">
+            <Button type="submit" form="coa-upload-form" icon="ph:magic-wand" :loading="form.processing" :disabled="!form.trade_material_id || files.length === 0 || !consent.allows([CERTIFICATE])" data-testid="coa-upload-submit">
                 {{ form.processing ? t('coa.upload.reading') : t('coa.upload.submit') }}
             </Button>
         </template>

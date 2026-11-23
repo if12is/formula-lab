@@ -7,6 +7,8 @@ export const E2E_DATABASE = process.env.E2E_DATABASE ?? 'formula_lab_e2e';
 export const E2E_PORT = process.env.E2E_PORT ?? '8000';
 /** A second server on the next port with the terms-of-use gate ON (S-16): the main server runs with it off so the other specs are not sent to the terms screen. */
 export const E2E_GATE_PORT = String(Number(E2E_PORT) + 1);
+/** A scripted stand-in for the model provider (e2e/support/anthropic-stub.mjs): the assistant specs read back what the app sent it. */
+export const E2E_PROVIDER_PORT = String(Number(E2E_PORT) + 2);
 
 /**
  * TEST-FIXTURE margin rule (the app ships none: config/pricing.php). +25 % on cost, labelled "تجار الجملة", which the
@@ -33,7 +35,7 @@ export const E2E_OVERRIDE_ROLE = 'quality_manager';
  */
 export const E2E_DEVIATION_THRESHOLD_PCT = '5';
 
-/** TEST-FIXTURE role of an operator: weights only, no prices (config production.weights_only_roles). */
+/** TEST-FIXTURE role of an operator: weights only, no prices (central field policy, apps/api/config/field_visibility.php). */
 export const E2E_OPERATOR_ROLE = 'production';
 
 /** TEST-FIXTURE price age limit (the owner has not decided it: HUMAN-TODO S-15). The app ships none; the e2e run uses 30 days so the stale-price figure can be exercised. */
@@ -57,6 +59,12 @@ export const e2eServerEnv = (): Record<string, string> => ({
   EDA_CHECKLIST_DEFINITIONS_PATH: E2E_EDA_DEFINITIONS,
   // S-16: off on the main server; the gate server (E2E_GATE_PORT) turns it on.
   TERMS_GATE_ENFORCED: 'false',
+  // P-08/P-10: the assistant talks to the scripted stand-in, with a placeholder key (no real key exists, and none is ever read here).
+  ANTHROPIC_BASE_URL: `http://127.0.0.1:${E2E_PROVIDER_PORT}`,
+  ANTHROPIC_API_KEY: 'e2e-placeholder-key',
+  ASSISTANT_ENABLED: 'true',
+  // The screenshot specs ask many questions from one IP inside a minute; the shipped limit (20 a minute) stays the default.
+  ASSISTANT_RATE_LIMIT_PER_MINUTE: '300',
 });
 
 /** Demo seeders every run starts from (each is idempotent and the specs still call the ones they need). */

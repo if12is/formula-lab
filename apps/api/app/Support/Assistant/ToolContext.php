@@ -8,6 +8,9 @@ final class ToolContext
     /** @var list<array{id: string, name: string, result: array<string, mixed>}> */
     private array $results = [];
 
+    /** @param  string|null  $consentKey  The browser session whose privacy consent gates the tools (P-10); null = no session, so no consent. */
+    public function __construct(public readonly ?string $consentKey = null) {}
+
     /** @param  array<string, mixed>  $result */
     public function record(string $toolUseId, string $name, array $result): void
     {

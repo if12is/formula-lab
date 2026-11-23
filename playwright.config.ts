@@ -1,5 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
-import { E2E_GATE_PORT, E2E_PORT, e2eServerEnv } from './e2e/support/e2e-env';
+import { E2E_GATE_PORT, E2E_PORT, E2E_PROVIDER_PORT, e2eServerEnv } from './e2e/support/e2e-env';
 
 const EXCLUSIVE = [/j09-n08-evidence\.spec\.ts/, /currency\.spec\.ts/];
 
@@ -21,6 +21,13 @@ export default defineConfig({
     { name: 'exclusive-rates', use: { ...devices['Desktop Chrome'] }, testMatch: /currency\.spec\.ts/, dependencies: ['exclusive-eda'] },
   ],
   webServer: [
+    {
+      // The scripted model provider the assistant specs talk to (P-08, P-10).
+      command: `node e2e/support/anthropic-stub.mjs ${E2E_PROVIDER_PORT}`,
+      url: `http://127.0.0.1:${E2E_PROVIDER_PORT}/up`,
+      reuseExistingServer: false,
+      timeout: 30_000,
+    },
     {
       command: `pnpm --filter @fl/api build && php artisan serve --host 127.0.0.1 --port ${E2E_PORT}`,
       cwd: 'apps/api',

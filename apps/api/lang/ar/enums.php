@@ -220,6 +220,11 @@ return [
         'aluminium' => 'ألومنيوم',
         'carton' => 'كرتون',
     ],
+    'pack_level' => [
+        'unit' => 'وحدة البيع',
+        'carton' => 'كرتونة الشحن',
+        'pallet' => 'بالتة',
+    ],
     'production_order_status' => [
         'draft' => 'مسودة',
         'approved' => 'معتمد',
@@ -288,5 +293,28 @@ return [
         'items_not_sourced' => 'قايمة المستندات لسه مش متحددة',
         'incomplete' => 'ناقص',
         'ready' => 'جاهز',
+    ],
+    'assistant_data_category' => [
+        'formula_composition' => 'مكونات التركيبة ونسبها',
+        'formula_cost' => 'تكلفة التركيبة وأسعار خاماتها',
+        'supplier_certificate' => 'شهادات تحليل الموردين (COA)',
+    ],
+    'assistant_consent_event_type' => [
+        'granted' => 'موافقة',
+        'revoked' => 'سحب الموافقة',
+    ],
+    'assistant_consent_end_reason' => [
+        'user' => 'سحبها المستخدم',
+        'session_ended' => 'انتهت الجلسة',
+        'expired' => 'انتهت مدتها',
+    ],
+    'assistant_disclosure_outcome' => [
+        'sent' => 'اتبعت',
+        'refused' => 'اترفض (مفيش موافقة)',
+    ],
+    'field_group' => [
+        'cost' => 'التكلفة',
+        'price' => 'السعر',
+        'percentage' => 'النسب المئوية',
     ],
 ];

@@ -6,6 +6,8 @@ use App\Enums\Assistant\AssistantRequestStatus;
 use App\Exceptions\Domain\AssistantException;
 use App\Integrations\Anthropic\MessageResponse;
 use App\Integrations\Anthropic\MessagesClient;
+use App\Services\Assistant\AssistantConsentService;
+use App\Support\Assistant\AssistantPayload;
 use App\Support\Assistant\AssistantPrompt;
 use App\Support\Assistant\AssistantToolRegistry;
 use App\Support\Assistant\NumberGuard;
@@ -25,22 +27,25 @@ final class RunAssistantTurnAction
         private readonly AssistantToolRegistry $tools,
         private readonly NumberGuard $guard,
         private readonly ExecuteAssistantToolAction $executeTool,
+        private readonly AssistantConsentService $consent,
     ) {}
 
     /**
      * @param  list<array{role: string, text: string}>  $history  Earlier messages of the conversation, oldest first.
+     * @param  string|null  $consentKey  The browser session whose privacy consent applies (P-10).
      *
      * @throws AssistantException When the provider fails or the model keeps calling tools past the limit.
      */
-    public function __invoke(string $question, array $history, TurnUsage $usage): AssistantReply
+    public function __invoke(string $question, array $history, TurnUsage $usage, ?string $consentKey = null): AssistantReply
     {
+        $history = $this->consentedHistory($history, $consentKey);
         $messages = array_map(fn (array $message): array => ['role' => $message['role'], 'content' => $message['text']], $history);
         $messages[] = ['role' => 'user', 'content' => $question];
 
         $userTexts = [$question, ...array_column(array_filter($history, fn (array $message): bool => $message['role'] === 'user'), 'text')];
         $identifierKeys = (array) config('assistant.guard.identifier_keys');
         $userNumbers = $this->guard->collect($userTexts);
-        $context = new ToolContext;
+        $context = new ToolContext($consentKey);
         $toolsUsed = [];
         $toolRounds = 0;
         $maxRounds = (int) config('assistant.max_tool_rounds');
@@ -51,6 +56,8 @@ final class RunAssistantTurnAction
             $usage->apiCalls++;
             $usage->inputTokens += $response->inputTokens;
             $usage->outputTokens += $response->outputTokens;
+            $usage->cacheCreationInputTokens += $response->cacheCreationInputTokens;
+            $usage->cacheReadInputTokens += $response->cacheReadInputTokens;
 
             if ($response->toolUses() !== []) {
                 if (++$toolRounds > $maxRounds) {
@@ -87,11 +94,27 @@ final class RunAssistantTurnAction
         return [
             'model' => (string) config('assistant.model'),
             'max_tokens' => (int) config('assistant.max_output_tokens'),
-            'temperature' => config('assistant.temperature'),
-            'system' => AssistantPrompt::system(),
-            'tools' => $this->tools->definitions(),
+            ...AssistantPayload::sampling(),
+            'system' => AssistantPayload::system(AssistantPrompt::system()),
+            'tools' => AssistantPayload::tools($this->tools->definitions()),
             'messages' => $messages,
         ];
+    }
+
+    /**
+     * Earlier assistant replies may hold formula content from a time the session had consented. Without an active consent they are not sent
+     * again (what the user typed still is: it is theirs).
+     *
+     * @param  list<array{role: string, text: string}>  $history
+     * @return list<array{role: string, text: string}>
+     */
+    private function consentedHistory(array $history, ?string $consentKey): array
+    {
+        if ($this->consent->state($consentKey)->granted()) {
+            return $history;
+        }
+
+        return array_values(array_filter($history, fn (array $message): bool => $message['role'] === 'user'));
     }
 
     /**

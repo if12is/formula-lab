@@ -5,6 +5,7 @@ namespace App\Actions\Coa;
 use App\Exceptions\Domain\AssistantException;
 use App\Exceptions\Domain\CoaException;
 use App\Integrations\Anthropic\MessagesClient;
+use App\Support\Assistant\AssistantPayload;
 use App\Support\Assistant\TurnUsage;
 use App\Support\Coa\CoaAnswer;
 use App\Support\Coa\CoaAnswerParser;
@@ -36,9 +37,9 @@ final class RunCoaExtractionAction
         $response = $this->client->create([
             'model' => (string) config('assistant.model'),
             'max_tokens' => (int) config('coa.max_output_tokens'),
-            'temperature' => config('assistant.temperature'),
-            'system' => CoaReportSchema::system(),
-            'tools' => [CoaReportSchema::definition()],
+            ...AssistantPayload::sampling(),
+            'system' => AssistantPayload::system(CoaReportSchema::system()),
+            'tools' => AssistantPayload::tools([CoaReportSchema::definition()]),
             'tool_choice' => ['type' => 'tool', 'name' => CoaReportSchema::TOOL],
             'messages' => [[
                 'role' => 'user',
@@ -55,6 +56,8 @@ final class RunCoaExtractionAction
         $usage->apiCalls++;
         $usage->inputTokens += $response->inputTokens;
         $usage->outputTokens += $response->outputTokens;
+        $usage->cacheCreationInputTokens += $response->cacheCreationInputTokens;
+        $usage->cacheReadInputTokens += $response->cacheReadInputTokens;
 
         return $this->parser->parse($response);
     }

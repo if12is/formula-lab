@@ -27,6 +27,7 @@ return [
         'string' => 'يجب أن يكون حقل :attribute على الأقل :min حرفاً.',
     ],
     'attributes' => [
+        'categories' => 'الفئات المسموحة',
         'question' => 'سؤالك',
         'history' => 'المحادثة السابقة',
         'history.*.role' => 'الدور',

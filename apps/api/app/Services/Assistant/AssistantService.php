@@ -24,17 +24,18 @@ final class AssistantService
 
     /**
      * @param  list<array{role: string, text: string}>  $history
+     * @param  string|null  $consentKey  The browser session whose privacy consent gates the tools (P-10).
      * @return array{reply: AssistantReply, requestId: string}
      *
      * @throws AssistantException When the provider fails (the failure is recorded first).
      */
-    public function ask(string $question, array $history = [], ?int $userId = null, ?string $tenantId = null): array
+    public function ask(string $question, array $history = [], ?int $userId = null, ?string $tenantId = null, ?string $consentKey = null): array
     {
         $usage = new TurnUsage;
         $started = hrtime(true);
 
         try {
-            $reply = ($this->runTurn)($question, $history, $usage);
+            $reply = ($this->runTurn)($question, $history, $usage, $consentKey);
         } catch (AssistantException $exception) {
             $this->record(AssistantRequestStatus::Failed, $usage, $started, $userId, $tenantId, $exception->reason);
 
@@ -60,6 +61,8 @@ final class AssistantService
             'guard_retries' => $usage->guardRetries,
             'input_tokens' => $usage->inputTokens,
             'output_tokens' => $usage->outputTokens,
+            'cache_creation_input_tokens' => $usage->cacheCreationInputTokens,
+            'cache_read_input_tokens' => $usage->cacheReadInputTokens,
         ]);
 
         return $record;

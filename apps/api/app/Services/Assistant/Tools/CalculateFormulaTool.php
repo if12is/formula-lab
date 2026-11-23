@@ -2,6 +2,7 @@
 
 namespace App\Services\Assistant\Tools;
 
+use App\Enums\Assistant\AssistantDataCategory;
 use App\Models\FormulaLine;
 use App\Models\FormulaVersion;
 use App\Models\TradeMaterial;
@@ -46,6 +47,11 @@ final class CalculateFormulaTool implements AssistantTool
             ],
             'additionalProperties' => false,
         ];
+    }
+
+    public function dataCategories(array $input): array
+    {
+        return [AssistantDataCategory::FormulaComposition, AssistantDataCategory::FormulaCost];
     }
 
     public function __invoke(array $input, ToolContext $context): array

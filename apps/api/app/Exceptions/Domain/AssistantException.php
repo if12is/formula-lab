@@ -2,6 +2,8 @@
 
 namespace App\Exceptions\Domain;
 
+use App\Enums\Assistant\AssistantDataCategory;
+
 /** Thrown when the assistant cannot answer: not configured, the provider failed, or a request is outside what it accepts. */
 class AssistantException extends BusinessRuleViolationException
 {
@@ -43,5 +45,11 @@ class AssistantException extends BusinessRuleViolationException
     public static function invalidToolInput(string $tool, string $detail): self
     {
         return new self(__('exceptions.assistant_invalid_tool_input', ['tool' => $tool, 'detail' => $detail]), 'invalid_tool_input', 422);
+    }
+
+    /** @param  list<AssistantDataCategory>  $categories  What would have been sent. */
+    public static function consentRequired(array $categories): self
+    {
+        return new self(__('exceptions.assistant_consent_required', ['categories' => implode(__('common.list_separator'), array_map(fn (AssistantDataCategory $category): string => $category->label(), $categories))]), 'consent_required', 403);
     }
 }

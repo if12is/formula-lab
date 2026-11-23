@@ -2,6 +2,7 @@
 
 namespace App\Services\Assistant\Tools;
 
+use App\Enums\Assistant\AssistantDataCategory;
 use App\Enums\Coa\CoaExtractionStatus;
 use App\Models\CoaExtraction;
 use App\Services\Coa\CoaExtractionDetailService;
@@ -40,6 +41,11 @@ final class ExtractCoaTool implements AssistantTool
             'required' => ['extractionId'],
             'additionalProperties' => false,
         ];
+    }
+
+    public function dataCategories(array $input): array
+    {
+        return [AssistantDataCategory::SupplierCertificate];
     }
 
     public function __invoke(array $input, ToolContext $context): array

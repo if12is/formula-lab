@@ -4,10 +4,11 @@
  * breadcrumbs derived from it, and the theme, language and user controls in the topbar. Pages render
  * only their own `<div class="kit-page">`.
  */
-import { computed, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { router, usePage } from '@inertiajs/vue3';
-import { AppShell, Breadcrumbs, DropdownItem, LocaleSwitcher, NavItem, SidebarSection, UserMenu, toast } from '@kit';
+import { AppShell, Breadcrumbs, DropdownItem, IconButton, LocaleSwitcher, NavItem, SidebarSection, UserMenu, toast } from '@kit';
 import { useI18n } from '../composables/useI18n';
+import AssistantPanel from '../components/assistant/AssistantPanel.vue';
 import DisplayCurrencyMenu from '../components/currency/DisplayCurrencyMenu.vue';
 import { findNavigationItem, homeItem, navigation, navigationItems } from '../config/navigation';
 
@@ -15,6 +16,10 @@ const page = usePage();
 const { t, locale } = useI18n();
 
 const locales = computed(() => page.props.locale.supported);
+
+// The assistant is off unless the server says so (production default); its panel is mounted once here for every page.
+const assistantEnabled = computed(() => page.props.assistant?.enabled === true);
+const assistantOpen = ref(false);
 
 const crumbs = computed(() => {
     const current = findNavigationItem(page.url);
@@ -70,6 +75,7 @@ function switchLocale(code) {
         <template #topbar-start><Breadcrumbs :items="crumbs" /></template>
 
         <template #topbar-end>
+            <IconButton v-if="assistantEnabled" icon="ph:sparkle" :label="t('assistant_ui.panel.open')" data-testid="assistant-open" @click="assistantOpen = true" />
             <LocaleSwitcher :model-value="locale" :locales="locales" compact @update:model-value="switchLocale" />
         </template>
 
@@ -85,5 +91,7 @@ function switchLocale(code) {
         </template>
 
         <slot />
+
+        <AssistantPanel v-if="assistantEnabled" v-model:open="assistantOpen" />
     </AppShell>
 </template>

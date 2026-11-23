@@ -14,4 +14,9 @@ final class TurnUsage
     public int $inputTokens = 0;
 
     public int $outputTokens = 0;
+
+    /** Prompt tokens written to and read from the provider's cache (P-08); a read costs a fraction of a fresh input token. */
+    public int $cacheCreationInputTokens = 0;
+
+    public int $cacheReadInputTokens = 0;
 }

@@ -2,6 +2,7 @@
 
 namespace App\Services\Assistant\Tools;
 
+use App\Enums\Assistant\AssistantDataCategory;
 use App\Models\FormulaVersion;
 use App\Models\TradeMaterial;
 use App\Services\Material\MaterialCompositionService;
@@ -47,6 +48,11 @@ final class CheckComplianceTool implements AssistantTool
             'required' => ['formulaVersionId'],
             'additionalProperties' => false,
         ];
+    }
+
+    public function dataCategories(array $input): array
+    {
+        return [AssistantDataCategory::FormulaComposition];
     }
 
     public function __invoke(array $input, ToolContext $context): array

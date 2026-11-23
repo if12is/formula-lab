@@ -2,6 +2,7 @@
 
 namespace App\Services\Assistant\Tools;
 
+use App\Enums\Assistant\AssistantDataCategory;
 use App\Enums\ProductTier;
 use App\Models\Price;
 use App\Models\TradeMaterial;
@@ -53,6 +54,11 @@ final class OptimizeTierTool implements AssistantTool
             'required' => ['productType', 'tier'],
             'additionalProperties' => false,
         ];
+    }
+
+    public function dataCategories(array $input): array
+    {
+        return [AssistantDataCategory::FormulaComposition, AssistantDataCategory::FormulaCost];
     }
 
     public function __invoke(array $input, ToolContext $context): array

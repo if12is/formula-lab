@@ -27,6 +27,7 @@ return [
         'string' => 'The :attribute field must be at least :min characters.',
     ],
     'attributes' => [
+        'categories' => 'allowed categories',
         'question' => 'question',
         'history' => 'earlier messages',
         'history.*.role' => 'role',

@@ -3,6 +3,7 @@
 namespace App\Actions\Assistant;
 
 use App\Exceptions\Domain\BusinessRuleViolationException;
+use App\Services\Assistant\AssistantConsentService;
 use App\Support\Assistant\AssistantToolRegistry;
 use App\Support\Assistant\NumberGuard;
 use App\Support\Assistant\ToolContext;
@@ -10,13 +11,15 @@ use App\Support\Assistant\ToolContext;
 /**
  * Runs one tool call of the model and returns the content of its tool_result block. A number the model passes as input must be one the
  * user wrote or an earlier tool answered with: the model cannot launder an invented figure through a tool. A failing tool is an error
- * result the model reads (and tells the user), never an exception that ends the question.
+ * result the model reads (and tells the user), never an exception that ends the question. A tool with data of the owner's (P-10) runs only
+ * while the session has consented to its categories; what it sent is logged by category.
  */
 final class ExecuteAssistantToolAction
 {
     public function __construct(
         private readonly AssistantToolRegistry $tools,
         private readonly NumberGuard $guard,
+        private readonly AssistantConsentService $consent,
     ) {}
 
     /**
@@ -30,6 +33,10 @@ final class ExecuteAssistantToolAction
 
         try {
             $tool = $this->tools->get($name);
+
+            // P-10: a tool that would show formula content, costs or a supplier certificate to the provider is refused until the session consented.
+            $categories = $tool->dataCategories($input);
+            $this->consent->authorize($context->consentKey, $name, $categories);
 
             $unsupported = $this->guard->violations(
                 (string) json_encode($this->withoutIdentifiers($input, $identifierKeys), JSON_UNESCAPED_UNICODE),
@@ -45,6 +52,7 @@ final class ExecuteAssistantToolAction
         }
 
         $context->record($toolUseId, $name, $result);
+        $this->consent->disclosed($context->consentKey, $name, $categories);
 
         return ['content' => (string) json_encode($result, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION), 'is_error' => false];
     }

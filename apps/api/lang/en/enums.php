@@ -220,6 +220,11 @@ return [
         'aluminium' => 'Aluminium',
         'carton' => 'Carton',
     ],
+    'pack_level' => [
+        'unit' => 'Selling unit',
+        'carton' => 'Shipping carton',
+        'pallet' => 'Pallet',
+    ],
     'production_order_status' => [
         'draft' => 'Draft',
         'approved' => 'Approved',
@@ -288,5 +293,28 @@ return [
         'items_not_sourced' => 'Document list not defined',
         'incomplete' => 'Incomplete',
         'ready' => 'Ready',
+    ],
+    'assistant_data_category' => [
+        'formula_composition' => 'Formula ingredients and percentages',
+        'formula_cost' => 'Formula cost and material prices',
+        'supplier_certificate' => 'Supplier certificates of analysis (COA)',
+    ],
+    'assistant_consent_event_type' => [
+        'granted' => 'Granted',
+        'revoked' => 'Revoked',
+    ],
+    'assistant_consent_end_reason' => [
+        'user' => 'Withdrawn by the user',
+        'session_ended' => 'Session ended',
+        'expired' => 'Expired',
+    ],
+    'assistant_disclosure_outcome' => [
+        'sent' => 'Sent',
+        'refused' => 'Refused (no consent)',
+    ],
+    'field_group' => [
+        'cost' => 'cost',
+        'price' => 'price',
+        'percentage' => 'percentages',
     ],
 ];

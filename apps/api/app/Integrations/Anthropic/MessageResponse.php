@@ -13,6 +13,8 @@ final readonly class MessageResponse
         public string $stopReason,
         public int $inputTokens,
         public int $outputTokens,
+        public int $cacheCreationInputTokens = 0,
+        public int $cacheReadInputTokens = 0,
     ) {}
 
     /** The text blocks joined, which is the reply. */

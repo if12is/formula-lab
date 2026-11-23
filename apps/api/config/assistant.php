@@ -14,6 +14,12 @@ use App\Services\Assistant\Tools\OptimizeTierTool;
 | The API key is read here from the environment and nowhere else; it never reaches a browser, a log or a database row.
 */
 return [
+    /*
+    | Master switch of the assistant (panel, ask and consent routes). OFF in production unless ASSISTANT_ENABLED=true is set on purpose (P-10):
+    | everywhere else it follows the environment, and it still answers 503 until an API key exists.
+    */
+    'enabled' => (bool) env('ASSISTANT_ENABLED', env('APP_ENV') !== 'production'),
+
     'provider' => [
         /* Server-side only. Empty = the assistant answers 503 and nothing is sent anywhere. */
         'api_key' => env('ANTHROPIC_API_KEY'),
@@ -25,8 +31,32 @@ return [
     /* The model id is configuration, never code: switching to a newer Haiku is an environment change. */
     'model' => env('ASSISTANT_MODEL', 'claude-haiku-5-5'),
 
-    /* Deterministic answers (P-08): no sampling. */
-    'temperature' => 0,
+    /*
+    | Deterministic answers (P-08): temperature 0. Set ASSISTANT_TEMPERATURE to an empty value to leave `temperature` out of the request: the
+    | provider's documentation says newer models (claude-haiku-5-5, any model on API version 2026-10-21) reject it with a 400 (HUMAN-TODO P-08),
+    | and then determinism rests on strict tool schemas, the tools and the number guard.
+    */
+    'temperature' => env('ASSISTANT_TEMPERATURE', '0') === '' ? null : (float) env('ASSISTANT_TEMPERATURE', '0'),
+
+    /*
+    | Prompt caching (P-08): a cache_control breakpoint on the last tool definition and on the system prompt (render order is tools, system,
+    | messages, so the two breakpoints cache both). `ttl` is "5m" (provider default) or "1h". A prefix under the model's minimum is simply not cached.
+    */
+    'prompt_cache' => [
+        'enabled' => (bool) env('ASSISTANT_PROMPT_CACHE', true),
+        'ttl' => env('ASSISTANT_PROMPT_CACHE_TTL', '5m'),
+    ],
+
+    /* Structured outputs (P-08): every tool definition is sent with `strict: true`, so the model's tool input always matches its schema. */
+    'structured_outputs' => (bool) env('ASSISTANT_STRUCTURED_OUTPUTS', true),
+
+    /*
+    | Privacy (P-10): formula content, costs and supplier certificates reach the provider only after the user consents for the current browser
+    | session. A grant is also closed by the clock after `consent.ttl_minutes` (default: the session lifetime) when nothing else ended it.
+    */
+    'consent' => [
+        'ttl_minutes' => (int) env('ASSISTANT_CONSENT_TTL_MINUTES', env('SESSION_LIFETIME', 120)),
+    ],
     'max_output_tokens' => (int) env('ASSISTANT_MAX_OUTPUT_TOKENS', 1024),
 
     /* Longest request message in characters, and the most earlier messages a request may carry. */

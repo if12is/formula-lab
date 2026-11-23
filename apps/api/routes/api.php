@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Sanad\SanadAbility;
+use App\Http\Controllers\Api\Assistant\AssistantConsentController;
 use App\Http\Controllers\Api\Assistant\AssistantController;
 use App\Http\Controllers\Api\Sanad\ChangesController;
 use App\Http\Controllers\Api\Sanad\OutboxController;
@@ -22,6 +23,10 @@ Route::prefix('sanad/v1')->name('sanad.')->middleware('throttle:sanad')->group(f
 });
 
 // The Claude Haiku formulation assistant (phase P). No sign-in exists yet (U-01), so the guard is the rate limit; the model key stays on the server.
-Route::prefix('assistant')->name('assistant.')->middleware('throttle:assistant')->group(function () {
+// It lives in the browser session (cookie + CSRF) because the privacy consent (P-10) belongs to the session, and it is a 404 while config assistant.enabled is off.
+Route::prefix('assistant')->name('assistant.')->middleware(['assistant.enabled', 'assistant.session', 'throttle:assistant'])->group(function () {
     Route::post('ask', [AssistantController::class, 'ask'])->name('ask');
+    Route::get('consent', [AssistantConsentController::class, 'show'])->name('consent.show');
+    Route::post('consent', [AssistantConsentController::class, 'grant'])->name('consent.grant');
+    Route::delete('consent', [AssistantConsentController::class, 'revoke'])->name('consent.revoke');
 });

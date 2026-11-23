@@ -2,11 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Assistant\AssistantDataCategory;
 use App\Enums\TradeMaterialStatus;
 use App\Integrations\Anthropic\MessageResponse;
 use App\Integrations\Anthropic\MessagesClient;
 use App\Models\CoaExtraction;
 use App\Models\TradeMaterial;
+use App\Services\Assistant\AssistantConsentService;
 use App\Services\Coa\CoaExtractionService;
 use Illuminate\Database\Seeder;
 use Illuminate\Http\UploadedFile;
@@ -114,7 +116,14 @@ class CoaDemoSeeder extends Seeder
             }
         });
 
-        return app(CoaExtractionService::class)->extract(new UploadedFile($path, $name, $mime, null, true), $material);
+        // The "model" above is a scripted stand-in, so no certificate leaves the machine; the seeder still consents like a session would (P-10).
+        $consent = app(AssistantConsentService::class);
+        $key = $consent->sessionKey('demo-seeder');
+        if (! $consent->allows($key, [AssistantDataCategory::SupplierCertificate])) {
+            $consent->grant($key, [AssistantDataCategory::SupplierCertificate]);
+        }
+
+        return app(CoaExtractionService::class)->extract(new UploadedFile($path, $name, $mime, null, true), $material, null, $key);
     }
 
     /** @return array<string, mixed> */

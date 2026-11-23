@@ -11,6 +11,8 @@ use App\Models\IfraCertificate;
 use App\Models\LabProtocol;
 use App\Models\LabTrial;
 use App\Models\MaterialComposition;
+use App\Models\PackagingBom;
+use App\Models\PackagingBomLine;
 use App\Models\PackagingCompatibility;
 use App\Models\Price;
 use App\Models\ProductionBatch;
@@ -34,6 +36,8 @@ use App\Models\TradeMaterial;
 */
 return [
     'append_only' => [
+        'assistant_consent_events',
+        'assistant_disclosures',
         'audit_log',
         'calc_runs',
         'coa_extraction_events',
@@ -69,6 +73,8 @@ return [
         'rules' => ComplianceRule::class,
         'ifra_certificates' => IfraCertificate::class,
         'packaging_compatibilities' => PackagingCompatibility::class,
+        'packaging_boms' => PackagingBom::class,
+        'packaging_bom_lines' => PackagingBomLine::class,
         'material_compositions' => MaterialComposition::class,
         'property_values' => PropertyValue::class,
         'substances' => Substance::class,
