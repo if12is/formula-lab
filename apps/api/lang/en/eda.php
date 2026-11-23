@@ -1,0 +1,72 @@
+<?php
+
+return [
+    'title' => 'EDA notification files',
+    'description' => 'For each product that EDA regulates: the documents its notification file needs, what is attached, and how ready the file is.',
+    'search_placeholder' => 'Search by code or name',
+    'filters' => [
+        'family' => 'Family',
+        'group' => 'Group',
+    ],
+    'sorts' => [
+        'code' => 'Code',
+        'name' => 'Name',
+    ],
+    'columns' => [
+        'code' => 'Code',
+        'name' => 'Product',
+        'family' => 'Family',
+        'readiness' => 'File readiness',
+        'progress' => 'Documents',
+    ],
+    'empty_title' => 'No product under EDA yet',
+    'empty_description' => 'A product appears here when its family is regulated by EDA. Pick a family on the formula to include it.',
+    'summary' => [
+        'title' => 'Readiness at a glance',
+        'total' => 'Products under EDA',
+        'description' => 'Counted over all EDA products, not only this page.',
+    ],
+    'show' => [
+        'back' => 'All EDA files',
+        'open_formula' => 'Open the formula',
+        'no_family' => 'This product has no family, so no checklist can be chosen. Pick its family on the formula.',
+        'out_of_scope' => 'The family of this product is not regulated by EDA, so it has no EDA file.',
+        'reference' => 'Reference',
+        'progress' => '{attached} of {applicable} applicable documents attached ({not_applicable} not applicable).',
+        'checklist' => 'Required documents',
+        'orphans' => 'Recorded for documents the checklist no longer has: {items}. They are kept and not counted.',
+    ],
+    'not_sourced' => [
+        'title' => 'The list of required documents is not defined yet',
+        'description' => 'The project sources name the EDA decision and its guides but do not list the documents a notification file needs, so nothing is listed here and the file is never shown as ready. The list is added from the owner\'s source (see HUMAN-TODO), each document with its source.',
+    ],
+    'item' => [
+        'document' => 'Document',
+        'reference' => 'Reference number',
+        'note' => 'Note',
+        'file' => 'File',
+        'file_hint' => 'Optional. A scan of the document, to keep it with the file.',
+        'download' => 'Download {name}',
+        'edit' => 'Record',
+        'save' => 'Save',
+        'cancel' => 'Cancel',
+        'clear' => 'Set back to missing',
+        'status_label' => 'Status',
+        'document_title' => 'Document title',
+        'document_title_hint' => 'What the document is, as written on it.',
+        'note_hint' => 'Required when the item is not applicable: say why.',
+        'updated' => 'Updated {when}',
+    ],
+    'saved' => 'The EDA file was updated.',
+    'attributes' => [
+        'status' => 'status',
+        'document_title' => 'document title',
+        'document_reference' => 'reference number',
+        'note' => 'note',
+        'file' => 'file',
+    ],
+    'validation' => [
+        'document_title_required' => 'Write what the attached document is.',
+        'note_required' => 'Say why this document does not apply to the product.',
+    ],
+];

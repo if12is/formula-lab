@@ -116,7 +116,7 @@
 115,N-05,N,agent,,done,UNKNOWN لما الداتا ناقصة (مش PASS)
 116,N-06,N,agent,,done,مولّد قائمة INCI مرتبة تنازليًا (و<1% بأي ترتيب) + تحذيرات Annex III الإلزامية
 117,N-07,N,agent,N-02,partial,مولّد بطاقة منظفات حسب ES 6910 (عربي)
-118,N-08,N,agent,,todo,مساعد ملف إخطار EDA (checklist + المستندات)
+118,N-08,N,agent,,done,مساعد ملف إخطار EDA (checklist + المستندات)
 119,N-09,N,agent,,partial,قاعدة الميثانول ممنوع في العطور والمعطرات الكحولية (FAIL تلقائي)
 120,N-10,N,agent,E-13,todo,قواعد IFRA لكل فئة منتج جديدة (4، 5A، 5B، 10A، 10B، 12)
 121,N-11,N,human,,todo,قاعدة ES 2295 (كمية المنتج في العبوات): الحد الأدنى للتعبئة بعد شراء النص
@@ -144,7 +144,7 @@
 143,J-06,J,agent,,done,Infeasibility: إرجاع القيود المتعارضة بالعربي (مثلًا: السعر المستهدف أقل من أقل تكلفة ممكنة بـ X جنيه)
 144,J-07,J,agent,,done,Sensitivity: لو سعر خامة زاد 10% التركيبة/التكلفة تتغير إزاي (shadow prices)
 145,J-08,J,agent,,done,Reverse pricing: من سعر بيع للمستهلك ⇒ هامش الموزع ⇒ أقصى تكلفة ⇒ أعلى فئة ممكنة
-146,J-09,J,agent,D-06,todo,كل حل مُحسَّن يتحفظ كـ formula_version حالتها draft (مش approved إلا بعد معمل)
+146,J-09,J,agent,D-06,done,كل حل مُحسَّن يتحفظ كـ formula_version حالتها draft (مش approved إلا بعد معمل)
 147,P-01,P,agent,,done,AI proxy في Laravel (المفتاح على السيرفر، rate limit، logging، cost tracking)
 148,P-02,P,agent,,done,"تعريف tools: get_material, calculate_formula, optimize_tier, check_compliance, convert_units, explain_result, extract_coa"
 149,P-03,P,agent,,done,System prompt بالعربي المصري: ممنوع حساب أو تقدير رقم، كل رقم من tool

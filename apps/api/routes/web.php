@@ -23,6 +23,7 @@ require __DIR__.'/pricing.php';
 require __DIR__.'/ladder.php';
 require __DIR__.'/tiers.php';
 require __DIR__.'/compliance.php';
+require __DIR__.'/eda.php';
 require __DIR__.'/calculators.php';
 require __DIR__.'/settings.php';
 require __DIR__.'/terms.php';

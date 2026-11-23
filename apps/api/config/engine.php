@@ -36,6 +36,7 @@ return [
         'production' => 'scripts/production.ts',
         'check-packaging-compat' => 'scripts/check-packaging-compat.ts',
         'assistant' => 'scripts/assistant.ts',
+        'eda-checklist' => 'scripts/eda-checklist.ts',
         // The optimizer package's own script (P-02): paths are relative to package_path.
         'optimize-tier' => '../optimizer/scripts/optimize.ts',
     ],

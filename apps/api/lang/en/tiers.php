@@ -128,4 +128,13 @@ return [
         'price' => 'Price',
         'activeMatterPct' => 'Active matter',
     ],
+    'save_version' => [
+        'reason' => 'Saved from the optimizer (:tier tier) as a draft',
+        'action' => 'Save as draft version',
+        'hint' => 'Saves this formula as a new draft version of the product with where it came from. It is not approved: approval needs a lab trial.',
+        'saving' => 'Saving...',
+        'saved' => 'Saved as draft version {number}. It still has to go through the lab before approval.',
+        'open' => 'Open the version',
+        'failed' => 'The version could not be saved now. Try again.',
+    ],
 ];

@@ -101,12 +101,13 @@ final class FormulaWorkflowService
     public function panel(FormulaVersion $version): array
     {
         $coverage = $this->coverage->forVersion($version);
-        $version->loadMissing('transitions.signer');
+        $version->loadMissing(['transitions.signer', 'provenance']);
 
         return [
             'status' => $version->status->value,
             'next' => array_map(fn (FormulaStatus $status): string => $status->value, $version->status->allowedNext()),
             'hash' => $version->hash,
+            'provenance' => $this->provenance($version),
             'coverage' => $coverage->toArray(),
             'decision' => $this->decision($coverage),
             'signatures' => $version->transitions->map(fn (FormulaVersionTransition $row): array => [
@@ -136,6 +137,30 @@ final class FormulaWorkflowService
                 'process' => route('formulas.versions.process', [$version->formula_id, $version->version], false),
                 'newOrder' => route('production.orders.create', ['formula_version' => $version->getKey()], false),
             ],
+        ];
+    }
+
+    /**
+     * Where a generated version came from (J-09), for the panel; null for a typed version.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function provenance(FormulaVersion $version): ?array
+    {
+        $row = $version->provenance;
+        if ($row === null) {
+            return null;
+        }
+
+        return [
+            'origin' => $row->origin->value,
+            'tier' => $row->tier,
+            'cost_per_kg' => $row->cost_per_kg,
+            'solver' => $row->solver,
+            'optimizer_version' => $row->optimizer_version,
+            'input_hash' => $row->input_hash,
+            'has_profile' => $row->tier_profile_id !== null,
+            'href' => route('tiers.index', ['formula' => $version->formula_id, 'tier' => $row->tier], false),
         ];
     }
 }

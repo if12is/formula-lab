@@ -56,7 +56,7 @@ const provenanceFacts = computed(() => {
         { term: t('formulas.workflow.provenance.solver'), value: row.solver, mono: true },
         { term: t('formulas.workflow.provenance.optimizer_version'), value: row.optimizer_version, mono: true },
         { term: t('formulas.workflow.provenance.tier_profile'), value: row.has_profile ? t('formulas.workflow.provenance.profile_kept') : t('formulas.workflow.provenance.profile_deleted') },
-        { term: t('formulas.workflow.provenance.input_hash'), value: row.input_hash, mono: true },
+        { term: t('formulas.workflow.provenance.input_hash'), key: 'input_hash', value: row.input_hash },
     ];
 });
 
@@ -102,7 +102,9 @@ const items = computed(() => props.workflow.signatures.map((row) => ({
                     <Button size="sm" variant="ghost" icon="ph:stack" :href="workflow.provenance.href" class="ms-auto">{{ t('formulas.workflow.provenance.open_tiers') }}</Button>
                 </div>
                 <p class="text-label text-ink-3">{{ t('formulas.workflow.provenance.optimizer_description') }}</p>
-                <DescriptionList :items="provenanceFacts" :columns="2" />
+                <DescriptionList :items="provenanceFacts" :columns="2">
+                    <template #input_hash="{ item }"><bdi dir="ltr" class="break-all font-mono text-label" data-testid="provenance-hash">{{ item.value }}</bdi></template>
+                </DescriptionList>
             </div>
 
             <CoveragePanel v-if="showCoverage" :coverage="workflow.coverage" />

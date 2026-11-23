@@ -1,0 +1,35 @@
+{
+  "id": "eda-checklist",
+  "version": "0.1.0",
+  "status": "draft",
+  "sources": [
+    {
+      "id": "plan-00-research-03",
+      "title": "plan/00-research/03-egyptian-regulations.md: EDA decision 122/2022 (notification and circulation of cosmetic preparations) and the EDA claims guide, July 2026 edition; EDA guide for licensing disinfectant preparation factories/lines, EDREX:GL.CALI.009, 2026 (project research, not the texts themselves)",
+      "confidence": "L7_estimate",
+      "retrievedAt": "2026-11-23"
+    }
+  ],
+  "checklists": [
+    {
+      "id": "eda_cosmetics_notification",
+      "regulator": "EDA",
+      "appliesToGroups": ["personal_care", "skincare"],
+      "reference": {
+        "title": { "ar": "قرار هيئة الدواء 122 لسنة 2022: إخطار وتداول مستحضرات التجميل", "en": "EDA decision 122/2022: notification and circulation of cosmetic preparations" },
+        "sourceId": "plan-00-research-03"
+      },
+      "items": null
+    },
+    {
+      "id": "eda_disinfectant_pathway",
+      "regulator": "EDA",
+      "appliesToGroups": ["disinfectants"],
+      "reference": {
+        "title": { "ar": "دليل هيئة الدواء لتراخيص مصانع/خطوط المستحضرات المطهرة (EDREX:GL.CALI.009، إصدار 2026)", "en": "EDA guide for licensing disinfectant preparation factories/lines (EDREX:GL.CALI.009, 2026 edition)" },
+        "sourceId": "plan-00-research-03"
+      },
+      "items": null
+    }
+  ]
+}

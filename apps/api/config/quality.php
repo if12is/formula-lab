@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\ComplianceRule;
+use App\Models\EdaChecklistEntry;
 use App\Models\Formula;
 use App\Models\FormulaLine;
 use App\Models\FormulaProcessCheck;
@@ -40,6 +41,7 @@ return [
         'export_logs',
         'formula_cost_approvals',
         'formula_publications',
+        'formula_version_provenances',
         'formula_version_transitions',
         'lab_measurements',
         'production_batch_checks',
@@ -71,6 +73,7 @@ return [
         'sources' => Source::class,
         'prices' => Price::class,
         'tier_profiles' => TierProfile::class,
+        'eda_checklist_entries' => EdaChecklistEntry::class,
     ],
 
     'outside' => [

@@ -112,5 +112,9 @@ return [
     'assistant_tool_rounds_exceeded' => 'تجاوز المساعد حدّ :limit استدعاءات للأدوات في سؤال واحد.',
     'assistant_unknown_tool' => 'الأداة :tool غير معروفة.',
     'assistant_invalid_tool_input' => 'مدخلات الأداة :tool غير صحيحة: :detail',
+    'optimized_version_not_optimal' => 'الحل لا يتحفظ كنسخة إلا لو المُحسِّن لقى حل مثالي (حالة المُحسِّن: :status).',
     'terms_version_changed' => 'الشروط اتغيّرت والصفحة مفتوحة (اللي شفته :submitted والإصدار الحالي :current). اقرأ الشروط الحالية ووافق عليها تاني.',
+    'eda_item_unknown' => 'قايمة المنتج ده مفيهاش مستند اسمه :item.',
+    'eda_items_not_sourced' => 'قايمة المستندات المطلوبة لسه مش متحددة، فمش ممكن نسجّل عليها حاجة.',
+    'eda_data_invalid' => 'بيانات قايمة هيئة الدواء ماعدتش فحوصاتها، فمش هنعرض جاهزية.',
 ];

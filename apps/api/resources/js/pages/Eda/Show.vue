@@ -7,7 +7,7 @@
  */
 import { computed, ref } from 'vue';
 import { Head, useForm } from '@inertiajs/vue3';
-import { Alert, Badge, Button, Card, EmptyState, FileUploader, FormField, Input, Modal, PageHeader, SegmentedControl, Textarea } from '@kit';
+import { Alert, Badge, Button, Card, FileUploader, FormField, Input, Modal, PageHeader, SegmentedControl, Textarea } from '@kit';
 import StatusBadge from '../../components/StatusBadge.vue';
 import { useDateTime } from '../../composables/useDateTime';
 import { useI18n } from '../../composables/useI18n';
@@ -93,7 +93,6 @@ function save() {
                     </li>
                 </ul>
             </Card>
-            <EmptyState v-else-if="readiness.state === 'items_not_sourced'" compact icon="ph:list-checks" :title="t('eda.not_sourced.title')" :description="t('eda.not_sourced.description')" />
         </div>
 
         <Modal v-model:open="open" :title="editing?.name ?? ''" size="md">

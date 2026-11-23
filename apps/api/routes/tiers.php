@@ -12,4 +12,5 @@ Route::prefix('tiers')->name('tiers.')->group(function (): void {
     Route::get('/', [TierController::class, 'index'])->name('index');
     Route::put('profile', [TierController::class, 'saveProfile'])->name('profile.save');
     Route::post('solve', [TierController::class, 'solve'])->name('solve');
+    Route::post('versions', [TierController::class, 'saveVersion'])->name('versions.store');
 });

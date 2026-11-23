@@ -31,6 +31,7 @@ export * from './base-equivalent';
 export * from './sourced-input';
 export * from './active';
 export * from './disinfectant';
+export * from './eda-checklist';
 export * from './neutralize';
 export * from './soap';
 export * from './report';

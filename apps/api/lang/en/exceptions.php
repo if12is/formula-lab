@@ -112,5 +112,9 @@ return [
     'assistant_tool_rounds_exceeded' => 'The assistant went over the limit of :limit tool calls for one question.',
     'assistant_unknown_tool' => 'The tool :tool is not known.',
     'assistant_invalid_tool_input' => 'The input of the tool :tool is not valid: :detail',
+    'optimized_version_not_optimal' => 'Only an optimal answer can be saved as a version (the optimizer says: :status).',
     'terms_version_changed' => 'The terms changed while this page was open (you saw :submitted, the current version is :current). Read the current terms and accept them again.',
+    'eda_item_unknown' => 'The checklist of this product has no document called :item.',
+    'eda_items_not_sourced' => 'The list of required documents is not defined yet, so nothing can be recorded against it.',
+    'eda_data_invalid' => 'The EDA checklist data did not pass its own checks, so no readiness can be shown.',
 ];

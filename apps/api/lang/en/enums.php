@@ -253,6 +253,9 @@ return [
         'raw_material' => 'Material',
         'packaging' => 'Packaging',
     ],
+    'formula_version_origin' => [
+        'optimizer' => 'Optimizer',
+    ],
     'export_kind' => [
         'formula_label' => 'Formula label',
         'cost_report' => 'Cost report',
@@ -263,5 +266,16 @@ return [
         'approved' => 'Printed copy',
         'unapproved' => 'Draft - not approved',
         'neutral' => 'Printed copy',
+    ],
+    'eda_item_status' => [
+        'missing' => 'Missing',
+        'attached' => 'Attached',
+        'not_applicable' => 'Not applicable',
+    ],
+    'eda_readiness' => [
+        'out_of_scope' => 'Not an EDA product',
+        'items_not_sourced' => 'Document list not defined',
+        'incomplete' => 'Incomplete',
+        'ready' => 'Ready',
     ],
 ];

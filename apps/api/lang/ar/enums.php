@@ -253,6 +253,9 @@ return [
         'raw_material' => 'خامة',
         'packaging' => 'تغليف',
     ],
+    'formula_version_origin' => [
+        'optimizer' => 'المُحسِّن',
+    ],
     'export_kind' => [
         'formula_label' => 'بطاقة التركيبة',
         'cost_report' => 'تقرير التكلفة',
@@ -263,5 +266,16 @@ return [
         'approved' => 'نسخة مطبوعة',
         'unapproved' => 'مسودة - غير معتمدة',
         'neutral' => 'نسخة مطبوعة',
+    ],
+    'eda_item_status' => [
+        'missing' => 'ناقص',
+        'attached' => 'مرفق',
+        'not_applicable' => 'لا ينطبق',
+    ],
+    'eda_readiness' => [
+        'out_of_scope' => 'مش منتج هيئة دواء',
+        'items_not_sourced' => 'قايمة المستندات لسه مش متحددة',
+        'incomplete' => 'ناقص',
+        'ready' => 'جاهز',
     ],
 ];

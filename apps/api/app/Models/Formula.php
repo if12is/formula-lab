@@ -51,6 +51,12 @@ class Formula extends Model
         return $this->belongsTo(FormulaTemplate::class);
     }
 
+    /** @return HasMany<EdaChecklistEntry, $this> What was recorded for the items of its EDA notification file (N-08). */
+    public function edaChecklistEntries(): HasMany
+    {
+        return $this->hasMany(EdaChecklistEntry::class);
+    }
+
     /** @return HasMany<FormulaVersion, $this> */
     public function versions(): HasMany
     {

@@ -15,6 +15,7 @@ return [
     'packaging' => 'Packaging',
     'calculators' => 'Calculators',
     'compliance' => 'Compliance',
+    'eda' => 'EDA files',
     'lab' => 'Lab',
     'tiers' => 'Tiers',
     'price_ladder' => 'Price ladder',

@@ -11,6 +11,7 @@ use App\Models\DecisionOverride;
 use App\Models\ExportLog;
 use App\Models\FormulaCostApproval;
 use App\Models\FormulaPublication;
+use App\Models\FormulaVersionProvenance;
 use App\Models\FormulaVersionTransition;
 use App\Models\LabMeasurement;
 use App\Models\ProductionBatchCheck;
@@ -39,6 +40,7 @@ class QualityTablesTest extends TestCase
         'export_logs' => ExportLog::class,
         'formula_cost_approvals' => FormulaCostApproval::class,
         'formula_publications' => FormulaPublication::class,
+        'formula_version_provenances' => FormulaVersionProvenance::class,
         'formula_version_transitions' => FormulaVersionTransition::class,
         'lab_measurements' => LabMeasurement::class,
         'production_batch_checks' => ProductionBatchCheck::class,

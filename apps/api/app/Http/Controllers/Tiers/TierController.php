@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Tiers;
 
 use App\Exceptions\Domain\BusinessRuleViolationException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Tiers\SaveOptimizedVersionRequest;
 use App\Http\Requests\Tiers\SaveTierProfileRequest;
 use App\Http\Requests\Tiers\ShowTierRequest;
 use App\Http\Requests\Tiers\SolveTierRequest;
 use App\Models\Formula;
+use App\Services\Tiers\OptimizedVersionService;
 use App\Services\Tiers\TierPageService;
 use App\Services\Tiers\TierProfileService;
 use App\Services\Tiers\TierSolveService;
@@ -23,6 +25,7 @@ class TierController extends Controller
         private TierPageService $tierPageService,
         private TierProfileService $tierProfileService,
         private TierSolveService $tierSolveService,
+        private OptimizedVersionService $optimizedVersionService,
     ) {}
 
     public function index(ShowTierRequest $request): InertiaResponse
@@ -49,5 +52,24 @@ class TierController extends Controller
         } catch (BusinessRuleViolationException $exception) {
             return response()->json(['message' => $exception->getMessage()], 503);
         }
+    }
+
+    /** J-09: the optimizer's answer saved as a new draft version of the product, with where it came from. */
+    public function saveVersion(SaveOptimizedVersionRequest $request): JsonResponse
+    {
+        $formula = Formula::query()->findOrFail($request->validated('formula_id'));
+
+        try {
+            $version = $this->optimizedVersionService->saveDraft($formula, $request->tier(), $request->validated(), $request->user());
+        } catch (BusinessRuleViolationException $exception) {
+            return response()->json(['message' => $exception->getMessage(), 'errors' => ['formula_id' => [$exception->getMessage()]]], 422);
+        }
+
+        return response()->json([
+            'number' => $version->version,
+            'status' => $version->status->value,
+            'hash' => $version->hash,
+            'url' => route('formulas.versions.edit', [$formula, $version->version], false),
+        ], 201);
     }
 }

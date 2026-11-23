@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /** One immutable-by-convention version of a formula; approved versions are immutable by guard. */
 class FormulaVersion extends Model
@@ -74,6 +75,12 @@ class FormulaVersion extends Model
     public function transitions(): HasMany
     {
         return $this->hasMany(FormulaVersionTransition::class)->orderBy('signed_at');
+    }
+
+    /** @return HasOne<FormulaVersionProvenance, $this> What a generated version (the optimizer's, J-09) was made from; none for a typed one. */
+    public function provenance(): HasOne
+    {
+        return $this->hasOne(FormulaVersionProvenance::class);
     }
 
     public function isApproved(): bool

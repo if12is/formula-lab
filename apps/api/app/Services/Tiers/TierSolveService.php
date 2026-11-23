@@ -5,6 +5,7 @@ namespace App\Services\Tiers;
 use App\Enums\ProductTier;
 use App\Models\Formula;
 use App\Models\Source;
+use App\Models\TierProfile;
 use App\Services\Tax\TaxRegimeService;
 use App\Support\DecimalNormalizer;
 use App\Support\Engine\EngineRunner;
@@ -31,6 +32,27 @@ final class TierSolveService
      */
     public function solve(Formula $formula, ProductTier $tier, array $input): array
     {
+        $run = $this->run($formula, $tier, $input);
+        $answer = $run['answer'];
+
+        $scenarioPct = $input['scenario_pct'] ?? null;
+        if (($answer['status'] ?? null) === 'optimal' && $scenarioPct !== null && $scenarioPct !== '') {
+            $scenarios = array_map(fn (array $line): array => ['materialId' => $line['materialId'], 'changePct' => DecimalNormalizer::normalize($scenarioPct)], $answer['formula']);
+            $answer = $this->engine->run('tier-solve', [...$run['request'], 'scenarios' => $scenarios]);
+        }
+
+        return $this->present($answer, $run['names'], $run['record']?->source);
+    }
+
+    /**
+     * One optimizer run on the saved profile and the offered materials: what was sent, what came back and the profile record it read.
+     * Shared by the screen's solve and by saving the answer as a draft version (J-09), so both start from exactly the same inputs.
+     *
+     * @param  array{qs_material_id?: string|null, reverse?: array<string, string|null>}  $input
+     * @return array{request: array<string, mixed>, answer: array<string, mixed>, record: TierProfile|null, names: array<string, string>}
+     */
+    public function run(Formula $formula, ProductTier $tier, array $input): array
+    {
         $offered = $this->offeredMaterials->offered();
         $record = $this->profiles->find($formula->product_type, $tier);
         $profile = ['productType' => $formula->product_type, 'tier' => $tier->value, ...($record?->profile ?? $this->profiles->body([]))];
@@ -46,15 +68,7 @@ final class TierSolveService
             'tax' => $hasTarget ? $this->tax->engineTax($formula) : null,
         ], fn (mixed $part): bool => $part !== null);
 
-        $answer = $this->engine->run('tier-solve', $request);
-
-        $scenarioPct = $input['scenario_pct'] ?? null;
-        if (($answer['status'] ?? null) === 'optimal' && $scenarioPct !== null && $scenarioPct !== '') {
-            $request['scenarios'] = array_map(fn (array $line): array => ['materialId' => $line['materialId'], 'changePct' => DecimalNormalizer::normalize($scenarioPct)], $answer['formula']);
-            $answer = $this->engine->run('tier-solve', $request);
-        }
-
-        return $this->present($answer, $offered['names'], $record?->source);
+        return ['request' => $request, 'answer' => $this->engine->run('tier-solve', $request), 'record' => $record, 'names' => $offered['names']];
     }
 
     /**

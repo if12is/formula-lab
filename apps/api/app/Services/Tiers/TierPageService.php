@@ -37,6 +37,7 @@ final class TierPageService
                 'sourceStore' => route('sources.store', [], false),
                 'save' => route('tiers.profile.save', [], false),
                 'solve' => route('tiers.solve', [], false),
+                'saveVersion' => route('tiers.versions.store', [], false),
             ],
         ];
     }

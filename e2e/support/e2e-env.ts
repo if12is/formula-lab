@@ -39,6 +39,9 @@ export const E2E_OPERATOR_ROLE = 'production';
 /** TEST-FIXTURE price age limit (the owner has not decided it: HUMAN-TODO S-15). The app ships none; the e2e run uses 30 days so the stale-price figure can be exercised. */
 export const E2E_STALE_PRICE_DAYS = '30';
 
+/** TEST-FIXTURE checklist data for the EDA file assistant (N-08): invented document names, because the shipped file lists none (the sources do not state them). */
+export const E2E_EDA_DEFINITIONS = `${process.cwd()}/apps/api/tests/fixtures/eda-checklist.json`;
+
 /** Environment for every artisan process and for the server: the process env wins over apps/api/.env. */
 export const e2eServerEnv = (): Record<string, string> => ({
   DB_DATABASE: E2E_DATABASE,
@@ -49,6 +52,7 @@ export const e2eServerEnv = (): Record<string, string> => ({
   PRODUCTION_APPROVER_ROLES: E2E_OVERRIDE_ROLE,
   PRODUCTION_WEIGHTS_ONLY_ROLES: E2E_OPERATOR_ROLE,
   DASHBOARD_STALE_PRICE_DAYS: E2E_STALE_PRICE_DAYS,
+  EDA_CHECKLIST_DEFINITIONS_PATH: E2E_EDA_DEFINITIONS,
   // S-16: off on the main server; the gate server (E2E_GATE_PORT) turns it on.
   TERMS_GATE_ENFORCED: 'false',
 });
