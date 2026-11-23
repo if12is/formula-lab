@@ -1,0 +1,31 @@
+{
+  "id": "who-handrub-reference",
+  "version": "0.1.0",
+  "status": "reference",
+  "note": "Reference metadata only. These are WHO recipes for local production, NOT acceptance limits or legal minimums. The owner decides any limit (orchestration/HUMAN-TODO.md K-05).",
+  "source": {
+    "id": "who-guide-local-production-2010",
+    "title": "WHO, Guide to Local Production: WHO-recommended Handrub Formulations (WHO/IER/PSP/2010.5, revised April 2010), Part A, final products",
+    "url": "https://www.who.int/docs/default-source/documents/guidelines/guide-to-local-production.pdf?sfvrsn=357b4129_4",
+    "confidence": "L3_standard",
+    "retrievedAt": "2026-11-23"
+  },
+  "formulations": [
+    {
+      "id": "formulation-1",
+      "finalConcentrations": [
+        { "substance": "ethanol", "value": "80", "unit": "%v/v" },
+        { "substance": "glycerol", "value": "1.45", "unit": "%v/v" },
+        { "substance": "hydrogen_peroxide", "value": "0.125", "unit": "%v/v" }
+      ]
+    },
+    {
+      "id": "formulation-2",
+      "finalConcentrations": [
+        { "substance": "isopropyl_alcohol", "value": "75", "unit": "%v/v" },
+        { "substance": "glycerol", "value": "1.45", "unit": "%v/v" },
+        { "substance": "hydrogen_peroxide", "value": "0.125", "unit": "%v/v" }
+      ]
+    }
+  ]
+}

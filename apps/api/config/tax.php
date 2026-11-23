@@ -33,6 +33,24 @@ return [
         'retrieved_at' => '2026-11-21',
     ],
 
+    /*
+    | Legal reference read on 2026-11-23 (research round 2). Reference metadata only: it does NOT change the rates, the
+    | regime confidence or the `pending` verification above, because whether a product class is taxable at 14% is not settled.
+    | Law 67/2016, Article 3 (ETA English translation, updated 15 Jan 2023): the standard rate is 13% for FY2016/17 and 14%
+    | from FY2017/18; exports are zero-rated. Confidence L3 for that rate; amendments after Jan 2023 were not checked.
+    | The same law's Table lists "Soap and synthetic detergents for household use" (First, item 10: Table Tax 5%, no VAT line)
+    | and "Perfume & moistening products, cosmetics, health and hair-care products" (Second, item 5: VAT plus Table Tax 8%).
+    | Owner and accountant must decide how those apply (orchestration/HUMAN-TODO.md TAX).
+    */
+    'legal_reference' => [
+        'law' => 'Egypt VAT Law No. 67 of 2016',
+        'rate_article' => 'Article 3',
+        'standard_rate_pct' => '14',
+        'url' => 'https://eta.gov.eg/sites/default/files/2024-02/Law-english-no.67-2016.pdf.pdf',
+        'confidence' => 'L3_standard',
+        'retrieved_at' => '2026-11-23',
+    ],
+
     /* Decimal places of the rate sent to Sanad (contract 4.2 shows "14.00"). */
     'sanad_rate_places' => 2,
 ];
