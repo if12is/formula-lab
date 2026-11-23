@@ -36,6 +36,9 @@ return [
     'append_only' => [
         'audit_log',
         'calc_runs',
+        'coa_extraction_events',
+        'coa_extraction_fields',
+        'coa_extractions',
         'dataset_versions',
         'decision_overrides',
         'export_logs',

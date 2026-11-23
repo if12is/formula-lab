@@ -6,6 +6,9 @@ use App\Concerns\Auditable;
 use App\Enums\AuditAction;
 use App\Models\AuditLog;
 use App\Models\CalcRun;
+use App\Models\CoaExtraction;
+use App\Models\CoaExtractionEvent;
+use App\Models\CoaExtractionField;
 use App\Models\DatasetVersion;
 use App\Models\DecisionOverride;
 use App\Models\ExportLog;
@@ -35,6 +38,9 @@ class QualityTablesTest extends TestCase
     private const APPEND_ONLY_MODELS = [
         'audit_log' => AuditLog::class,
         'calc_runs' => CalcRun::class,
+        'coa_extraction_events' => CoaExtractionEvent::class,
+        'coa_extraction_fields' => CoaExtractionField::class,
+        'coa_extractions' => CoaExtraction::class,
         'dataset_versions' => DatasetVersion::class,
         'decision_overrides' => DecisionOverride::class,
         'export_logs' => ExportLog::class,
