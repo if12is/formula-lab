@@ -38,11 +38,11 @@ class AssistantToolsTest extends TestCase
         return app(AssistantToolRegistry::class)->get($tool)($input, $context ?? new ToolContext);
     }
 
-    public function test_the_registry_offers_the_seven_tools_with_strict_schemas(): void
+    public function test_the_registry_offers_the_twelve_tools_with_strict_schemas(): void
     {
         $definitions = app(AssistantToolRegistry::class)->definitions();
 
-        $this->assertSame(['get_material', 'calculate_formula', 'optimize_tier', 'check_compliance', 'convert_units', 'explain_result', 'extract_coa'], array_column($definitions, 'name'));
+        $this->assertSame(['get_material', 'calculate_formula', 'optimize_tier', 'check_compliance', 'convert_units', 'explain_result', 'extract_coa', 'landed_cost', 'packaging_bom', 'price_waterfall', 'fragrance_blend', 'emulsion_phases'], array_column($definitions, 'name'));
         foreach ($definitions as $definition) {
             $schema = $definition['input_schema'];
             $this->assertSame('object', $schema['type'], $definition['name']);

@@ -168,6 +168,11 @@ class AssistantConsentTest extends TestCase
             'convert_units' => [],
             'explain_result' => [],
             'extract_coa' => ['supplier_certificate'],
+            'landed_cost' => ['formula_cost'],
+            'packaging_bom' => ['formula_cost'],
+            'price_waterfall' => ['formula_cost'],
+            'fragrance_blend' => ['formula_composition'],
+            'emulsion_phases' => ['formula_composition'],
         ];
 
         $declared = [];

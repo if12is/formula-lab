@@ -50,4 +50,18 @@ trait BuildsToolAnswers
     {
         return ['ok' => false, 'data' => $data, 'missing' => array_values($missing), 'warnings' => array_values($warnings)];
     }
+
+    /**
+     * An engine gap as the model reads it: what is missing and why, without the screen wording a service adds (subject, text).
+     *
+     * @param  list<array<string, mixed>>  $gaps
+     * @return list<array<string, mixed>>
+     */
+    protected function plainGaps(array $gaps): array
+    {
+        return array_values(array_map(
+            fn (array $gap): array => array_filter(array_intersect_key($gap, ['materialId' => 1, 'property' => 1, 'reason' => 1]), fn (mixed $part): bool => $part !== null),
+            $gaps,
+        ));
+    }
 }

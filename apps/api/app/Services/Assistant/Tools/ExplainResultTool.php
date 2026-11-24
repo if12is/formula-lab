@@ -23,6 +23,7 @@ final class ExplainResultTool implements AssistantTool
     /** @param  list<string>  $explainable  The names of the tools whose answers can be explained. */
     public function __construct(private readonly array $explainable = [
         'get_material', 'calculate_formula', 'optimize_tier', 'check_compliance', 'convert_units',
+        'landed_cost', 'packaging_bom', 'price_waterfall', 'fragrance_blend', 'emulsion_phases',
     ]) {}
 
     public function name(): string

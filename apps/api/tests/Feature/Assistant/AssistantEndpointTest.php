@@ -76,7 +76,7 @@ class AssistantEndpointTest extends TestCase
         $this->assertSame(0, $payload['temperature']);
         $this->assertStringContainsString('أي رقم', $payload['system'][0]['text']);
         $this->assertStringContainsString('ممنوع تحسب أو تقدّر', $payload['system'][0]['text']);
-        $this->assertSame(['get_material', 'calculate_formula', 'optimize_tier', 'check_compliance', 'convert_units', 'explain_result', 'extract_coa'], array_column($payload['tools'], 'name'));
+        $this->assertSame(['get_material', 'calculate_formula', 'optimize_tier', 'check_compliance', 'convert_units', 'explain_result', 'extract_coa', 'landed_cost', 'packaging_bom', 'price_waterfall', 'fragrance_blend', 'emulsion_phases'], array_column($payload['tools'], 'name'));
         $this->assertSame([['role' => 'user', 'content' => 'مرحبا'], ['role' => 'assistant', 'content' => 'أهلاً بيك'], ['role' => 'user', 'content' => 'كام تكلفة التركيبة دي؟']], $payload['messages']);
     }
 

@@ -244,7 +244,12 @@
       "calculate_formula",
       "optimize_tier",
       "check_compliance",
-      "convert_units"
+      "convert_units",
+      "landed_cost",
+      "packaging_bom",
+      "price_waterfall",
+      "fragrance_blend",
+      "emulsion_phases"
      ]
     }
    },
@@ -273,40 +278,37 @@
  },
  {
   "name": "landed_cost",
-  "description": "Allocate freight, insurance, duty, clearance, transport and finance charges over a receipt's lines. Deterministic; returns landed cost per stock unit with trace.",
+  "description": "Deterministic engine: the delivered price per kg (EGP) of trade materials, from their newest usable price quote, with the quote source, confidence and date. Give materialIds (up to 10). A material with no usable price is reported in missing, never as zero. The freight, duty and clearance overlay is not recorded yet, so the price is the stored quote only: say so.",
   "input_schema": {
    "type": "object",
    "properties": {
-    "receiptId": {
-     "type": "string"
-    },
-    "allocationBasis": {
-     "enum": [
-      "value",
-      "weight",
-      "volume",
-      "qty"
-     ]
+    "materialIds": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "description": "Ids of the trade materials to price."
     }
    },
    "required": [
-    "receiptId"
+    "materialIds"
    ],
    "additionalProperties": false
   }
  },
  {
   "name": "packaging_bom",
-  "description": "Packaging cost per unit for a SKU from its BOM, reject rates, carton/pallet shares and amortized one-time costs.",
+  "description": "Deterministic engine: the packaging cost per selling unit (EGP) of a SKU packaging BOM (packagingBomId): the total and each component per unit, with reject share, carton and pallet share and the declared neck/closure pairs. A figure the BOM does not have (price, quantity, reject %, packing, a declared pair) is reported in missing and no total is given.",
   "input_schema": {
    "type": "object",
    "properties": {
-    "skuId": {
-     "type": "string"
+    "packagingBomId": {
+     "type": "string",
+     "description": "The id of the packaging BOM of one SKU."
     }
    },
    "required": [
-    "skuId"
+    "packagingBomId"
    ],
    "additionalProperties": false
   }
@@ -338,25 +340,68 @@
  },
  {
   "name": "price_waterfall",
-  "description": "Cost to shelf price (forward) or shelf price to maximum allowable cost (reverse), using dated tax regime.",
+  "description": "Deterministic engine: the price ladder of a product (formulaId). direction forward walks unit cost to factory, wholesaler, retailer and shelf price with VAT; direction reverse walks a shelfPriceEGP back to the maximum unit cost and formula cost per kg. Margins and costs are the ones the user typed (decimal strings); any the user did not give is reported in missing, never assumed.",
   "input_schema": {
    "type": "object",
    "properties": {
-    "skuId": {
-     "type": "string"
+    "formulaId": {
+     "type": "string",
+     "description": "The id of the product (formula)."
     },
     "direction": {
+     "type": "string",
      "enum": [
       "forward",
       "reverse"
      ]
     },
+    "marginBasis": {
+     "type": "string",
+     "enum": [
+      "markup_on_cost",
+      "margin_on_price"
+     ],
+     "description": "Whether the margins are a markup on cost or a margin on price."
+    },
+    "factoryMarginPct": {
+     "type": "string",
+     "description": "Factory margin %. A decimal string."
+    },
+    "distributionCostPerUnit": {
+     "type": "string",
+     "description": "Distribution cost per unit, EGP. A decimal string."
+    },
+    "wholesalerMarginPct": {
+     "type": "string",
+     "description": "Wholesaler margin %. A decimal string."
+    },
+    "retailerMarginPct": {
+     "type": "string",
+     "description": "Retailer margin %. A decimal string."
+    },
+    "returnsPct": {
+     "type": "string",
+     "description": "Returns allowance %. A decimal string."
+    },
+    "promoPct": {
+     "type": "string",
+     "description": "Promotion allowance %. A decimal string."
+    },
     "shelfPriceEGP": {
-     "type": "string"
+     "type": "string",
+     "description": "The shelf price including VAT, for direction reverse. A decimal string."
+    },
+    "fillKg": {
+     "type": "string",
+     "description": "Fill of one unit in kg, for direction reverse. A decimal string."
+    },
+    "nonFormulaCostPerUnit": {
+     "type": "string",
+     "description": "Packaging and other cost per unit that is not the formula, EGP, for direction reverse. A decimal string."
     }
    },
    "required": [
-    "skuId",
+    "formulaId",
     "direction"
    ],
    "additionalProperties": false
@@ -364,54 +409,48 @@
  },
  {
   "name": "fragrance_blend",
-  "description": "Fine fragrance / air care calc: fragrance oil %, ethanol dilution via OIML R22 tables, water, IFRA limit check for the product category, maceration loss.",
+  "description": "Deterministic engine: the blend of an air-care product for a batch: fragrance oil %, other additives %, the q.s. carrier, each in % w/w and grams, and the IFRA check of the oil against the limit on its certificate for ifraCategory. Give fragranceMaterialId, fragranceOilPct and batchMassG as the user wrote them. Without a certificate limit the IFRA status is UNKNOWN (never PASS) and the gap is in missing.",
   "input_schema": {
    "type": "object",
    "properties": {
-    "productType": {
-     "type": "string"
+    "fragranceMaterialId": {
+     "type": "string",
+     "description": "The id of the fragrance oil (a trade material)."
     },
-    "fragranceOilId": {
-     "type": "string"
+    "fragranceOilPct": {
+     "type": "string",
+     "description": "Fragrance oil, % w/w of the product. A decimal string."
     },
-    "oilPctWW": {
-     "type": "string"
+    "batchMassG": {
+     "type": "string",
+     "description": "Batch mass in grams. A decimal string."
     },
-    "ethanolSourceStrengthVV": {
-     "type": "string"
+    "otherPct": {
+     "type": "string",
+     "description": "Other additives (colour, preservative), % w/w. A decimal string; omit for none."
     },
-    "targetEthanolVV": {
-     "type": "string"
-    },
-    "batchSize": {
-     "type": "string"
-    },
-    "batchUnit": {
-     "enum": [
-      "kg",
-      "L"
-     ]
+    "ifraCategory": {
+     "type": "string",
+     "description": "The IFRA category exactly as written on the oil certificate."
     }
    },
    "required": [
-    "productType",
-    "fragranceOilId",
-    "oilPctWW"
+    "fragranceMaterialId",
+    "fragranceOilPct",
+    "batchMassG"
    ],
    "additionalProperties": false
   }
  },
  {
   "name": "emulsion_phases",
-  "description": "Emulsion formula by phases with functional classes, required HLB of oil phase, emulsifier blend, frame-formulation and preservative limits.",
+  "description": "Deterministic engine: the sum of each process phase (water, oil, cool_down) of a saved formula version (formulaVersionId), the lines without a phase and the total, with the deviation from 100. A formula with no phases, a line with no phase or phase sums that are not 100 are reported in missing.",
   "input_schema": {
    "type": "object",
    "properties": {
     "formulaVersionId": {
-     "type": "string"
-    },
-    "productType": {
-     "type": "string"
+     "type": "string",
+     "description": "The id of a saved formula version."
     }
    },
    "required": [

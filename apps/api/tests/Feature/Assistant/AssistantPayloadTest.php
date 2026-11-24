@@ -88,12 +88,12 @@ class AssistantPayloadTest extends TestCase
         $payload = $this->chatPayload();
 
         $tools = $payload['tools'];
-        $this->assertCount(7, $tools);
+        $this->assertCount(12, $tools);
         foreach (array_slice($tools, 0, -1) as $tool) {
             $this->assertArrayNotHasKey('cache_control', $tool, $tool['name']);
         }
-        $this->assertSame('extract_coa', $tools[6]['name']);
-        $this->assertSame(['type' => 'ephemeral'], $tools[6]['cache_control']);
+        $this->assertSame('emulsion_phases', $tools[11]['name']);
+        $this->assertSame(['type' => 'ephemeral'], $tools[11]['cache_control']);
         $this->assertStringNotContainsString('cache_control', (string) json_encode($payload['messages']));
     }
 
