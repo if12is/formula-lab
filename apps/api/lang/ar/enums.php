@@ -317,4 +317,14 @@ return [
         'price' => 'السعر',
         'percentage' => 'النسب المئوية',
     ],
+    'backup_run_kind' => [
+        'backup' => 'نسخة احتياطية',
+        'verify' => 'تحقق',
+        'restore' => 'استرجاع',
+        'restore_test' => 'اختبار استرجاع',
+    ],
+    'backup_run_status' => [
+        'succeeded' => 'نجح',
+        'failed' => 'فشل',
+    ],
 ];

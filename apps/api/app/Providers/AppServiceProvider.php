@@ -11,6 +11,8 @@ use App\Services\Currency\Providers\ExchangeRateProvider;
 use App\Services\Decisions\OverrideAuthorizer;
 use App\Services\Production\ProductionAudience;
 use App\Support\Assistant\NumberGuard;
+use App\Support\Backup\DatabaseDriver;
+use App\Support\Backup\PostgresDriver;
 use App\Support\Clock\Clock;
 use App\Support\Clock\SystemClock;
 use App\Support\Coa\DocumentTextReader;
@@ -37,6 +39,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(MessagesClient::class, HttpMessagesClient::class);
         // The clock behind records that carry a trusted time (terms acceptance, export log); tests bind a FixedClock.
         $this->app->bind(Clock::class, SystemClock::class);
+
+        // The PostgreSQL tools behind backups (U-05); tests bind a fake so they need no pg_dump.
+        $this->app->bind(DatabaseDriver::class, PostgresDriver::class);
         $this->app->bind(DocumentTextReader::class, PdftotextReader::class);
         $this->app->bind(NumberGuard::class, fn (): NumberGuard => new NumberGuard((array) config('assistant.guard.reference_prefixes')));
 

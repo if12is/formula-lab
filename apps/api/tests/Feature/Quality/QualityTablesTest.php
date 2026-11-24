@@ -7,6 +7,7 @@ use App\Enums\AuditAction;
 use App\Models\AssistantConsentEvent;
 use App\Models\AssistantDisclosure;
 use App\Models\AuditLog;
+use App\Models\BackupRun;
 use App\Models\CalcRun;
 use App\Models\CoaExtraction;
 use App\Models\CoaExtractionEvent;
@@ -41,6 +42,7 @@ class QualityTablesTest extends TestCase
         'assistant_consent_events' => AssistantConsentEvent::class,
         'assistant_disclosures' => AssistantDisclosure::class,
         'audit_log' => AuditLog::class,
+        'backup_runs' => BackupRun::class,
         'calc_runs' => CalcRun::class,
         'coa_extraction_events' => CoaExtractionEvent::class,
         'coa_extraction_fields' => CoaExtractionField::class,

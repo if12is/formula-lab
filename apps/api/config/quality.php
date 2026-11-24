@@ -39,6 +39,7 @@ return [
         'assistant_consent_events',
         'assistant_disclosures',
         'audit_log',
+        'backup_runs',
         'calc_runs',
         'coa_extraction_events',
         'coa_extraction_fields',

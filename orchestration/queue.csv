@@ -201,12 +201,12 @@
 200,U-02,U,agent,,todo,تشفير التركيبات at-rest (per-tenant key)
 201,U-03,U,agent,,done,Watermark على تقارير PDF + سجل تصدير
 202,U-04,U,agent,,todo,Multi-tenancy (نمط shared DB + dedicated DB لعملاء كبار)
-203,U-05,U,agent,,todo,نسخ احتياطي مشفر يومي + اختبار استرجاع شهري
+203,U-05,U,agent,,partial,نسخ احتياطي مشفر يومي + اختبار استرجاع شهري
 204,U-06,U,agent,,todo,مراجعة أمان قبل الإطلاق (OWASP top 10)
 205,U-07,U,agent,,done,صلاحيات حقول على السيرفر: دور الإنتاج ما يستلمش أسعار ولا تكاليف من الـ API أصلًا
 206,U-08,U,agent,,todo,2FA (TOTP) + إدارة الجلسات والأجهزة
 207,U-09,U,agent,,todo,ترخيص موقّع Ed25519 (جهاز، مدة، مميزات) يتحقق أوفلاين بدل رمز الجهاز
-208,U-10,U,agent,,todo,نسخة احتياطية مشفرة + hash تحقق + استرجاع تجريبي قبل الكتابة
+208,U-10,U,agent,,partial,نسخة احتياطية مشفرة + hash تحقق + استرجاع تجريبي قبل الكتابة
 209,V-01,V,agent,,todo,"Dockerfiles (api, web, worker, etl-cron)"
 210,V-02,V,agent,,todo,docker-compose.prod.yml + Postgres + Redis + Caddy/Nginx (HTTPS)
 211,V-03,V,agent,E-01,todo,Cron للـ ETL (CosIng أسبوعي، أسعار يومي)

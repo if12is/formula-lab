@@ -317,4 +317,14 @@ return [
         'price' => 'price',
         'percentage' => 'percentages',
     ],
+    'backup_run_kind' => [
+        'backup' => 'Backup',
+        'verify' => 'Verification',
+        'restore' => 'Restore',
+        'restore_test' => 'Restore test',
+    ],
+    'backup_run_status' => [
+        'succeeded' => 'Succeeded',
+        'failed' => 'Failed',
+    ],
 ];
