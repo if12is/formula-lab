@@ -4,6 +4,7 @@ namespace Tests\Feature\Actions;
 
 use App\Actions\Formula\CreateFormulaVersionAction;
 use App\Enums\FormulaStatus;
+use App\Exceptions\Domain\InvalidFormulaVersionException;
 use App\Models\Formula;
 use App\Models\FormulaVersion;
 use App\Models\TradeMaterial;
@@ -67,6 +68,16 @@ class CreateFormulaVersionActionTest extends TestCase
         $formula = Formula::factory()->create();
 
         $this->assertThrowsException(QueryException::class, fn () => app(CreateFormulaVersionAction::class)(
+            $formula, [['trade_material_id' => TradeMaterial::factory()->create()->id, 'percent_ww' => null]], 1, null, null,
+        ));
+        $this->assertSame(0, FormulaVersion::count());
+    }
+
+    public function test_it_refuses_a_material_that_does_not_exist_because_the_encrypted_column_has_no_foreign_key(): void
+    {
+        $formula = Formula::factory()->create();
+
+        $this->assertThrowsException(InvalidFormulaVersionException::class, fn () => app(CreateFormulaVersionAction::class)(
             $formula, [['trade_material_id' => fake()->uuid(), 'percent_ww' => '5']], 1, null, null,
         ));
         $this->assertSame(0, FormulaVersion::count());

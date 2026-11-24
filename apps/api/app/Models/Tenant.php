@@ -13,4 +13,7 @@ class Tenant extends Model
     use HasFactory, HasUuids;
 
     protected $fillable = ['name'];
+
+    /** The wrapped data key is only ever handled by App\Services\Crypto; it is never serialised. */
+    protected $hidden = ['wrapped_data_key'];
 }

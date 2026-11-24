@@ -133,4 +133,12 @@ return [
     'backup_invalid_database_name' => ':database is not a valid scratch database name (lowercase letters, digits and underscores, starting with a letter).',
     'backup_tool_failed' => ':tool failed: :detail',
     'backup_counts_differ' => 'The row counts of the restored database differ from the manifest.',
+    'formula_version_unknown_material' => 'Material :material does not exist, so it cannot be put in a formula.',
+    'crypto_master_key_missing' => 'The master encryption key (APP_MASTER_KEY) is not set on the server, so tenant formulas can be neither opened nor saved. Generate one with crypto:generate-master-key and put it in the server environment.',
+    'crypto_master_key_invalid' => 'The master encryption key (APP_MASTER_KEY) is invalid: it must be 32 bytes as base64: or 64 hex characters.',
+    'crypto_master_key_unknown' => 'The tenant key is wrapped by a master key (:key) that is not configured. Add it to APP_MASTER_KEY_PREVIOUS until crypto:rewrap-tenant-keys has run.',
+    'crypto_tenant_unknown' => 'There is no tenant or formula version with id :tenant, so the encryption key has no owner.',
+    'crypto_decrypt_failed' => 'Could not decrypt :column: the data was altered, was encrypted with another tenant\'s key, or the key is wrong. No fallback value is shown.',
+    'crypto_not_encrypted' => 'The value stored in :column is not encrypted. Run crypto:encrypt-compositions (or check the data); nothing is read without encryption.',
+    'crypto_verification_failed' => 'The hash check after encryption failed for version :version, so its encryption was rolled back and the data is unchanged.',
 ];

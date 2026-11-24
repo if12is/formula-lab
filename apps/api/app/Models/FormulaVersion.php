@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Concerns\Auditable;
 use App\Enums\FormulaStatus;
+use App\Exceptions\Domain\CompositionCryptoException;
 use App\Exceptions\Domain\ImmutableRecordException;
 use App\Support\CanonicalJson;
 use Database\Factories\FormulaVersionFactory;
@@ -129,9 +130,13 @@ class FormulaVersion extends Model
         return CanonicalJson::hash($canonicalLines);
     }
 
-    /** True when the stored lines (and steps) still hash to the recorded hash. */
+    /** True when the stored lines (and steps) still hash to the recorded hash; encrypted lines that no longer open (altered, wrong key) do not. */
     public function verifyHash(): bool
     {
-        return hash_equals($this->hash, CanonicalJson::hash($this->canonicalContent()));
+        try {
+            return hash_equals($this->hash, CanonicalJson::hash($this->canonicalContent()));
+        } catch (CompositionCryptoException) {
+            return false;
+        }
     }
 }

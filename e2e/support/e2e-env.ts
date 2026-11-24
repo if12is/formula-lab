@@ -44,9 +44,13 @@ export const E2E_STALE_PRICE_DAYS = '30';
 /** TEST-FIXTURE checklist data for the EDA file assistant (N-08): invented document names, because the shipped file lists none (the sources do not state them). */
 export const E2E_EDA_DEFINITIONS = `${process.cwd()}/apps/api/tests/fixtures/eda-checklist.json`;
 
+/** TEST-FIXTURE master key (U-02): a throwaway value for the disposable e2e database only; real environments generate their own (`php artisan crypto:generate-master-key`). */
+export const E2E_MASTER_KEY = 'base64:' + Buffer.from('e2e-only-master-key-32-bytes!!!!').toString('base64');
+
 /** Environment for every artisan process and for the server: the process env wins over apps/api/.env. */
 export const e2eServerEnv = (): Record<string, string> => ({
   DB_DATABASE: E2E_DATABASE,
+  APP_MASTER_KEY: E2E_MASTER_KEY,
   PRICING_RULES: E2E_PRICING_RULES,
   // Y-04 TEST-FIXTURE role: the owner has not named the roles that may override a blocked decision yet (HUMAN-TODO).
   DECISIONS_OVERRIDE_ROLES: E2E_OVERRIDE_ROLE,

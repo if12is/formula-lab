@@ -7,6 +7,7 @@ use App\Integrations\Anthropic\MessagesClient;
 use App\Models\Substance;
 use App\Models\TradeMaterial;
 use App\Models\User;
+use App\Services\Crypto\TenantKeyring;
 use App\Services\Currency\Providers\ExchangeRateProvider;
 use App\Services\Decisions\OverrideAuthorizer;
 use App\Services\Production\ProductionAudience;
@@ -39,6 +40,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(MessagesClient::class, HttpMessagesClient::class);
         // The clock behind records that carry a trusted time (terms acceptance, export log); tests bind a FixedClock.
         $this->app->bind(Clock::class, SystemClock::class);
+        // One keyring per process: unwrapped tenant data keys are cached in memory only (U-02).
+        $this->app->singleton(TenantKeyring::class);
 
         // The PostgreSQL tools behind backups (U-05); tests bind a fake so they need no pg_dump.
         $this->app->bind(DatabaseDriver::class, PostgresDriver::class);

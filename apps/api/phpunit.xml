@@ -24,6 +24,7 @@
         <env name="BROADCAST_CONNECTION" value="null"/>
         <env name="CACHE_STORE" value="array"/>
         <env name="TERMS_GATE_ENFORCED" value="false"/>
+        <env name="APP_MASTER_KEY" value="base64:dGVzdC1vbmx5LW1hc3Rlci1rZXktMzItYnl0ZXMhISE="/>
         <env name="DB_CONNECTION" value="pgsql"/>
         <env name="DB_DATABASE" value="formula_lab_test"/>
         <env name="DB_URL" value=""/>

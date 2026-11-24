@@ -133,4 +133,12 @@ return [
     'backup_invalid_database_name' => ':database مش اسم قاعدة تجريبية صالح (حروف إنجليزي صغيرة وأرقام وشرطة سفلية، ويبدأ بحرف).',
     'backup_tool_failed' => ':tool فشل: :detail',
     'backup_counts_differ' => 'أعداد الصفوف في القاعدة المسترجعة مختلفة عن المانيفست.',
+    'formula_version_unknown_material' => 'الخامة :material مش موجودة، فمينفعش تتحط في تركيبة.',
+    'crypto_master_key_missing' => 'مفتاح التشفير الرئيسي (APP_MASTER_KEY) مش متظبط على السيرفر، فتركيبات العميل مش هتتفتح ولا هتتحفظ. ولّد مفتاح بالأمر crypto:generate-master-key وحطه في بيئة السيرفر.',
+    'crypto_master_key_invalid' => 'مفتاح التشفير الرئيسي (APP_MASTER_KEY) غلط: لازم يكون 32 بايت بصيغة base64: أو 64 حرف hex.',
+    'crypto_master_key_unknown' => 'مفتاح العميل متغلّف بمفتاح رئيسي (:key) مش موجود في الإعدادات. ضيفه في APP_MASTER_KEY_PREVIOUS لحد ما تعمل crypto:rewrap-tenant-keys.',
+    'crypto_tenant_unknown' => 'مفيش عميل (tenant) أو نسخة تركيبة بالمعرّف :tenant، فمفتاح التشفير ملوش صاحب.',
+    'crypto_decrypt_failed' => 'تعذّر فك تشفير :column: البيانات اتغيّرت أو متشفرة بمفتاح عميل تاني أو المفتاح غلط. مفيش قيمة بديلة بتتعرض.',
+    'crypto_not_encrypted' => 'القيمة المخزنة في :column مش مشفرة. شغّل crypto:encrypt-compositions (أو راجع الداتا)، ومفيش قراءة من غير تشفير.',
+    'crypto_verification_failed' => 'تحقق البصمة بعد التشفير فشل للنسخة :version، فالتشفير اتلغى ليها والداتا زي ما كانت.',
 ];

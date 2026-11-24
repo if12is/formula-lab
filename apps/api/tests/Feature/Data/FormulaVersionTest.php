@@ -143,7 +143,8 @@ class FormulaVersionTest extends TestCase
 
     public function test_it_rolls_back_the_whole_version_when_a_line_is_invalid(): void
     {
-        $this->assertThrowsException(QueryException::class, fn () => $this->service->createVersion($this->formula, [
+        // No foreign key on the encrypted trade_material_id (U-02): the action refuses an unknown material itself.
+        $this->assertThrowsException(InvalidFormulaVersionException::class, fn () => $this->service->createVersion($this->formula, [
             ['trade_material_id' => $this->a->id, 'percent_ww' => '10'],
             ['trade_material_id' => fake()->uuid(), 'percent_ww' => '5'],
         ], null));

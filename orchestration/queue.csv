@@ -198,7 +198,7 @@
 197,T-05,T,agent,,todo,Playwright e2e للرحلات الأساسية (تركيبة ⇒ فئة ⇒ مطابقة ⇒ دفعة ⇒ PDF)
 198,T-06,T,agent,,todo,AI evals (J-09) في CI
 199,U-01,U,human,,todo,RBAC: مالك، كيميائي، إنتاج (يشوف أوزان بس من غير نسب)، محاسب (تكلفة بس)
-200,U-02,U,agent,,todo,تشفير التركيبات at-rest (per-tenant key)
+200,U-02,U,agent,,partial,تشفير التركيبات at-rest (per-tenant key)
 201,U-03,U,agent,,done,Watermark على تقارير PDF + سجل تصدير
 202,U-04,U,agent,,todo,Multi-tenancy (نمط shared DB + dedicated DB لعملاء كبار)
 203,U-05,U,agent,,partial,نسخ احتياطي مشفر يومي + اختبار استرجاع شهري

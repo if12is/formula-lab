@@ -14,4 +14,9 @@ class InvalidFormulaVersionException extends BusinessRuleViolationException
     {
         return new self(__('exceptions.formula_version_reason_required'));
     }
+
+    public static function unknownMaterial(string $materialId): self
+    {
+        return new self(__('exceptions.formula_version_unknown_material', ['material' => $materialId]));
+    }
 }
